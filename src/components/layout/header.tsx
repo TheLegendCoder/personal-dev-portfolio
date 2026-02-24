@@ -1,7 +1,6 @@
 'use client';
 
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -18,18 +17,34 @@ const navLinks = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <nav 
+        className={cn(
+          "pointer-events-auto transition-all duration-500 ease-out rounded-full border",
+          scrolled 
+            ? "bg-background/80 backdrop-blur-md border-border/50 shadow-lg py-2 px-6" 
+            : "bg-transparent border-transparent py-4 px-4"
+        )}
+      >
+        <div className="flex items-center justify-between gap-8">
           {/* Logo */}
           <Link 
             href="/" 
-            className="text-xl font-display font-semibold text-foreground hover:text-primary transition-colors"
+            className="text-lg font-display font-semibold text-foreground hover:text-primary transition-colors"
           >
-            Tsholofelo<span className="text-primary">.</span>
+            TN<span className="text-primary">.</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -39,10 +54,10 @@ export function Navbar() {
                 key={link.path}
                 href={link.path}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                  "px-4 py-2 text-sm font-medium rounded-full transition-all duration-300",
                   pathname === link.path
                     ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {link.name}
@@ -54,7 +69,7 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden rounded-full"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -64,7 +79,7 @@ export function Navbar() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-fade-in">
+          <div className="md:hidden absolute top-full left-0 right-0 mt-4 p-4 bg-background/95 backdrop-blur-xl border border-border/50 rounded-3xl shadow-xl animate-fade-in">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
@@ -72,7 +87,7 @@ export function Navbar() {
                   href={link.path}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
+                    "px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200",
                     pathname === link.path
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"

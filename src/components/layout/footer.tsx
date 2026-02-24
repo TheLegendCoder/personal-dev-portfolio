@@ -53,66 +53,67 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-secondary/30 border-t border-border">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
+    <footer className="bg-background border-t border-border/50 py-12 mt-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          {/* Brand & Status */}
           <div className="space-y-4">
             <Link 
               href="/" 
               className="text-xl font-display font-semibold text-foreground"
             >
-              Tsholofelo<span className="text-primary">.</span>
+              {personalInfo.name}<span className="text-primary">.</span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              {personalInfo.tagline}
+            <p className="text-sm text-muted-foreground">
+              {personalInfo.title}
             </p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">System Operational</span>
+            </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Quick Links</h3>
-            <nav className="flex flex-col gap-2">
-              {footerLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
+          {/* Navigation */}
+          <nav className="flex flex-wrap gap-6">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.path}
+                href={link.path}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
 
           {/* Social Links */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Connect</h3>
-            <div className="flex gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target={social.email ? undefined : "_blank"}
-                  rel={social.email ? undefined : "noopener noreferrer"}
-                  onClick={social.email ? (e) => handleEmailClick(e, personalInfo.email) : undefined}
-                  className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-                  aria-label={social.name}
-                >
-                  <social.icon className="h-5 w-5" />
-                </a>
-              ))}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {personalInfo.location}
-            </p>
+          <div className="flex gap-4">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.url}
+                target={social.email ? undefined : "_blank"}
+                rel={social.email ? undefined : "noopener noreferrer"}
+                onClick={social.email ? (e) => handleEmailClick(e, personalInfo.email) : undefined}
+                className="p-2 rounded-full bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all duration-300"
+                aria-label={social.name}
+              >
+                <social.icon className="h-5 w-5" />
+              </a>
+            ))}
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground text-center">
+        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-muted-foreground font-mono">
             © {currentYear} {personalInfo.name}. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground font-mono">
+            {personalInfo.location}
           </p>
         </div>
       </div>
