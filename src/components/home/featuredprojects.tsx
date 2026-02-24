@@ -1,21 +1,85 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { ArrowRight, Code2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ProjectCard } from "@/components/projects/projectcards";
-import { projects } from "@/components/data/content";
-import { StaggerContainer } from "@/components/ui/stagger";
-import { EmptyState } from "@/components/ui/empty-state";
+import { useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { ArrowRight, Code2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ProjectCard } from '@/components/projects/projectcards';
+import { projects } from '@/components/data/content';
+import { EmptyState } from '@/components/ui/empty-state';
+import { gsap, ScrollTrigger, EASE, STAGGER_CARD } from '@/lib/gsap';
 
 export function FeaturedProjects() {
-  const featuredProjects = projects.filter((project) => project.featured);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  const featuredProjects = projects.filter((p) => p.featured);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Header children stagger up
+      if (headerRef.current?.children) {
+        gsap.from(Array.from(headerRef.current.children), {
+          y: 28,
+          duration: 0.7,
+          ease: EASE,
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 85%',
+            once: true,
+          },
+        });
+      }
+
+      // Cards stagger up on scroll
+      if (gridRef.current?.children) {
+        gsap.from(Array.from(gridRef.current.children), {
+          y: 60,
+          duration: 0.85,
+          ease: EASE,
+          stagger: STAGGER_CARD,
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: 'top 82%',
+            once: true,
+          },
+        });
+      }
+
+      // CTA lifts in last
+      if (ctaRef.current) {
+        gsap.from(ctaRef.current, {
+          y: 20,
+          duration: 0.6,
+          ease: EASE,
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 92%',
+            once: true,
+          },
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="py-20 bg-secondary/20">
+    <section ref={sectionRef} className="w-full py-24 bg-secondary/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div ref={headerRef} className="text-center mb-12">
+          <p className="text-xs font-mono text-primary tracking-widest uppercase mb-3">
+            Featured Work
+          </p>
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-4">
             Featured Projects
           </h2>
@@ -33,19 +97,16 @@ export function FeaturedProjects() {
           />
         ) : (
           <>
-            {/* Projects Grid with Stagger Animation */}
-            <StaggerContainer
-              variant="slide-up"
-              delayChildren={100}
+            <div
+              ref={gridRef}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
             >
               {featuredProjects.map((project) => (
                 <ProjectCard key={project.id} {...project} />
               ))}
-            </StaggerContainer>
+            </div>
 
-            {/* View All Button */}
-            <div className="text-center">
+            <div ref={ctaRef} className="text-center">
               <Button asChild variant="outline" size="lg" className="group">
                 <Link href="/projects">
                   View All Projects

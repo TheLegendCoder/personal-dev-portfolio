@@ -6,7 +6,7 @@ export const personalInfo = {
   tagline: "Crafting elegant solutions through code",
   bio: "I document what I learn while building real-world software — from scalable web apps to thoughtful product decisions. This is where I share my experiments, lessons, and projects as I grow as an engineer.",
   email: "",
-  location: "",
+  location: "South Africa",
   availability: "Open to opportunities",
   socialLinks: {
     github: "https://github.com/TheLegendCoder",
@@ -27,8 +27,41 @@ export interface Project {
   featured?: boolean;
 }
 
-export const projects: Project[] = [];
-
+export const projects: Project[] = [
+  {
+    id: "portfolio",
+    title: "CMS-backed Portfolio",
+    description:
+      "A production-grade personal portfolio built with Next.js 15, TypeScript, and MDX. Features full SEO, structured data, PostHog analytics, and a GSAP-driven cinematic UI system.",
+    image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&q=80",
+    tags: ["Next.js", "TypeScript", "GSAP", "Tailwind CSS", "MDX"],
+    liveUrl: "https://tsholofelo.dev",
+    githubUrl: "https://github.com/TheLegendCoder/tsholofelo-ndawonde",
+    featured: true,
+  },
+  {
+    id: "content-repurposing",
+    title: "Content Repurposing System",
+    description:
+      "An automated pipeline that ingests long-form content and transforms it into platform-optimised formats using AI. Built with Node.js, TypeScript, and structured prompt engineering.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    tags: ["Node.js", "TypeScript", "AI / LLM", "REST API", "Automation"],
+    liveUrl: "",
+    githubUrl: "https://github.com/TheLegendCoder",
+    featured: true,
+  },
+  {
+    id: "production-api",
+    title: "Production API — C# / Azure",
+    description:
+      "A robust REST API built with ASP.NET Core and deployed on Azure App Service. Includes JWT authentication, structured logging, health checks, and a full CI/CD pipeline via GitHub Actions.",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
+    tags: ["C#", ".NET", "Azure", "CI/CD", "GitHub Actions", "SQL Server"],
+    liveUrl: "",
+    githubUrl: "https://github.com/TheLegendCoder",
+    featured: true,
+  },
+];
 
 
 export const aboutContent = {
