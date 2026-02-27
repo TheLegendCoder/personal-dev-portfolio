@@ -40,7 +40,7 @@ async function seed() {
       slug,
       title: data.title ?? '',
       description: data.description ?? '',
-      date: data.date ? String(data.date).slice(0, 10) : new Date().toISOString().slice(0, 10),
+      date: data.date ? new Date(data.date).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
       author: data.author ?? '',
       tags: Array.isArray(data.tags) ? data.tags : [],
       read_time: data.readTime ?? '',
