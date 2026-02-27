@@ -5,7 +5,10 @@ import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
 
 export async function LatestPosts() {
   const allPosts = await getAllBlogPosts();
-  const latestPosts = allPosts.slice(0, 3);
+
+  // Show featured posts first (up to 3); fall back to the 3 most-recent if none are featured
+  const featuredPosts = allPosts.filter((p) => p.featured);
+  const latestPosts = featuredPosts.length > 0 ? featuredPosts.slice(0, 3) : allPosts.slice(0, 3);
 
   return (
     <section className="w-full py-24">
