@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 import { Code2 } from 'lucide-react';
-import { getProjects, getProjectsByCategory } from '@/lib/projects';
+import { getProjectsByCategory } from '@/lib/projects';
 import type { ProjectCategory } from '@/lib/projects';
 import { ProjectCard } from '@/components/projects/projectcards';
 import { ProjectFilters } from '@/components/projects/project-filters';
@@ -9,20 +10,21 @@ import { StaggerContainer } from '@/components/ui/stagger';
 import { BreadcrumbWithSchema } from '@/components/ui/breadcrumb';
 import { generateBreadcrumbs } from '@/lib/seo/breadcrumbs';
 
+export const dynamic = 'force-dynamic';
+
 interface ProjectsPageProps {
   searchParams: Promise<{ category?: string }>;
 }
 
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const { category } = await searchParams;
-  const validCategory =
-    category === 'professional' || category === 'personal'
-      ? (category as ProjectCategory)
-      : undefined;
 
-  const projects = validCategory
-    ? await getProjectsByCategory(validCategory)
-    : await getProjects();
+  if (category !== 'professional' && category !== 'personal') {
+    redirect('/projects?category=professional');
+  }
+
+  const validCategory = category as ProjectCategory;
+  const projects = await getProjectsByCategory(validCategory);
 
   const breadcrumbs = generateBreadcrumbs('/projects');
 
@@ -47,7 +49,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
           {/* Filter Buttons */}
           <div className="flex justify-center mb-12 lg:mb-16">
             <Suspense fallback={null}>
-              <ProjectFilters current={validCategory ?? ''} />
+              <ProjectFilters current={validCategory} />
             </Suspense>
           </div>
         </div>

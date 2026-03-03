@@ -2,8 +2,7 @@
 // Data-access layer for portfolio_projects (Supabase)
 // ---------------------------------------------------------------------------
 
-import { createClient } from '@/lib/supabase/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
 import type {
   PortfolioProject,
   DbProjectInsert,
@@ -19,7 +18,7 @@ export type { PortfolioProject, ProjectCategory };
 
 /** All published projects ordered by sort_order, then created_at */
 export async function getProjects(): Promise<PortfolioProject[]> {
-  const supabase = await createClient();
+  const supabase = createAnonClient();
   const { data, error } = await supabase
     .from('portfolio_projects')
     .select('*')
@@ -28,7 +27,8 @@ export async function getProjects(): Promise<PortfolioProject[]> {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('[getProjects]', error.message);
+    console.error('[getProjects]', error.message, error.code, error.details);
+    if (process.env.NODE_ENV === 'development') throw new Error(`[getProjects] ${error.message}`);
     return [];
   }
   return data ?? [];
@@ -36,7 +36,7 @@ export async function getProjects(): Promise<PortfolioProject[]> {
 
 /** Published + featured projects — used on the home page */
 export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
-  const supabase = await createClient();
+  const supabase = createAnonClient();
   const { data, error } = await supabase
     .from('portfolio_projects')
     .select('*')
@@ -46,7 +46,8 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('[getFeaturedProjects]', error.message);
+    console.error('[getFeaturedProjects]', error.message, error.code, error.details);
+    if (process.env.NODE_ENV === 'development') throw new Error(`[getFeaturedProjects] ${error.message}`);
     return [];
   }
   return data ?? [];
@@ -56,7 +57,7 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
 export async function getProjectsByCategory(
   category: ProjectCategory,
 ): Promise<PortfolioProject[]> {
-  const supabase = await createClient();
+  const supabase = createAnonClient();
   const { data, error } = await supabase
     .from('portfolio_projects')
     .select('*')
@@ -66,7 +67,8 @@ export async function getProjectsByCategory(
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('[getProjectsByCategory]', error.message);
+    console.error('[getProjectsByCategory]', error.message, error.code, error.details);
+    if (process.env.NODE_ENV === 'development') throw new Error(`[getProjectsByCategory] ${error.message}`);
     return [];
   }
   return data ?? [];
@@ -86,8 +88,8 @@ export async function getAllProjectsAdmin(): Promise<PortfolioProject[]> {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('[getAllProjectsAdmin]', error.message);
-    return [];
+    console.error('[getAllProjectsAdmin]', error.message, error.code, error.details);
+    throw new Error(`[getAllProjectsAdmin] ${error.message}`);
   }
   return data ?? [];
 }

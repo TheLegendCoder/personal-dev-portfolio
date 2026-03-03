@@ -35,3 +35,17 @@ export function createServiceClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 }
+
+/** Simple anon client — for public reads, no cookie/session management needed. */
+export function createAnonClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        fetch: (url, options = {}) =>
+          fetch(url, { ...options, cache: 'no-store' }),
+      },
+    }
+  );
+}
