@@ -20,7 +20,7 @@ export function ProjectFilters({ current }: { current: string }) {
     } else {
       params.delete('category');
     }
-    router.push(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (
