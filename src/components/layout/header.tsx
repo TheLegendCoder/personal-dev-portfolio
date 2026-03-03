@@ -65,6 +65,9 @@ export function Navbar() {
     return () => cleanups.forEach((fn) => fn());
   }, []);
 
+  // Never render the public navbar inside the admin area
+  if (pathname.startsWith('/admin')) return null;
+
   return (
     <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
       <nav

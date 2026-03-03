@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { personalInfo } from "@/components/data/content";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,10 @@ const footerLinks = [
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { toast } = useToast();
+  const pathname = usePathname();
+
+  // Never render the public footer inside the admin area
+  if (pathname.startsWith('/admin')) return null;
 
   const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>, email: string) => {
     e.preventDefault();

@@ -123,10 +123,10 @@ function SidebarContents({
       <div className="px-3 pb-5 pt-3 border-t border-border space-y-1">
         <Link
           href="/"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
-          Back to site
+          Home
         </Link>
         <form action="/api/admin/signout" method="POST">
           <button
