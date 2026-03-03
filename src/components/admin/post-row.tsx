@@ -53,33 +53,40 @@ export function AdminPostRow({ post }: AdminPostRowProps) {
   });
 
   return (
-    <tr className={`hover:bg-muted/30 transition-colors ${isPending ? 'opacity-60' : ''}`}>
+    <tr className={`hover:bg-muted/40 transition-colors group ${isPending ? 'opacity-60' : ''}`}>
       {/* Title */}
-      <td className="px-4 py-3">
-        <div className="flex items-start flex-col gap-0.5">
-          <span className="font-medium text-foreground line-clamp-1">{post.title}</span>
-          <span className="text-xs text-muted-foreground">/blog/{post.slug}</span>
+      <td className="px-4 py-3.5">
+        <div className="flex items-start flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 ${published ? 'bg-accent' : 'bg-muted-foreground/40'}`}
+            />
+            <span className="font-medium text-foreground line-clamp-1">{post.title}</span>
+          </div>
+          <span className="text-xs text-muted-foreground font-mono pl-3.5">/blog/{post.slug}</span>
         </div>
       </td>
 
       {/* Date */}
-      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{formattedDate}</td>
+      <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap text-xs">{formattedDate}</td>
 
       {/* Published toggle */}
-      <td className="px-4 py-3 text-center">
+      <td className="px-4 py-3.5 text-center">
         <button
           onClick={handlePublish}
           disabled={isPending}
           title={published ? 'Click to unpublish' : 'Click to publish'}
-          className="inline-flex items-center justify-center"
+          className="inline-flex items-center justify-center group/toggle"
         >
           <span
-            className={`inline-block w-10 h-5 rounded-full transition-colors ${
-              published ? 'bg-green-500' : 'bg-muted-foreground/30'
+            className={`inline-block w-10 h-5 rounded-full transition-all ${
+              published
+                ? 'bg-accent shadow-[0_0_0_3px_hsl(var(--accent)/0.15)]'
+                : 'bg-muted-foreground/25 hover:bg-muted-foreground/40'
             }`}
           >
             <span
-              className={`block w-4 h-4 rounded-full bg-white shadow-sm mt-0.5 transition-transform ${
+              className={`block w-4 h-4 rounded-full bg-white shadow-md mt-0.5 transition-transform ${
                 published ? 'translate-x-5' : 'translate-x-1'
               }`}
             />
@@ -88,7 +95,7 @@ export function AdminPostRow({ post }: AdminPostRowProps) {
       </td>
 
       {/* Featured toggle */}
-      <td className="px-4 py-3 text-center">
+      <td className="px-4 py-3.5 text-center">
         <button
           onClick={handleFeatured}
           disabled={isPending}
@@ -96,12 +103,14 @@ export function AdminPostRow({ post }: AdminPostRowProps) {
           className="inline-flex items-center justify-center"
         >
           <span
-            className={`inline-block w-10 h-5 rounded-full transition-colors ${
-              featured ? 'bg-amber-500' : 'bg-muted-foreground/30'
+            className={`inline-block w-10 h-5 rounded-full transition-all ${
+              featured
+                ? 'bg-amber-500 shadow-[0_0_0_3px_hsl(45,93%,47%,0.15)]'
+                : 'bg-muted-foreground/25 hover:bg-muted-foreground/40'
             }`}
           >
             <span
-              className={`block w-4 h-4 rounded-full bg-white shadow-sm mt-0.5 transition-transform ${
+              className={`block w-4 h-4 rounded-full bg-white shadow-md mt-0.5 transition-transform ${
                 featured ? 'translate-x-5' : 'translate-x-1'
               }`}
             />
@@ -110,24 +119,24 @@ export function AdminPostRow({ post }: AdminPostRowProps) {
       </td>
 
       {/* Actions */}
-      <td className="px-4 py-3">
-        <div className="flex items-center justify-end gap-2">
+      <td className="px-4 py-3.5">
+        <div className="flex items-center justify-end gap-1.5">
           <Link
             href={`/admin/blog/${post.slug}`}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-primary/10 transition-colors text-muted-foreground hover:text-primary"
             title="Edit post"
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil className="h-3.5 w-3.5" />
           </Link>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
                 title="Delete post"
                 disabled={isPending}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>

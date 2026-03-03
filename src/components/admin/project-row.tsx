@@ -48,16 +48,21 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
   };
 
   return (
-    <tr className={`hover:bg-muted/30 transition-colors ${isPending ? 'opacity-60' : ''}`}>
+    <tr className={`hover:bg-muted/40 transition-colors group ${isPending ? 'opacity-60' : ''}`}>
       {/* Title + category */}
-      <td className="px-4 py-3">
-        <div className="flex items-start flex-col gap-1">
-          <span className="font-medium text-foreground line-clamp-1">{project.title}</span>
+      <td className="px-4 py-3.5">
+        <div className="flex items-start flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 ${published ? 'bg-accent' : 'bg-muted-foreground/40'}`}
+            />
+            <span className="font-medium text-foreground line-clamp-1">{project.title}</span>
+          </div>
           <Badge
-            className={`text-xs ${
+            className={`text-xs font-medium border-0 ${
               project.category === 'professional'
-                ? 'bg-blue-600/10 text-blue-600'
-                : 'bg-violet-600/10 text-violet-600'
+                ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                : 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
             }`}
           >
             {project.category === 'professional' ? 'Professional' : 'Personal'}
@@ -66,10 +71,10 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
       </td>
 
       {/* Tags */}
-      <td className="px-4 py-3">
+      <td className="px-4 py-3.5">
         <div className="flex flex-wrap gap-1">
           {project.tags.slice(0, 3).map((tag) => (
-            <Badge key={tag} className="bg-muted text-muted-foreground text-xs">
+            <Badge key={tag} className="bg-muted/70 text-muted-foreground text-xs font-normal border-0">
               {tag}
             </Badge>
           ))}
@@ -80,7 +85,7 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
       </td>
 
       {/* Published toggle */}
-      <td className="px-4 py-3 text-center">
+      <td className="px-4 py-3.5 text-center">
         <button
           onClick={handlePublish}
           disabled={isPending}
@@ -88,12 +93,14 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
           className="inline-flex items-center justify-center"
         >
           <span
-            className={`inline-block w-10 h-5 rounded-full transition-colors ${
-              published ? 'bg-green-500' : 'bg-muted-foreground/30'
+            className={`inline-block w-10 h-5 rounded-full transition-all ${
+              published
+                ? 'bg-accent shadow-[0_0_0_3px_hsl(var(--accent)/0.15)]'
+                : 'bg-muted-foreground/25 hover:bg-muted-foreground/40'
             }`}
           >
             <span
-              className={`block w-4 h-4 rounded-full bg-white shadow-sm mt-0.5 transition-transform ${
+              className={`block w-4 h-4 rounded-full bg-white shadow-md mt-0.5 transition-transform ${
                 published ? 'translate-x-5' : 'translate-x-1'
               }`}
             />
@@ -102,7 +109,7 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
       </td>
 
       {/* Featured toggle (= shown on home page) */}
-      <td className="px-4 py-3 text-center">
+      <td className="px-4 py-3.5 text-center">
         <button
           onClick={handleFeatured}
           disabled={isPending}
@@ -110,12 +117,14 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
           className="inline-flex items-center justify-center"
         >
           <span
-            className={`inline-block w-10 h-5 rounded-full transition-colors ${
-              featured ? 'bg-amber-500' : 'bg-muted-foreground/30'
+            className={`inline-block w-10 h-5 rounded-full transition-all ${
+              featured
+                ? 'bg-violet-500 shadow-[0_0_0_3px_rgb(139,92,246,0.15)]'
+                : 'bg-muted-foreground/25 hover:bg-muted-foreground/40'
             }`}
           >
             <span
-              className={`block w-4 h-4 rounded-full bg-white shadow-sm mt-0.5 transition-transform ${
+              className={`block w-4 h-4 rounded-full bg-white shadow-md mt-0.5 transition-transform ${
                 featured ? 'translate-x-5' : 'translate-x-1'
               }`}
             />
@@ -124,24 +133,24 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
       </td>
 
       {/* Actions */}
-      <td className="px-4 py-3">
-        <div className="flex items-center justify-end gap-2">
+      <td className="px-4 py-3.5">
+        <div className="flex items-center justify-end gap-1.5">
           <Link
             href={`/admin/projects/${project.id}`}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-primary/10 transition-colors text-muted-foreground hover:text-primary"
             title="Edit project"
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil className="h-3.5 w-3.5" />
           </Link>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
                 title="Delete project"
                 disabled={isPending}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>

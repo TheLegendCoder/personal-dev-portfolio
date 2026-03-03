@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Save, Trash2 } from 'lucide-react';
+import { Save, Trash2, FolderKanban, Globe, Github, Tag, Image, ArrowUpDown, Layers, Eye } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Zod schema
@@ -106,22 +106,25 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Top bar */}
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-bold text-foreground">
-          {isNew ? 'New project' : `Editing: ${project.title}`}
-        </h1>
-        <div className="flex items-center gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Sticky action bar */}
+      <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-card/95 backdrop-blur border-b border-border border-l-4 border-l-primary flex items-center justify-between gap-4 mb-2">
+        <div className="min-w-0">
+          <h1 className="text-sm font-semibold text-foreground truncate">
+            {isNew ? 'New project' : project.title}
+          </h1>
+          <p className="text-xs text-muted-foreground">{isNew ? 'Draft — unsaved' : 'Editing project'}</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
           {!isNew && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button
                   type="button"
                   disabled={isPending}
-                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-sm text-destructive hover:bg-destructive/10 transition-colors border border-destructive/30"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors border border-destructive/25"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5" />
                   Delete
                 </button>
               </AlertDialogTrigger>
@@ -147,119 +150,156 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
           <button
             type="submit"
             disabled={isPending}
-            className="inline-flex items-center gap-1.5 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 h-8 px-4 bg-primary text-primary-foreground rounded-md text-xs font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-sm"
           >
-            <Save className="h-4 w-4" />
-            {isPending ? 'Saving…' : 'Save'}
+            <Save className="h-3.5 w-3.5" />
+            {isPending ? 'Saving…' : 'Save project'}
           </button>
         </div>
       </div>
 
       {serverError && (
-        <p className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
-          {serverError}
-        </p>
+        <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/8 border border-destructive/20 px-4 py-3 rounded-lg">
+          <span className="font-semibold shrink-0">Error:</span>
+          <span>{serverError}</span>
+        </div>
       )}
 
-      {/* Metadata grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Title */}
-        <div className="md:col-span-2 space-y-1.5">
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" placeholder="Project title" {...register('title')} />
-          {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+      {/* ── Card: Project Details ── */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border bg-primary/5">
+          <FolderKanban className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">Project Details</h2>
         </div>
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+          {/* Title */}
+          <div className="md:col-span-2 space-y-1.5">
+            <Label htmlFor="title" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Title
+            </Label>
+            <Input id="title" placeholder="Project title" className="text-sm font-medium" {...register('title')} />
+            {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+          </div>
 
-        {/* Description */}
-        <div className="md:col-span-2 space-y-1.5">
-          <Label htmlFor="description">Description</Label>
-          <textarea
-            id="description"
-            {...register('description')}
-            rows={3}
-            placeholder="Brief project summary…"
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          {errors.description && (
-            <p className="text-xs text-destructive">{errors.description.message}</p>
-          )}
+          {/* Description */}
+          <div className="md:col-span-2 space-y-1.5">
+            <Label htmlFor="description" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Description
+            </Label>
+            <textarea
+              id="description"
+              {...register('description')}
+              rows={3}
+              placeholder="Brief project summary…"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            {errors.description && (
+              <p className="text-xs text-destructive">{errors.description.message}</p>
+            )}
+          </div>
+
+          {/* Live URL */}
+          <div className="space-y-1.5">
+            <Label htmlFor="liveUrl" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Globe className="h-3 w-3" /> Live URL
+            </Label>
+            <Input id="liveUrl" type="url" placeholder="https://…" {...register('liveUrl')} />
+            {errors.liveUrl && <p className="text-xs text-destructive">{errors.liveUrl.message}</p>}
+          </div>
+
+          {/* GitHub URL */}
+          <div className="space-y-1.5">
+            <Label htmlFor="githubUrl" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Github className="h-3 w-3" /> GitHub URL
+            </Label>
+            <Input id="githubUrl" type="url" placeholder="https://github.com/…" {...register('githubUrl')} />
+            {errors.githubUrl && <p className="text-xs text-destructive">{errors.githubUrl.message}</p>}
+          </div>
+
+          {/* Image URL */}
+          <div className="md:col-span-2 space-y-1.5">
+            <Label htmlFor="image" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Image className="h-3 w-3" /> Cover image URL
+            </Label>
+            <Input id="image" type="url" placeholder="https://…" {...register('image')} />
+            {errors.image && <p className="text-xs text-destructive">{errors.image.message}</p>}
+          </div>
+
+          {/* Image hint */}
+          <div className="space-y-1.5">
+            <Label htmlFor="imageHint" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Image alt / hint
+            </Label>
+            <Input id="imageHint" placeholder="e.g. project screenshot" {...register('imageHint')} />
+          </div>
+
+          {/* Tags */}
+          <div className="space-y-1.5">
+            <Label htmlFor="tags" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Tag className="h-3 w-3" /> Tags
+            </Label>
+            <Input id="tags" placeholder="Next.js, TypeScript, Tailwind CSS" {...register('tags')} />
+            <p className="text-xs text-muted-foreground">Separate tags with commas.</p>
+          </div>
         </div>
+      </div>
 
-        {/* Live URL */}
-        <div className="space-y-1.5">
-          <Label htmlFor="liveUrl">Live URL</Label>
-          <Input id="liveUrl" type="url" placeholder="https://…" {...register('liveUrl')} />
-          {errors.liveUrl && <p className="text-xs text-destructive">{errors.liveUrl.message}</p>}
+      {/* ── Card: Publishing Settings ── */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border bg-accent/5">
+          <Eye className="h-4 w-4 text-accent" />
+          <h2 className="text-sm font-semibold text-foreground">Publishing Settings</h2>
         </div>
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+          {/* Category */}
+          <div className="space-y-1.5">
+            <Label htmlFor="category" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Layers className="h-3 w-3" /> Category
+            </Label>
+            <select
+              id="category"
+              {...register('category')}
+              className="w-full h-10 rounded-lg border border-border bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="professional">Professional</option>
+              <option value="personal">Personal</option>
+            </select>
+            {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
+          </div>
 
-        {/* GitHub URL */}
-        <div className="space-y-1.5">
-          <Label htmlFor="githubUrl">GitHub URL</Label>
-          <Input id="githubUrl" type="url" placeholder="https://github.com/…" {...register('githubUrl')} />
-          {errors.githubUrl && (
-            <p className="text-xs text-destructive">{errors.githubUrl.message}</p>
-          )}
-        </div>
+          {/* Sort order */}
+          <div className="space-y-1.5">
+            <Label htmlFor="sortOrder" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <ArrowUpDown className="h-3 w-3" /> Sort order
+            </Label>
+            <Input
+              id="sortOrder"
+              type="number"
+              min={0}
+              {...register('sortOrder', { valueAsNumber: true })}
+            />
+            <p className="text-xs text-muted-foreground">Lower numbers appear first.</p>
+          </div>
 
-        {/* Image URL */}
-        <div className="md:col-span-2 space-y-1.5">
-          <Label htmlFor="image">Cover image URL</Label>
-          <Input id="image" type="url" placeholder="https://…" {...register('image')} />
-          {errors.image && <p className="text-xs text-destructive">{errors.image.message}</p>}
-        </div>
-
-        {/* Image hint */}
-        <div className="space-y-1.5">
-          <Label htmlFor="imageHint">Image alt text / hint</Label>
-          <Input id="imageHint" placeholder="e.g. project screenshot" {...register('imageHint')} />
-        </div>
-
-        {/* Tags */}
-        <div className="space-y-1.5">
-          <Label htmlFor="tags">Tags (comma-separated)</Label>
-          <Input id="tags" placeholder="Next.js, TypeScript, Tailwind CSS" {...register('tags')} />
-        </div>
-
-        {/* Category */}
-        <div className="space-y-1.5">
-          <Label htmlFor="category">Category</Label>
-          <select
-            id="category"
-            {...register('category')}
-            className="w-full h-10 rounded-md border border-input bg-background px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="professional">Professional</option>
-            <option value="personal">Personal</option>
-          </select>
-          {errors.category && (
-            <p className="text-xs text-destructive">{errors.category.message}</p>
-          )}
-        </div>
-
-        {/* Sort order */}
-        <div className="space-y-1.5">
-          <Label htmlFor="sortOrder">Sort order</Label>
-          <Input
-            id="sortOrder"
-            type="number"
-            min={0}
-            {...register('sortOrder', { valueAsNumber: true })}
-          />
-          <p className="text-xs text-muted-foreground">Lower numbers appear first.</p>
-        </div>
-
-        {/* Toggles */}
-        <div className="md:col-span-2 flex items-center gap-6">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" className="sr-only" {...register('published')} />
-            <ToggleVisual checked={watch('published')} />
-            <span className="text-sm text-foreground">Published</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" className="sr-only" {...register('featured')} />
-            <ToggleVisual checked={watch('featured')} color="amber" />
-            <span className="text-sm text-foreground">Featured on home page</span>
-          </label>
+          {/* Toggles */}
+          <div className="md:col-span-2 flex flex-wrap gap-8 pt-1">
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input type="checkbox" className="sr-only" {...register('published')} />
+              <ToggleVisual checked={watch('published')} />
+              <div>
+                <p className="text-sm font-medium text-foreground">Published</p>
+                <p className="text-xs text-muted-foreground">Visible to the public</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input type="checkbox" className="sr-only" {...register('featured')} />
+              <ToggleVisual checked={watch('featured')} color="amber" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Featured</p>
+                <p className="text-xs text-muted-foreground">Pinned to the home page</p>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
     </form>
@@ -278,14 +318,19 @@ function ToggleVisual({
 }) {
   const bg = checked
     ? color === 'green'
-      ? 'bg-green-500'
+      ? 'bg-emerald-500'
       : 'bg-amber-500'
-    : 'bg-muted-foreground/30';
+    : 'bg-muted-foreground/25';
+  const ring = checked
+    ? color === 'green'
+      ? 'ring-2 ring-emerald-500/25'
+      : 'ring-2 ring-amber-500/25'
+    : '';
   return (
-    <span className={`inline-block w-10 h-5 rounded-full transition-colors ${bg}`}>
+    <span className={`relative inline-flex w-11 h-6 rounded-full transition-all duration-200 shrink-0 ${bg} ${ring}`}>
       <span
-        className={`block w-4 h-4 rounded-full bg-white shadow-sm mt-0.5 transition-transform ${
-          checked ? 'translate-x-5' : 'translate-x-1'
+        className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${
+          checked ? 'left-6' : 'left-1'
         }`}
       />
     </span>
