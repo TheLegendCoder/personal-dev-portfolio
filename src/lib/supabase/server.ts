@@ -32,7 +32,20 @@ export async function createClient() {
 export function createServiceClient() {
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      global: {
+        fetch: (url, options = {}) => {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+          return fetch(url, {
+            ...options,
+            signal: controller.signal,
+            cache: 'no-store',
+          }).finally(() => clearTimeout(timeout));
+        },
+      },
+    }
   );
 }
 

@@ -106,7 +106,7 @@ export async function getProjectByIdAdmin(
     .single();
 
   if (error) {
-    console.error('[getProjectByIdAdmin]', error.message);
+    console.error('[getProjectByIdAdmin]', error.message, error.code, error.details);
     return null;
   }
   return data;
