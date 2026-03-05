@@ -9,32 +9,8 @@ import type {
   DbProjectUpdate,
   ProjectCategory,
 } from '@/lib/supabase/types';
-import { projects as staticProjects, type Project } from '@/components/data/content';
 
 export type { PortfolioProject, ProjectCategory };
-
-// ---------------------------------------------------------------------------
-// Static fallback — used when Supabase is unreachable (paused project, network failure, etc.)
-// ---------------------------------------------------------------------------
-
-function toPortfolioProject(p: Project, index: number): PortfolioProject {
-  return {
-    id: p.id,
-    title: p.title,
-    description: p.description,
-    image: p.image,
-    image_hint: '',
-    tags: p.tags,
-    live_url: p.liveUrl ?? '',
-    github_url: p.githubUrl ?? '',
-    featured: p.featured ?? false,
-    published: true,
-    category: p.category ?? 'personal',
-    sort_order: index,
-    created_at: '',
-    updated_at: '',
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Public reads (published only — uses anon client / RLS)
@@ -53,20 +29,14 @@ export async function getProjects(): Promise<PortfolioProject[]> {
 
     if (error) {
       console.error('[getProjects] Supabase error:', error.message, '| code:', error.code);
-      return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
+      return [];
     }
 
     console.log('[getProjects] Supabase returned', data?.length ?? 0, 'rows');
-
-    // Fall back to static data if Supabase returned nothing
-    if (!data || data.length === 0) {
-      console.warn('[getProjects] No rows from Supabase — using static fallback');
-      return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
-    }
-    return data;
+    return data ?? [];
   } catch (err) {
     console.error('[getProjects] Fetch exception:', err);
-    return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
+    return [];
   }
 }
 
@@ -84,19 +54,14 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
 
     if (error) {
       console.error('[getFeaturedProjects] Supabase error:', error.message, '| code:', error.code);
-      return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
+      return [];
     }
 
     console.log('[getFeaturedProjects] Supabase returned', data?.length ?? 0, 'rows');
-
-    if (!data || data.length === 0) {
-      console.warn('[getFeaturedProjects] No rows from Supabase — using static fallback');
-      return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
-    }
-    return data;
+    return data ?? [];
   } catch (err) {
     console.error('[getFeaturedProjects] Fetch exception:', err);
-    return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
+    return [];
   }
 }
 
@@ -116,29 +81,14 @@ export async function getProjectsByCategory(
 
     if (error) {
       console.error('[getProjectsByCategory] Supabase error for category', category, ':', error.message, '| code:', error.code);
-      return staticProjects
-        .filter((p: Project) => (p.category ?? 'personal') === category)
-        .map((p: Project, index: number) => toPortfolioProject(p, index));
+      return [];
     }
 
     console.log('[getProjectsByCategory]', category, '— Supabase returned', data?.length ?? 0, 'rows');
-
-    if (!data || data.length === 0) {
-      const fallback = staticProjects
-        .filter((p: Project) => (p.category ?? 'personal') === category)
-        .map((p: Project, index: number) => toPortfolioProject(p, index));
-      if (fallback.length > 0) {
-        console.warn('[getProjectsByCategory] No rows from Supabase — using static fallback (' + fallback.length + ' items)');
-        return fallback;
-      }
-      return [];
-    }
-    return data;
+    return data ?? [];
   } catch (err) {
     console.error('[getProjectsByCategory] Fetch exception:', err);
-    return staticProjects
-      .filter((p: Project) => (p.category ?? 'personal') === category)
-      .map((p: Project, index: number) => toPortfolioProject(p, index));
+    return [];
   }
 }
 

@@ -6,7 +6,6 @@ import type { ProjectCategory } from '@/lib/projects';
 import { ProjectCard } from '@/components/projects/projectcards';
 import { ProjectFilters } from '@/components/projects/project-filters';
 import { EmptyState } from '@/components/ui/empty-state';
-import { StaggerContainer } from '@/components/ui/stagger';
 import { BreadcrumbWithSchema } from '@/components/ui/breadcrumb';
 import { generateBreadcrumbs } from '@/lib/seo/breadcrumbs';
 
@@ -64,16 +63,12 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
           {projects.length === 0 ? (
             <EmptyState
               icon={<Code2 className="h-12 w-12 text-primary" />}
-              title="Projects on the way"
-              description={`More ${category === 'all' ? '' : (category ?? '') + ' '}projects coming soon. Check back soon.`}
+              title="I am working on it."
+              description={`Coming soon!${category !== 'all' ? ` No ${category} projects are published yet.` : ''}`}
               actionText="Check back soon"
             />
           ) : (
-            <StaggerContainer
-              variant="slide-up"
-              delayChildren={0}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8"
-            >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 animate-fade-in">
               {projects.map((project) => (
                 <ProjectCard
                   key={project.id}
@@ -88,7 +83,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
                   category={project.category}
                 />
               ))}
-            </StaggerContainer>
+            </div>
           )}
         </div>
       </section>

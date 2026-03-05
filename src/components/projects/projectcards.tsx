@@ -76,24 +76,28 @@ export function ProjectCard({
 
 				{/* Links */}
 				<div className="flex items-center gap-4">
-					<Link
-						href={liveUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-					>
-						Live Demo
-						<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-					</Link>
-					<Link
-						href={githubUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-					>
-						<Github className="mr-1 h-4 w-4" />
-						GitHub
-					</Link>
+					{liveUrl && liveUrl !== '#' && (
+						<Link
+							href={liveUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+						>
+							Live Demo
+							<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+						</Link>
+					)}
+					{githubUrl && (
+						<Link
+							href={githubUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+						>
+							<Github className="mr-1 h-4 w-4" />
+							GitHub
+						</Link>
+					)}
 				</div>
 			</div>
 		</article>

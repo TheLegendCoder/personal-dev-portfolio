@@ -93,8 +93,8 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
         {projects.length === 0 ? (
           <EmptyState
             icon={<Code2 className="h-12 w-12 text-primary" />}
-            title="Featured projects coming soon"
-            description="I'm working on some exciting projects to feature here. Check back soon to see what I've been building."
+            title="I am working on it."
+            description="Coming soon!"
             actionText="Check back soon"
           />
         ) : (
