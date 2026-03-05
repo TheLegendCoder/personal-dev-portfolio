@@ -38,9 +38,12 @@ export function createServiceClient() {
         fetch: (url, options = {}) => {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+          const signals = [controller.signal, (options as RequestInit).signal].filter(
+            (s): s is AbortSignal => s instanceof AbortSignal,
+          );
           return fetch(url, {
             ...options,
-            signal: controller.signal,
+            signal: signals.length > 1 ? AbortSignal.any(signals) : signals[0],
             cache: 'no-store',
           }).finally(() => clearTimeout(timeout));
         },
@@ -56,8 +59,18 @@ export function createAnonClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       global: {
-        fetch: (url, options = {}) =>
-          fetch(url, { ...options, cache: 'no-store' }),
+        fetch: (url, options = {}) => {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 15000); // 15s — enough headroom for SSR cold starts
+          const signals = [controller.signal, (options as RequestInit).signal].filter(
+            (s): s is AbortSignal => s instanceof AbortSignal,
+          );
+          return fetch(url, {
+            ...options,
+            signal: signals.length > 1 ? AbortSignal.any(signals) : signals[0],
+            cache: 'no-store',
+          }).finally(() => clearTimeout(timeout));
+        },
       },
     }
   );

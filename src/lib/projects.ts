@@ -2,15 +2,39 @@
 // Data-access layer for portfolio_projects (Supabase)
 // ---------------------------------------------------------------------------
 
-import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type {
   PortfolioProject,
   DbProjectInsert,
   DbProjectUpdate,
   ProjectCategory,
 } from '@/lib/supabase/types';
+import { projects as staticProjects, type Project } from '@/components/data/content';
 
 export type { PortfolioProject, ProjectCategory };
+
+// ---------------------------------------------------------------------------
+// Static fallback — used when Supabase is unreachable (paused project, network failure, etc.)
+// ---------------------------------------------------------------------------
+
+function toPortfolioProject(p: Project, index: number): PortfolioProject {
+  return {
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    image: p.image,
+    image_hint: '',
+    tags: p.tags,
+    live_url: p.liveUrl ?? '',
+    github_url: p.githubUrl ?? '',
+    featured: p.featured ?? false,
+    published: true,
+    category: 'personal',
+    sort_order: index,
+    created_at: '',
+    updated_at: '',
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Public reads (published only — uses anon client / RLS)
@@ -18,46 +42,54 @@ export type { PortfolioProject, ProjectCategory };
 
 /** All published projects ordered by sort_order, then created_at */
 export async function getProjects(): Promise<PortfolioProject[]> {
-  const supabase = createAnonClient();
-  const { data, error } = await supabase
-    .from('portfolio_projects')
-    .select('*')
-    .eq('published', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('published', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('[getProjects]', error.message, error.code, error.details);
-    if (process.env.NODE_ENV === 'development') throw new Error(`[getProjects] ${error.message}`);
-    return [];
+    if (error) {
+      console.error('[getProjects] Supabase error:', error.message, '| code:', error.code);
+      return staticProjects.map(toPortfolioProject);
+    }
+    return data ?? [];
+  } catch (err) {
+    console.error('[getProjects] Fetch exception:', err);
+    return staticProjects.map(toPortfolioProject);
   }
-  return data ?? [];
 }
 
 /** Published + featured projects — used on the home page */
 export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
-  const supabase = createAnonClient();
-  const { data, error } = await supabase
-    .from('portfolio_projects')
-    .select('*')
-    .eq('published', true)
-    .eq('featured', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('published', true)
+      .eq('featured', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('[getFeaturedProjects]', error.message, error.code, error.details);
-    if (process.env.NODE_ENV === 'development') throw new Error(`[getFeaturedProjects] ${error.message}`);
-    return [];
+    if (error) {
+      console.error('[getFeaturedProjects] Supabase error:', error.message, '| code:', error.code);
+      return staticProjects.filter(p => p.featured).map(toPortfolioProject);
+    }
+    return data ?? [];
+  } catch (err) {
+    console.error('[getFeaturedProjects] Fetch exception:', err);
+    return staticProjects.filter(p => p.featured).map(toPortfolioProject);
   }
-  return data ?? [];
 }
 
 /** Published projects filtered by category */
 export async function getProjectsByCategory(
   category: ProjectCategory,
 ): Promise<PortfolioProject[]> {
-  const supabase = createAnonClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('portfolio_projects')
     .select('*')
@@ -67,8 +99,7 @@ export async function getProjectsByCategory(
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('[getProjectsByCategory]', error.message, error.code, error.details);
-    if (process.env.NODE_ENV === 'development') throw new Error(`[getProjectsByCategory] ${error.message}`);
+    console.error('[getProjectsByCategory] Supabase error:', error.message, '| code:', error.code, '| details:', error.details);
     return [];
   }
   return data ?? [];
