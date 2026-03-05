@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { Code2 } from 'lucide-react';
-import { getProjectsByCategory } from '@/lib/projects';
+import { getProjects, getProjectsByCategory } from '@/lib/projects';
 import type { ProjectCategory } from '@/lib/projects';
 import { ProjectCard } from '@/components/projects/projectcards';
 import { ProjectFilters } from '@/components/projects/project-filters';
@@ -19,12 +19,15 @@ interface ProjectsPageProps {
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const { category } = await searchParams;
 
-  if (category !== 'professional' && category !== 'personal') {
-    redirect('/projects?category=professional');
+  const validCategories = ['all', 'professional', 'personal'];
+  if (!category || !validCategories.includes(category)) {
+    redirect('/projects?category=all');
   }
 
-  const validCategory = category as ProjectCategory;
-  const projects = await getProjectsByCategory(validCategory);
+  const projects =
+    category === 'all'
+      ? await getProjects()
+      : await getProjectsByCategory(category as ProjectCategory);
 
   const breadcrumbs = generateBreadcrumbs('/projects');
 
@@ -49,7 +52,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
           {/* Filter Buttons */}
           <div className="flex justify-center mb-12 lg:mb-16">
             <Suspense fallback={null}>
-              <ProjectFilters current={validCategory} />
+              <ProjectFilters current={category} />
             </Suspense>
           </div>
         </div>
@@ -62,7 +65,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
             <EmptyState
               icon={<Code2 className="h-12 w-12 text-primary" />}
               title="Projects on the way"
-              description={`More ${validCategory ?? ''} projects coming soon. Check back soon.`}
+              description={`More ${category === 'all' ? '' : (category ?? '') + ' '}projects coming soon. Check back soon.`}
               actionText="Check back soon"
             />
           ) : (

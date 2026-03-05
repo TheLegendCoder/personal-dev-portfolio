@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { CelebrationButton } from '@/components/ui/celebration-button';
 
 const FILTERS = [
+  { label: 'All', value: 'all' },
   { label: 'Professional', value: 'professional' },
   { label: 'Personal', value: 'personal' },
 ] as const;

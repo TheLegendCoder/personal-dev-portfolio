@@ -14,8 +14,6 @@ export const personalInfo = {
     twitter: "https://x.com/tsholofelo_dev",
   },
 };
-
-
 export interface Project {
   id: string;
   title: string;
@@ -25,44 +23,52 @@ export interface Project {
   liveUrl: string;
   githubUrl: string;
   featured?: boolean;
+  category?: 'professional' | 'personal';
 }
 
+/**
+ * Static portfolio projects — used as fallback when Supabase is unavailable.
+ * Customize with your real projects. Each project requires:
+ * - id (unique identifier)
+ * - title, description, image, tags, liveUrl, githubUrl
+ * - featured (optional, shows on home page)
+ * - category (optional, 'professional' or 'personal', defaults to 'personal')
+ */
 export const projects: Project[] = [
   {
-    id: "portfolio",
-    title: "CMS-backed Portfolio",
-    description:
-      "A production-grade personal portfolio built with Next.js 15, TypeScript, and MDX. Features full SEO, structured data, PostHog analytics, and a GSAP-driven cinematic UI system.",
-    image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&q=80",
-    tags: ["Next.js", "TypeScript", "GSAP", "Tailwind CSS", "MDX"],
-    liveUrl: "https://tsholofelo.dev",
-    githubUrl: "https://github.com/TheLegendCoder/tsholofelo-ndawonde",
+    id: 'portfolio-website',
+    title: 'Personal Portfolio & Blog',
+    description: 'A modern portfolio website built with Next.js 15, TypeScript, and Tailwind CSS. Features a comprehensive blog system with MDX support, dark mode, and SEO optimization.',
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80',
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'MDX', 'Supabase'],
+    liveUrl: 'https://tsholofelo-ndawonde.vercel.app',
+    githubUrl: 'https://github.com/TheLegendCoder/tsholofelo-ndawonde',
     featured: true,
+    category: 'personal',
   },
   {
-    id: "content-repurposing",
-    title: "Content Repurposing System",
-    description:
-      "An automated pipeline that ingests long-form content and transforms it into platform-optimised formats using AI. Built with Node.js, TypeScript, and structured prompt engineering.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    tags: ["Node.js", "TypeScript", "AI / LLM", "REST API", "Automation"],
-    liveUrl: "",
-    githubUrl: "https://github.com/TheLegendCoder",
+    id: 'realtime-chat-app',
+    title: 'Real-time Chat Application',
+    description: 'Full-stack chat application with WebSocket support, user authentication, and message persistence. Built with Node.js backend and React frontend.',
+    image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80',
+    tags: ['Node.js', 'React', 'Socket.io', 'Express', 'MongoDB'],
+    liveUrl: 'https://realtime-chat-example.vercel.app',
+    githubUrl: 'https://github.com/TheLegendCoder/realtime-chat',
     featured: true,
+    category: 'personal',
   },
   {
-    id: "production-api",
-    title: "Production API — C# / Azure",
-    description:
-      "A robust REST API built with ASP.NET Core and deployed on Azure App Service. Includes JWT authentication, structured logging, health checks, and a full CI/CD pipeline via GitHub Actions.",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
-    tags: ["C#", ".NET", "Azure", "CI/CD", "GitHub Actions", "SQL Server"],
-    liveUrl: "",
-    githubUrl: "https://github.com/TheLegendCoder",
-    featured: true,
+    id: 'api-rest-service',
+    title: 'RESTful API Service',
+    description: 'Production-grade API service with authentication, rate limiting, and comprehensive documentation. Demonstrates best practices in API design and error handling.',
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80',
+    tags: ['.NET', 'C#', 'ASP.NET Core', 'Entity Framework', 'SQL Server'],
+    liveUrl: '',
+    githubUrl: 'https://github.com/TheLegendCoder/api-service',
+    featured: false,
+    category: 'professional',
   },
 ];
-
 
 export const aboutContent = {
   intro: "Hi, I’m Tsholofelo Ndawonde — a software engineer.",

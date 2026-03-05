@@ -29,7 +29,7 @@ function toPortfolioProject(p: Project, index: number): PortfolioProject {
     github_url: p.githubUrl ?? '',
     featured: p.featured ?? false,
     published: true,
-    category: 'personal',
+    category: p.category ?? 'personal',
     sort_order: index,
     created_at: '',
     updated_at: '',
@@ -53,12 +53,20 @@ export async function getProjects(): Promise<PortfolioProject[]> {
 
     if (error) {
       console.error('[getProjects] Supabase error:', error.message, '| code:', error.code);
-      return staticProjects.map(toPortfolioProject);
+      return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
     }
-    return data ?? [];
+
+    console.log('[getProjects] Supabase returned', data?.length ?? 0, 'rows');
+
+    // Fall back to static data if Supabase returned nothing
+    if (!data || data.length === 0) {
+      console.warn('[getProjects] No rows from Supabase — using static fallback');
+      return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
+    }
+    return data;
   } catch (err) {
     console.error('[getProjects] Fetch exception:', err);
-    return staticProjects.map(toPortfolioProject);
+    return staticProjects.map((p: Project, index: number) => toPortfolioProject(p, index));
   }
 }
 
@@ -76,12 +84,19 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
 
     if (error) {
       console.error('[getFeaturedProjects] Supabase error:', error.message, '| code:', error.code);
-      return staticProjects.filter(p => p.featured).map(toPortfolioProject);
+      return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
     }
-    return data ?? [];
+
+    console.log('[getFeaturedProjects] Supabase returned', data?.length ?? 0, 'rows');
+
+    if (!data || data.length === 0) {
+      console.warn('[getFeaturedProjects] No rows from Supabase — using static fallback');
+      return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
+    }
+    return data;
   } catch (err) {
     console.error('[getFeaturedProjects] Fetch exception:', err);
-    return staticProjects.filter(p => p.featured).map(toPortfolioProject);
+    return staticProjects.filter((p: Project) => p.featured).map((p: Project, index: number) => toPortfolioProject(p, index));
   }
 }
 
@@ -89,20 +104,42 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
 export async function getProjectsByCategory(
   category: ProjectCategory,
 ): Promise<PortfolioProject[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('portfolio_projects')
-    .select('*')
-    .eq('published', true)
-    .eq('category', category)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('published', true)
+      .eq('category', category)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('[getProjectsByCategory] Supabase error:', error.message, '| code:', error.code, '| details:', error.details);
-    return [];
+    if (error) {
+      console.error('[getProjectsByCategory] Supabase error for category', category, ':', error.message, '| code:', error.code);
+      return staticProjects
+        .filter((p: Project) => (p.category ?? 'personal') === category)
+        .map((p: Project, index: number) => toPortfolioProject(p, index));
+    }
+
+    console.log('[getProjectsByCategory]', category, '— Supabase returned', data?.length ?? 0, 'rows');
+
+    if (!data || data.length === 0) {
+      const fallback = staticProjects
+        .filter((p: Project) => (p.category ?? 'personal') === category)
+        .map((p: Project, index: number) => toPortfolioProject(p, index));
+      if (fallback.length > 0) {
+        console.warn('[getProjectsByCategory] No rows from Supabase — using static fallback (' + fallback.length + ' items)');
+        return fallback;
+      }
+      return [];
+    }
+    return data;
+  } catch (err) {
+    console.error('[getProjectsByCategory] Fetch exception:', err);
+    return staticProjects
+      .filter((p: Project) => (p.category ?? 'personal') === category)
+      .map((p: Project, index: number) => toPortfolioProject(p, index));
   }
-  return data ?? [];
 }
 
 // ---------------------------------------------------------------------------
