@@ -11,7 +11,7 @@ export const personalInfo = {
   socialLinks: {
     github: "https://github.com/TheLegendCoder",
     linkedin: "https://www.linkedin.com/in/ndawonde/",
-    twitter: "https://x.com/tsholofelo_dev",
+    twitter: "https://x.com/tsholo_dev",
   },
 };
 export interface Project {
