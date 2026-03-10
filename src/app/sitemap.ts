@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { MetadataRoute } from 'next';
 import { getAllBlogPosts, getAllTutorials } from '@/lib/blog';
 

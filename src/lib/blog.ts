@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { markdownToHtml } from '@/lib/markdown';
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
 
 export interface BlogPost {
@@ -33,7 +33,7 @@ const tutorialsDirectory = path.join(process.cwd(), 'src/content/tutorial');
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createAnonClient();
     const { data, error } = await supabase
       .from('portfolio_posts')
       .select('*')
@@ -67,7 +67,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createAnonClient();
     const { data, error } = await supabase
       .from('portfolio_posts')
       .select('*')

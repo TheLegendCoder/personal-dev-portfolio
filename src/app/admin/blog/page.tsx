@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { getAllBlogPostsAdmin } from '@/lib/blog';
 import { AdminPostRow } from '@/components/admin/post-row';

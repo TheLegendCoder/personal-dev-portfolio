@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { getAllProjectsAdmin } from '@/lib/projects';
 import { AdminProjectRow } from '@/components/admin/project-row';
