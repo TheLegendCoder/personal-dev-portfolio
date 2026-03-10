@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Github } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import type { ProjectCategory } from "@/lib/projects";
 
 interface ProjectCardProps {
 	id: string;
@@ -11,6 +12,7 @@ interface ProjectCardProps {
 	liveUrl: string;
 	githubUrl: string;
 	featured?: boolean;
+	category?: ProjectCategory;
 }
 
 export function ProjectCard({
@@ -22,6 +24,7 @@ export function ProjectCard({
 	liveUrl,
 	githubUrl,
 	featured,
+	category,
 }: ProjectCardProps) {
 	return (
 		<article className="group gradient-card rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300 hover:-translate-y-1">
@@ -32,9 +35,22 @@ export function ProjectCard({
 					alt={title}
 					className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 				/>
-				{featured && (
-					<Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">Featured</Badge>
-				)}
+				<div className="absolute top-4 left-4 flex gap-2">
+					{featured && (
+						<Badge className="bg-primary text-primary-foreground">Featured</Badge>
+					)}
+					{category && (
+						<Badge
+							className={
+								category === 'professional'
+									? 'bg-blue-600 text-white'
+									: 'bg-violet-600 text-white'
+							}
+						>
+							{category === 'professional' ? 'Professional' : 'Personal'}
+						</Badge>
+					)}
+				</div>
 			</Link>
 
 			{/* Content */}
@@ -60,24 +76,28 @@ export function ProjectCard({
 
 				{/* Links */}
 				<div className="flex items-center gap-4">
-					<Link
-						href={liveUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-					>
-						Live Demo
-						<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-					</Link>
-					<Link
-						href={githubUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-					>
-						<Github className="mr-1 h-4 w-4" />
-						GitHub
-					</Link>
+					{liveUrl && liveUrl !== '#' && (
+						<Link
+							href={liveUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+						>
+							Live Demo
+							<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+						</Link>
+					)}
+					{githubUrl && (
+						<Link
+							href={githubUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+						>
+							<Github className="mr-1 h-4 w-4" />
+							GitHub
+						</Link>
+					)}
 				</div>
 			</div>
 		</article>

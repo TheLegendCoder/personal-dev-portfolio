@@ -164,13 +164,17 @@ img {
   scrollbar-width: thin;
 }
 
-/* Enhance link interactions */
-a {
+/* Enhance link interactions — scoped to prose content only to avoid breaking nav */
+.prose a,
+article a,
+.blog-content a {
   position: relative;
   text-decoration: none;
 }
 
-a::after {
+.prose a::after,
+article a::after,
+.blog-content a::after {
   content: "";
   position: absolute;
   width: 0;
@@ -181,7 +185,9 @@ a::after {
   transition: width 0.3s ease-out;
 }
 
-a:hover::after {
+.prose a:hover::after,
+article a:hover::after,
+.blog-content a:hover::after {
   width: 100%;
 }
 

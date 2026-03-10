@@ -86,9 +86,15 @@ export default {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        'none': '0',
+        'sm': 'calc(var(--radius) - 4px)',
+        DEFAULT: 'var(--radius)',
+        'md': 'calc(var(--radius) - 2px)',
+        'lg': 'var(--radius)',
+        'xl': '1.5rem',
+        '2xl': '2rem',     // spec: 2rem
+        '3xl': '3rem',     // spec: 3rem
+        'full': '9999px',
       },
       fontSize: {
         '2xs': ['0.625rem', { lineHeight: '1rem' }],
