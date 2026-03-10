@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import styles from "./stagger.module.css"
+import { gsap, ScrollTrigger, STAGGER_CARD, EASE } from "@/lib/gsap"
 
 interface StaggerContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   staggerChildren?: boolean
@@ -27,40 +28,41 @@ const StaggerContainer = React.forwardRef<
   ) => {
     const containerRef = React.useRef<HTMLDivElement>(null)
 
-    React.useLayoutEffect(() => {
-      if (containerRef.current) {
-        containerRef.current.style.setProperty("--stagger-children", staggerChildren ? "1" : "0")
-        containerRef.current.style.setProperty("--delay-children", `${delayChildren}ms`)
-      }
-    }, [staggerChildren, delayChildren])
+    React.useEffect(() => {
+      const container = containerRef.current
+      if (!container || !staggerChildren) return
+
+      const items = Array.from(container.children) as HTMLElement[]
+      if (items.length === 0) return
+
+      gsap.registerPlugin(ScrollTrigger)
+
+      const ctx = gsap.context(() => {
+        gsap.from(items, {
+          y: variant === "fade" ? 0 : 40,
+          opacity: 0,
+          duration: 0.8,
+          ease: EASE,
+          stagger: STAGGER_CARD,
+          delay: delayChildren / 1000,
+          scrollTrigger: {
+            trigger: container,
+            start: "top 85%",
+            once: true,
+          },
+        })
+      }, container)
+
+      return () => ctx.revert()
+    }, [staggerChildren, delayChildren, variant])
 
     return (
       <div
         ref={containerRef}
-        className={cn(
-          styles.staggerContainer,
-          className
-        )}
+        className={cn(styles.staggerContainer, className)}
         {...props}
       >
-        {React.Children.map(children, (child, index) => {
-          if (!React.isValidElement(child)) return child
-
-          const variantMap = {
-            fade: "fade-in",
-            "slide-up": "bounce-up",
-            bounce: "bounce-in",
-            cascade: "cascade-in",
-          }
-
-          return React.cloneElement(child as React.ReactElement<any>, {
-            className: cn(
-              child.props.className,
-              `animate-${variantMap[variant]}`,
-              staggerChildren && `[animation-delay:${delayChildren + index * 100}ms]`
-            ),
-          })
-        })}
+        {children}
       </div>
     )
   }
