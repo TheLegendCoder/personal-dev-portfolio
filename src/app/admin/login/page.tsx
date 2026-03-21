@@ -54,7 +54,10 @@ function LoginForm() {
       return;
     }
 
-    const redirectTo = searchParams.get('redirectedFrom') ?? '/admin/blog';
+    // Validate the redirect target to prevent open-redirect attacks.
+    // Only allow relative paths that start with /admin; discard anything else.
+    const raw = searchParams.get('redirectedFrom') ?? '';
+    const redirectTo = raw.startsWith('/admin') && !raw.startsWith('//') ? raw : '/admin/blog';
     router.push(redirectTo);
     router.refresh();
   };
