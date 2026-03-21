@@ -1,0 +1,505 @@
+---
+title: How I Replaced My MDX Blog With a Supabase CMS (Without Adding a CMS)
+description: Learn how I replaced my MDX blog with a Supabase-powered CMS inside my Next.js app. Build drafts, an admin dashboard, and dynamic blog features without using a traditional CMS.
+date: 2026-03-21
+author: Tsholofelo Ndawonde
+tags: [
+  "Next.js blog",
+  "Supabase CMS",
+  "MDX blog",
+  "headless CMS alternative",
+  "developer blog setup",
+  "content management system",
+  "markdown blog",
+  "Next.js tutorial"
+]
+readTime: 7 min
+published: true
+featured: true
+image: https://hfazxdhdnozlgnxfowpy.supabase.co/storage/v1/object/public/dev-portfolio-images/A%20visual%20diagram-style%20illustration%20of%20a%20modern%20blog%20architecture.%20_Show%20Supabase%20database%20at%20the%20to.png
+imageHint: Supabase CMS architecture diagram for Next.js blog
+---
+
+# How I Turned My MDX Blog Into a Custom Supabase CMS (Without Adding a Bulky Platform)
+
+When I first built my portfolio website, my blog was intentionally simple: each post was an .mdx file in the repository.
+
+To publish a post, I created an .mdx file, committed, pushed, and waited for redeploy.
+
+1. Commit the changes
+2. Push to production
+3. Wait for the site to redeploy
+
+As my blog grew, this workflow became inefficient. Even small fixes required redeployment, and there was no way to draft, schedule, or feature a post without editing code.
+
+My “blog” was a group of files, not a true publishing platform.
+
+I started searching for a better solution that wouldn’t require a bulky CMS or a platform switch.
+
+I rebuilt the blog using Supabase as a backend CMS, but kept everything else in my Next.js and Tailwind portfolio app. The main steps were setting up the Supabase project and database table, connecting Supabase to my Next.js app, and building an admin UI within my existing site. This streamlined setup kept the workflow lightweight and fully within my own app.
+
+There’s no external dashboard and no new services, just a smoother workflow. To show how I improved this process, I’ll first explain why my old approach stopped working and what common problems arise with file-based blogs.
+
+File-based blogs are fantastic when you’re starting. They’re simple and fast, but at scale, publishing needs a code deploy.
+
+- Draft posts aren’t really possible.
+- Editing content requires touching the repository.
+- Non-technical users can’t manage posts.
+- You can’t easily toggle things like featured posts.
+
+Over time, content starts to feel more like code than writing.
+
+I still wanted markdown, but not Git commits for every update.
+
+## The Simpler Architecture I Built
+
+Now I store posts in a database table instead of files.
+
+Supabase stores the markdown.
+Next.js renders it.
+
+Here’s how the new setup works:
+
+```plaintext
+Supabase (blog_posts table)
+        ↓
+Next.js server queries
+        ↓
+markdownToHtml()
+        ↓
+Rendered blog pages
+```
+
+And for managing content:
+
+```plaintext
+/admin/blog
+```
+
+I built a simple admin interface directly into my portfolio app, using React with Next.js and Tailwind CSS for the UI. The admin panel uses the Supabase client libraries for authentication and database operations. This setup keeps the workflow consistent with the rest of the stack and makes it easy for others to adapt for their own projects.
+
+No external CMS required. No third-party dashboards. Everything in one place.
+
+## Designing the Blog Database
+
+The first step was creating a blog_posts table inside Supabase.
+
+Each blog post is now stored as a row.
+
+The schema sets published_defaults to false, so new posts are drafts.
+
+- featured controls homepage visibility
+- Tags are stored as an array.
+- content stores the raw markdown body
+
+Now the database contains everything from the old MDX files.
+
+## Protecting Draft Content With Row-Level Security
+
+Supabase’s Row Level Security enforces database access rules directly.
+
+For this blog, the policies are simple:
+
+Public visitors can only see published posts.
+
+```plaintext
+SELECT where published = true
+```
+
+**Authenticated admins can see everything.**
+
+- Draft posts
+- Published posts
+- Insert
+- Update
+- Delete
+
+This setup keeps drafts from appearing publicly by accident.
+
+## Connecting Supabase to Next.js
+
+I split the Supabase client into a browser client for client-side use and a server client for server-side use. This ensures authentication sessions work reliably in both environments. The browser client manages user sessions and authentication tokens in the user's browser, ideal for interactive features like login forms. The server client is used in Next.js server components or API routes and can safely access environment variables or handle SSR flows without exposing sensitive credentials. By splitting the clients, you avoid pitfalls like session mismatch or leaking tokens, and authentication works correctly no matter how or where a page is rendered.
+
+Browser client
+
+Used in Client Components like login forms.
+
+```plaintext
+createBrowserClient()
+```
+
+Server client
+
+Used in:
+
+- Server Components
+- Server Actions
+- Admin pages
+
+```plaintext
+createServerClient()
+```
+
+This ensures authentication sessions work with the Next.js App Router.
+
+## Rewriting the Blog Engine
+
+The main changes were inside my blog utility functions.
+
+Originally, they looked something like this:
+
+```plaintext
+fs.readFileSync()
+gray-matter
+markdownToHtml()
+```
+
+Previously, these functions read .mdx files. After migration, they run database queries instead.
+
+For example:
+
+**Fetching a blog post**
+
+Now, the code queries Supabase to find the published post.
+
+- Convert markdown to HTML.
+
+Finally, it returns the finished blog post.
+
+**Fetching all posts**
+
+This simply queries the table:
+
+- Filter published = true
+- Sort by date
+- Then it returns the results.
+
+**Admin queries**
+
+For the admin dashboard, I added:
+
+```plaintext
+getAllBlogPostsAdmin()
+```
+
+This returns all posts, including drafts.
+
+## Adding an Admin Dashboard
+
+Once posts lived in a database, I needed a way to manage them.
+
+I created a simple admin interface in my portfolio.
+
+
+```plaintext
+/admin/blog
+```
+
+This page lists every blog post and shows:
+
+- Title
+- Publish status
+- Featured status
+- Edit button
+- Delete button
+
+Clicking “New Post” opens an editor for metadata and Markdown content. After saving, the post appears on the main list, and you can edit, publish, feature, or delete posts all in one place, streamlining management.
+
+## Building a Simple Markdown Editor
+
+I chose not to install a full markdown editor.
+
+Instead, the editor is just:
+
+```plaintext
+textarea + live preview
+```
+
+The layout is split into two panels:
+
+Left side: blog metadata
+Right side: markdown editor
+
+Below the editor, there’s a live preview that uses the same markdownToHtml function as the public blog.
+
+This way, the admin preview always matches what appears on the website.
+
+## Protecting the Admin Routes
+
+I used Next.js middleware to protect the admin pages.
+
+Every request to:
+
+```plaintext
+/admin/*
+```
+
+checks whether a Supabase session exists.
+
+If not, the user is redirected to:
+
+```plaintext
+/admin/login
+```
+
+Authentication uses:
+
+```plaintext
+supabase.auth.signInWithPassword()
+```
+
+Simple email + password login.
+
+## Fixing Featured Posts on the Homepage
+
+Originally, my homepage simply displayed the three most recent posts.
+
+```plaintext
+posts.slice(0,3)
+```
+
+But that meant I couldn’t highlight important posts.
+
+Now the logic works like this:
+
+1. Check if any posts are marked as featured.
+2. If they exist → show those.
+3. Otherwise → fall back to the latest posts.
+
+This small change gives me more control over the homepage.
+
+## Migrating Existing Blog Posts
+
+The last step was migrating the two posts that already existed:
+
+- JSON Web Token vs Cookie
+- Understanding Messaging Idempotency
+
+Their frontmatter fields were copied into the database columns, and the markdown body went into the content field.
+
+After everything showed up correctly at the original URLs, I deleted the whole blog folder from the repository.
+
+No hybrid setup.
+
+Switching from file-based MDX to Supabase made it easier to manage content, use drafts, and feature posts, all without external services or CMS bloat. My workflow is smoother, and my portfolio app is more flexible than ever.
+
+## Comparing MDX and Database CMS for Next.js Blogs
+
+When building a blog with Next.js, developers usually choose between two approaches:
+
+1. File-based content (MDX / Markdown)
+2. Database-driven content (CMS or headless CMS)
+
+Both approaches are valid, but they solve different problems.
+
+### File-Based Blogs (MDX)
+
+This is the most common setup for developer portfolios.
+
+Posts live directly in your repository as .md or .mdx files.
+
+**Advantages**
+
+- Extremely simple architecture
+- No database required
+- Content versioning via Git
+- Very fast static builds
+- Easy to deploy with Vercel or Netlify
+
+**Disadvantages**
+
+- Publishing requires a redeploy
+- Draft workflows are difficult.
+- Non-technical users cannot edit posts.
+- Managing large amounts of content becomes messy.
+- Featured posts and metadata require code changes.
+
+File-based blogs work best when:
+
+- You publish occasionally
+- You’re the only editor.
+- You want everything stored in Git.
+
+### Database-Driven Blogs (CMS)
+
+In a CMS-driven architecture, blog posts are stored in a database and rendered dynamically.
+
+This is the approach used by platforms like:
+
+- Ghost
+- WordPress
+- Contentful
+- Sanity
+
+In this project, Supabase acts as the CMS backend.
+
+**Advantages**
+
+- Draft and publish workflows
+- No redeploy required for edits.
+- Admin dashboard for content management
+- Feature flags (like featured)
+- Easier content scaling
+
+**Disadvantages**
+
+- Requires a database
+- Slightly more complex architecture
+- Requires authentication and security setup
+
+### When MDX Is Still the Right Choice
+
+MDX is still fantastic when:
+
+- Your blog is very small.
+- Posts rarely change
+- You prefer Git-based publishing.
+- You want maximum static performance.
+
+Many developer blogs stick with MDX forever, and that’s totally fine.
+
+### Why I Moved Away From MDX
+
+My problem wasn’t MDX itself.
+
+The problem was workflow friction.
+
+Every time I wanted to:
+
+- Fix a typo
+- Update an article
+- Publish a draft
+- Feature a post
+
+I had to deploy the entire site.
+
+At that point, the blog felt less like content and more like code.
+
+Moving posts into Supabase solved that. The decision to move away from MDX isn’t always obvious, but there are telltale signs it might be time. om MDX?
+
+At some point, file-based blogs reach their limits. Here are signs you might be ready for a change.
+
+Here are a few signs you’ve reached it.
+
+**1. Publishing Requires Too Many Steps**
+
+If your publishing workflow looks like this:
+
+Write post
+Commit
+Push
+Wait for the build
+Verify deploy
+
+You’ve basically turned blogging into a deployment process.
+
+A CMS removes the friction, letting you focus on writing instead of deployment.
+
+---
+
+**2. You Want Draft Posts**
+
+MDX has no native concept of drafts.
+
+You can simulate it using frontmatter:
+
+draft: true
+
+It still feels awkward since the file is already in production.
+
+A database makes handling draft states simple.
+
+**3. You Want an Admin Dashboard**
+
+If you ever want:
+
+* Editors
+* Writers
+* Non-developers managing content
+
+Then MDX quickly becomes a blocker.
+
+A small admin interface solves this problem, making content management accessible to anyone.
+
+---
+
+**4. You Want Dynamic Content Features**
+
+Features like:
+
+- Featured posts
+- Scheduled publishing
+- Post analytics
+- Content search
+- Tag filtering
+
+All of these features are much easier to manage when your content is in a database.
+
+**5. Your Blog Is Becoming a Product**
+
+This is the clearest sign.
+
+When your blog becomes:
+
+- A marketing engine
+- A knowledge base
+- A documentation hub
+
+At that stage, treating posts like code no longer makes sense. That’s when a CMS architecture becomes the better choice.
+
+## The Hybrid Approach (What I Chose)
+
+Instead of adopting a full external CMS, I chose a hybrid architecture:
+
+- Supabase → content storage
+- Next.js → rendering
+- Admin UI → built into the same app.
+
+This approach maintains the MDX developer experience while adding the flexibility of a CMS. In other words:
+
+I didn’t replace markdown.
+
+I just moved it to a better place.
+
+
+## The Result
+
+Now publishing a blog post looks like this:
+
+1. Go to /admin/blog
+2. Click New Post
+3. Write markdown
+4. Save draft or publish
+
+No commits.
+No redeploys.
+No touching the codebase.
+
+Now, the blog works like a real CMS but still lives inside my portfolio project.
+
+## Why I Like This Setup
+
+This architecture gives me:
+
+- Markdown-based writing
+- Draft and publish workflow
+- Featured posts
+- Secure admin interface
+- Database-backed content
+- Full control over the stack
+
+And I did all this without adding a bulky external CMS. It's just a database and some well-designed routes. 
+
+If you're interested in exploring or reusing my admin UI or CMS code, you can visit it on my GitHub.
+
+## Future Improvements
+
+I would like to extend this:
+
+- Add scheduled publishing
+- Add image uploads via Supabase Storage.
+- Add role-based access
+- Add post analytics
+- Convert tutorials to DB too.
+- Add preview tokens for drafts.
+
