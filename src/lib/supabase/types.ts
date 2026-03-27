@@ -49,6 +49,31 @@ export interface PortfolioProject {
 export type DbProjectInsert = Omit<PortfolioProject, 'id' | 'created_at' | 'updated_at'>;
 export type DbProjectUpdate = Partial<DbProjectInsert>;
 
+// ---------------------------------------------------------------------------
+// portfolio_tutorials table
+// ---------------------------------------------------------------------------
+
+export interface PortfolioTutorial {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  tags: string[];
+  read_time: string;
+  published: boolean;
+  featured: boolean;
+  image: string;
+  image_hint: string;
+  content: string; // raw markdown
+  created_at: string;
+  updated_at: string;
+}
+
+export type DbTutorialInsert = Omit<PortfolioTutorial, 'id' | 'created_at' | 'updated_at'>;
+export type DbTutorialUpdate = Partial<DbTutorialInsert>;
+
 // Supabase requires a specific nested structure for the Database generic.
 // Views/Functions/Enums must be present even if empty.
 export type Database = {
@@ -64,6 +89,12 @@ export type Database = {
         Row: PortfolioProject;
         Insert: DbProjectInsert;
         Update: DbProjectUpdate;
+        Relationships: [];
+      };
+      portfolio_tutorials: {
+        Row: PortfolioTutorial;
+        Insert: DbTutorialInsert;
+        Update: DbTutorialUpdate;
         Relationships: [];
       };
     };
