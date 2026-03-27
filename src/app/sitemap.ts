@@ -1,7 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 import { MetadataRoute } from 'next';
-import { getAllBlogPosts, getAllTutorials } from '@/lib/blog';
+import { getAllBlogPosts } from '@/lib/blog';
+import { getAllTutorials } from '@/lib/tutorial';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tsholofelondawonde.co.za';
 

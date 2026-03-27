@@ -1,4 +1,4 @@
-import { getTutorial, getAllTutorials } from "@/lib/blog";
+import { getTutorial, getAllTutorials } from "@/lib/tutorial";
 import { Layout } from "@/components/layout/layout";
 import { notFound } from "next/navigation";
 import Link from "next/link";
