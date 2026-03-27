@@ -1,41 +1,19 @@
 'use server';
 
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import { markdownToHtml } from '@/lib/markdown';
-import { createClient, createServiceClient, createAnonClient } from '@/lib/supabase/server';
-import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
-
-export interface BlogPost {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  author: string;
-  tags: string[];
-  readTime: string;
-  published: boolean;
-  featured: boolean;
-  image: string;
-  imageHint: string;
-  content: string;
-}
+import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
+import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
+import type { BlogPost as TutorialPost } from '@/lib/blog';
 
 // ---------------------------------------------------------------------------
-// Tutorials are still file-based (unchanged)
-// ---------------------------------------------------------------------------
-const tutorialsDirectory = path.join(process.cwd(), 'src/content/tutorial');
-
-// ---------------------------------------------------------------------------
-// Public blog API — reads from Supabase, only published posts
+// Public tutorial API — reads from Supabase, only published posts
 // ---------------------------------------------------------------------------
 
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+export async function getTutorial(slug: string): Promise<TutorialPost | null> {
   try {
     const supabase = createAnonClient();
     const { data, error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .select('*')
       .eq('slug', slug)
       .eq('published', true)
@@ -60,16 +38,16 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
       content: htmlContent,
     };
   } catch (error) {
-    console.error(`Error fetching blog post ${slug}:`, error);
+    console.error(`Error fetching tutorial ${slug}:`, error);
     return null;
   }
 }
 
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
+export async function getAllTutorials(): Promise<TutorialPost[]> {
   try {
     const supabase = createAnonClient();
     const { data, error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .select('*')
       .eq('published', true)
       .order('date', { ascending: false });
@@ -92,26 +70,26 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           image: row.image,
           imageHint: row.image_hint,
           content: htmlContent,
-        } as BlogPost;
+        } as TutorialPost;
       })
     );
 
     return posts;
   } catch (error) {
-    console.error('Error fetching blog posts:', error);
+    console.error('Error fetching tutorials:', error);
     return [];
   }
 }
 
 // ---------------------------------------------------------------------------
-// Admin blog API — reads all posts (no published filter), uses service role
+// Admin tutorial API — reads all posts (no published filter), uses service role
 // ---------------------------------------------------------------------------
 
-export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
+export async function getAllTutorialsAdmin(): Promise<TutorialPost[]> {
   try {
     const supabase = createServiceClient();
     const { data, error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .select('*')
       .order('date', { ascending: false });
 
@@ -132,16 +110,16 @@ export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
       content: row.content, // raw markdown for admin
     }));
   } catch (error) {
-    console.error('Error fetching admin blog posts:', error);
+    console.error('Error fetching admin tutorials:', error);
     return [];
   }
 }
 
-export async function getBlogPostAdmin(slug: string): Promise<BlogPost | null> {
+export async function getTutorialAdmin(slug: string): Promise<TutorialPost | null> {
   try {
     const supabase = createServiceClient();
     const { data, error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .select('*')
       .eq('slug', slug)
       .single();
@@ -163,19 +141,19 @@ export async function getBlogPostAdmin(slug: string): Promise<BlogPost | null> {
       content: data.content, // raw markdown for admin
     };
   } catch (error) {
-    console.error(`Error fetching admin blog post ${slug}:`, error);
+    console.error(`Error fetching admin tutorial ${slug}:`, error);
     return null;
   }
 }
 
-export async function upsertBlogPost(
-  post: DbBlogPostInsert
+export async function upsertTutorial(
+  tutorial: DbTutorialInsert
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = createServiceClient();
     const { error } = await supabase
-      .from('portfolio_posts')
-      .upsert(post, { onConflict: 'slug' });
+      .from('portfolio_tutorials')
+      .upsert(tutorial, { onConflict: 'slug' });
 
     if (error) return { success: false, error: error.message };
     return { success: true };
@@ -184,14 +162,14 @@ export async function upsertBlogPost(
   }
 }
 
-export async function updateBlogPostFields(
+export async function updateTutorialFields(
   slug: string,
-  updates: DbBlogPostUpdate
+  updates: DbTutorialUpdate
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = createServiceClient();
     const { error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .update(updates)
       .eq('slug', slug);
 
@@ -202,13 +180,13 @@ export async function updateBlogPostFields(
   }
 }
 
-export async function deleteBlogPost(
+export async function deleteTutorial(
   slug: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = createServiceClient();
     const { error } = await supabase
-      .from('portfolio_posts')
+      .from('portfolio_tutorials')
       .delete()
       .eq('slug', slug);
 
@@ -218,4 +196,3 @@ export async function deleteBlogPost(
     return { success: false, error: String(err) };
   }
 }
-

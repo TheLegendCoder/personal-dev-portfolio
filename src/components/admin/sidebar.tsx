@@ -8,12 +8,13 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const isPostsActive = pathname.startsWith('/admin/blog');
   const isProjectsActive = pathname.startsWith('/admin/projects');
+  const isTutorialsActive = pathname.startsWith('/admin/tutorials');
 
   return (
     <>
       {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
       <aside className="hidden md:flex w-56 min-h-screen bg-card border-r border-border flex-col shrink-0 sticky top-0 h-screen overflow-y-auto">
-        <SidebarContents isPostsActive={isPostsActive} isProjectsActive={isProjectsActive} />
+        <SidebarContents isPostsActive={isPostsActive} isProjectsActive={isProjectsActive} isTutorialsActive={isTutorialsActive} />
       </aside>
 
       {/* ── Mobile top bar ───────────────────────────────────────────────── */}
@@ -50,6 +51,17 @@ export function AdminSidebar() {
               <FolderKanban className="h-3.5 w-3.5" />
               Projects
             </Link>
+            <Link
+              href="/admin/tutorials"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                isTutorialsActive
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
+            >
+              <PenLine className="h-3.5 w-3.5" />
+              Tutorials
+            </Link>
           </nav>
           {/* Sign out */}
           <form action="/api/admin/signout" method="POST">
@@ -71,9 +83,11 @@ export function AdminSidebar() {
 function SidebarContents({
   isPostsActive,
   isProjectsActive,
+  isTutorialsActive,
 }: {
   isPostsActive: boolean;
   isProjectsActive: boolean;
+  isTutorialsActive: boolean;
 }) {
   return (
     <>
@@ -116,6 +130,17 @@ function SidebarContents({
         >
           <FolderKanban className="h-4 w-4 shrink-0" />
           Projects
+        </Link>
+        <Link
+          href="/admin/tutorials"
+          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
+            isTutorialsActive
+              ? 'bg-primary/10 text-primary font-medium shadow-[inset_2px_0_0_hsl(var(--primary))]'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+          }`}
+        >
+          <PenLine className="h-4 w-4 shrink-0" />
+          Tutorials
         </Link>
       </nav>
 

@@ -1,4 +1,4 @@
-# Tsholofelo Ndawonde - Personal Portfolio
+# Personal Portfolio
 
 Personal portfolio website built with Next.js 15+, TypeScript, Tailwind CSS, and Radix UI components. Features a comprehensive blog system with MDX support, project showcase, and advanced SEO implementation.
 
@@ -8,7 +8,7 @@ Personal portfolio website built with Next.js 15+, TypeScript, Tailwind CSS, and
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS + CVA (class-variance-authority)
 - **UI Components**: Radix UI primitives + custom components
-- **Content**: MDX for blogs with gray-matter frontmatter
+- **Content**: MDX for blogs with grey-matter frontmatter
 - **Icons**: Lucide React
 - **Forms**: React Hook Form + Zod validation
 - **Markdown Processing**: Remark + Rehype with syntax highlighting
@@ -16,7 +16,7 @@ Personal portfolio website built with Next.js 15+, TypeScript, Tailwind CSS, and
 - **Utilities**: 
   - `date-fns` for date formatting
   - `embla-carousel-react` for responsive carousel components
-  - `recharts` for data visualization and charts
+  - `recharts` for data visualisation and charts
   - `@tailwindcss/typography` for prose/markdown styling
 - **SDK**: Firebase SDK installed (not actively deployed)
 
@@ -31,8 +31,8 @@ Personal portfolio website built with Next.js 15+, TypeScript, Tailwind CSS, and
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/TheLegendCoder/tsholofelo-ndawonde.git
-cd tsholofelo-ndawonde
+git clone https://github.com/TheLegendCoder/personal-dev-portfolio.git
+cd personal-dev-portfolio
 ```
 
 2. Install dependencies:
@@ -47,7 +47,7 @@ cp .env.example .env.local
 
 Edit `.env.local` and set your site URL:
 ```env
-NEXT_PUBLIC_SITE_URL=https://tsholofelondawonde.co.za
+NEXT_PUBLIC_SITE_URL=https://yoursite.com
 ```
 
 4. Run the development server:
@@ -68,24 +68,24 @@ npm run lint             # Run ESLint
 
 ## SEO Implementation
 
-This website includes comprehensive SEO infrastructure:
+This website includes a comprehensive SEO infrastructure:
 
 ### ✅ Implemented Features
 
 - **Sitemap**: Auto-generated XML sitemap at `/sitemap.xml` with all pages and blog posts
 - **Robots.txt**: Crawl directives at `/robots.txt` with sitemap reference
 - **Metadata**: Complete metadata on all pages (title, description, OpenGraph, Twitter Cards)
-- **Structured Data**: JSON-LD schemas for Organization, Website, Person, BlogPosting, and Breadcrumbs
+- **Structured Data**: JSON-LD schemas for Organisation, Website, Person, BlogPosting, and Breadcrumbs
 - **Canonical URLs**: Proper canonical URL tags on all pages
 - **Breadcrumb Navigation**: Visual breadcrumbs with schema markup
-- **Image Optimization**: Next.js Image component with Supabase support
+- **Image Optimisation**: Next.js Image component with Supabase support
 
 ### Environment Setup
 
-The site URL is configured via environment variable:
+The site URL is configured via an environment variable:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://tsholofelondawonde.co.za
+NEXT_PUBLIC_SITE_URL=https://yoursite.com
 ```
 
 For local development, you can use:
@@ -96,15 +96,15 @@ NEXT_PUBLIC_SITE_URL=http://localhost:9003
 ### Next Steps for SEO
 
 1. **Content Optimization**: 
-   - Optimize meta descriptions with target keywords
+   - Optimise meta descriptions with target keywords
    - Add alt text to images
    - Improve internal linking structure
 
 2. **Google Search Console**:
    - Verify site ownership at [Google Search Console](https://search.google.com/search-console)
-   - Submit sitemap: `https://tsholofelondawonde.co.za/sitemap.xml`
+   - Submit sitemap: `https://yoursite.com/sitemap.xml`
    - Monitor indexing status and search performance
-   - **Note**: Wait until content is fully optimized before submitting
+   - **Note**: Wait until content is fully optimised before submitting
 
 3. **Google Analytics** (Optional):
    - Set up GA4 property
@@ -163,7 +163,7 @@ Create a new file in `src/content/blog/` with frontmatter:
 title: Your Post Title
 description: Brief summary of the post
 date: 2026-02-05
-author: Tsholofelo Ndawonde
+author: Name LastName
 tags: [React, TypeScript, Web Development]
 readTime: 5 min read
 published: true
@@ -213,6 +213,6 @@ Personal portfolio - all rights reserved.
 
 - **GitHub**: [@TheLegendCoder](https://github.com/TheLegendCoder)
 - **LinkedIn**: [Tsholofelo Ndawonde](https://www.linkedin.com/in/ndawonde/)
-- **Twitter**: [@tsholofelo_dev](https://x.com/tsholofelo_dev)
+- **Twitter**: [@tsholofelo_dev](https://x.com/tsholo_dev)
 - **Website**: [tsholofelondawonde.co.za](https://tsholofelondawonde.co.za)
 
