@@ -7,7 +7,7 @@ import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
 
-export interface BlogPost {
+export interface BlogPostSummary {
   slug: string;
   title: string;
   description: string;
@@ -19,6 +19,9 @@ export interface BlogPost {
   featured: boolean;
   image: string;
   imageHint: string;
+}
+
+export interface BlogPost extends BlogPostSummary {
   content: string;
 }
 
@@ -99,6 +102,36 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     return posts;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
+    return [];
+  }
+}
+
+export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_posts')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    } as BlogPostSummary));
+  } catch (error) {
+    console.error('Error fetching blog posts summary:', error);
     return [];
   }
 }
