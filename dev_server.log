@@ -1,0 +1,40 @@
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 9003
+
+ ⚠ Invalid next.config.ts options detected:
+ ⚠     Unrecognized key(s) in object: 'staleTimes'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+   ▲ Next.js 15.5.12 (Turbopack)
+   - Local:        http://localhost:9003
+   - Network:      http://192.168.0.2:9003
+
+ ✓ Starting...
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 864ms
+ ✓ Ready in 2.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 8.1s
+[getFeaturedProjects] Fetch exception: Error: supabaseUrl is required.
+    at createAnonClient (src/lib/supabase/server.ts:57:30)
+    at getFeaturedProjects (src/lib/projects.ts:46:38)
+    at FeaturedProjects (src/components/home/featuredprojects.tsx:9:45)
+  55 | /** Simple anon client — for public reads, no cookie/session management needed. */
+  56 | export function createAnonClient() {
+> 57 |   return createSupabaseClient(
+     |                              ^
+  58 |     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  59 |     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  60 |     {
+Error fetching blog posts: Error: supabaseUrl is required.
+    at createAnonClient (src/lib/supabase/server.ts:57:30)
+    at getAllBlogPosts (src/lib/blog.ts:70:38)
+    at LatestPosts (src/components/home/latestposts.tsx:7:41)
+  55 | /** Simple anon client — for public reads, no cookie/session management needed. */
+  56 | export function createAnonClient() {
+> 57 |   return createSupabaseClient(
+     |                              ^
+  58 |     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  59 |     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  60 |     {
+ GET / 200 in 9840ms
