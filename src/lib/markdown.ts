@@ -3,6 +3,8 @@ import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
+// @ts-ignore - isomorphic-dompurify doesn't export types but matches DOMPurify
+import DOMPurify from 'isomorphic-dompurify';
 
 // Configure the markdown processor with syntax highlighting
 // Fixed pipeline: remark → remark-gfm → remark-rehype → rehype-highlight → rehype-stringify
@@ -23,13 +25,14 @@ const processor = remark()
 
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await processor.process(markdown);
-  return result.toString();
+  const html = result.toString();
+  return DOMPurify.sanitize(html);
 }
 
 // Alternative simpler approach using basic remark for fallback
 export function markdownToHtmlSync(markdown: string): string {
   // Enhanced markdown to HTML converter with better code block support
-  return markdown
+  const html = markdown
     // Headers with proper IDs
     .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-8 mb-4 text-foreground">$1</h3>')
     .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-10 mb-6 text-foreground">$1</h2>')
@@ -119,4 +122,6 @@ export function markdownToHtmlSync(markdown: string): string {
       return `<p class="mb-4 text-muted-foreground leading-relaxed">${paragraph.replace(/\n/g, ' ')}</p>`;
     })
     .join('\n');
+
+  return DOMPurify.sanitize(html);
 }
