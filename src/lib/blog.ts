@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { markdownToHtml } from '@/lib/markdown';
-import { createClient, createServiceClient, createAnonClient } from '@/lib/supabase/server';
+import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
 
 export interface BlogPost {
