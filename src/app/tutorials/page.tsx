@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout/layout";
 import { TutorialCard } from "@/components/tutorial/tutorialcard";
-import { getAllTutorials } from "@/lib/tutorial";
+import { getAllTutorialsSummary } from "@/lib/tutorial";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Lightbulb } from "lucide-react";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
@@ -14,7 +14,7 @@ export const metadata = generateSEOMetadata({
 });
 
 async function TutorialsPage() {
-  const tutorials = await getAllTutorials();
+  const tutorials = await getAllTutorialsSummary();
   const breadcrumbs = generateBreadcrumbs('/tutorials');
 
   if (tutorials.length === 0) {
