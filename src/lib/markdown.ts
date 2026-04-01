@@ -4,11 +4,45 @@ import remarkRehype from 'remark-rehype';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 
+export function sanitizeUrl(url: string): string {
+  if (!url) return '';
+  const decodedUrl = decodeURIComponent(url).toLowerCase().replace(/\s+/g, '');
+  if (
+    decodedUrl.startsWith('javascript:') ||
+    decodedUrl.startsWith('data:') ||
+    decodedUrl.startsWith('vbscript:')
+  ) {
+    return 'about:blank';
+  }
+  return url.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Simple rehype plugin to sanitize URLs in attributes
+function rehypeSanitizeUrls() {
+  return (tree: any) => {
+    const walk = (node: any) => {
+      if (node.properties) {
+        if (typeof node.properties.href === 'string') {
+          node.properties.href = sanitizeUrl(node.properties.href);
+        }
+        if (typeof node.properties.src === 'string') {
+          node.properties.src = sanitizeUrl(node.properties.src);
+        }
+      }
+      if (node.children) {
+        node.children.forEach(walk);
+      }
+    };
+    walk(tree);
+  };
+}
+
 // Configure the markdown processor with syntax highlighting
-// Fixed pipeline: remark → remark-gfm → remark-rehype → rehype-highlight → rehype-stringify
+// Fixed pipeline: remark → remark-gfm → remark-rehype → rehype-sanitize-urls → rehype-highlight → rehype-stringify
 const processor = remark()
   .use(remarkGfm)
-  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(remarkRehype)
+  .use(rehypeSanitizeUrls)
   .use(rehypeHighlight, {
     detect: true,
     ignoreMissing: true,
@@ -19,7 +53,7 @@ const processor = remark()
       'typescript': ['ts']
     }
   })
-  .use(rehypeStringify, { allowDangerousHtml: true });
+  .use(rehypeStringify);
 
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await processor.process(markdown);
@@ -28,8 +62,14 @@ export async function markdownToHtml(markdown: string): Promise<string> {
 
 // Alternative simpler approach using basic remark for fallback
 export function markdownToHtmlSync(markdown: string): string {
+  // First, escape HTML to prevent XSS from raw HTML
+  const escapedMarkdown = markdown
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
   // Enhanced markdown to HTML converter with better code block support
-  return markdown
+  return escapedMarkdown
     // Headers with proper IDs
     .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold mt-8 mb-4 text-foreground">$1</h3>')
     .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-10 mb-6 text-foreground">$1</h2>')
@@ -49,12 +89,7 @@ export function markdownToHtmlSync(markdown: string): string {
       };
       
       const normalizedLang = lang ? (languageMap[lang.toLowerCase()] || lang.toLowerCase()) : 'text';
-      const escapedCode = code
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+      const escapedCode = code; // Already escaped & < >
       
       // Language display names for the header
       const displayNames: Record<string, string> = {
@@ -96,7 +131,10 @@ export function markdownToHtmlSync(markdown: string): string {
     .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 mb-2">$1</li>')
     
     // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+      const safeUrl = sanitizeUrl(url);
+      return `<a href="${safeUrl}" class="text-primary hover:text-primary/80 underline transition-colors" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    })
     
     // Bold and italic
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
