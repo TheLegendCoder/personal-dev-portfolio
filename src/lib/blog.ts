@@ -65,6 +65,62 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
 }
 
+export async function getTopBlogPosts(): Promise<Omit<BlogPost, 'content'>[]> {
+  try {
+    const supabase = createAnonClient();
+
+    // First try to get up to 3 featured posts
+    let { data, error } = await supabase
+      .from('portfolio_posts')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .eq('featured', true)
+      .order('date', { ascending: false })
+      .limit(3);
+
+    if (error) {
+      console.error('Error fetching featured blog posts:', error);
+      return [];
+    }
+
+    // If no featured posts, fallback to latest 3
+    if (!data || data.length === 0) {
+      const fallbackResult = await supabase
+        .from('portfolio_posts')
+        .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+        .eq('published', true)
+        .order('date', { ascending: false })
+        .limit(3);
+
+      if (fallbackResult.error) {
+        console.error('Error fetching latest blog posts:', fallbackResult.error);
+        return [];
+      }
+
+      data = fallbackResult.data;
+    }
+
+    if (!data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    }));
+  } catch (error) {
+    console.error('Error fetching top blog posts:', error);
+    return [];
+  }
+}
+
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
     const supabase = createAnonClient();

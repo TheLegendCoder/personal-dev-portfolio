@@ -1,14 +1,10 @@
 import { BookOpen } from "lucide-react";
-import { getAllBlogPosts } from "@/lib/blog";
+import { getTopBlogPosts } from "@/lib/blog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
 
 export async function LatestPosts() {
-  const allPosts = await getAllBlogPosts();
-
-  // Show featured posts first (up to 3); fall back to the 3 most-recent if none are featured
-  const featuredPosts = allPosts.filter((p) => p.featured);
-  const latestPosts = featuredPosts.length > 0 ? featuredPosts.slice(0, 3) : allPosts.slice(0, 3);
+  const latestPosts = await getTopBlogPosts();
 
   return (
     <section className="w-full py-24">
