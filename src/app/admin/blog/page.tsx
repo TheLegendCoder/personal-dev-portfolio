@@ -1,12 +1,12 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { getAllBlogPostsAdmin } from '@/lib/blog';
+import { getAllBlogPostsAdminSummary } from '@/lib/blog';
 import { AdminPostRow } from '@/components/admin/post-row';
 import { PenLine, FileText, CheckCircle2, Star } from 'lucide-react';
 
 export default async function AdminBlogPage() {
-  const posts = await getAllBlogPostsAdmin();
+  const posts = await getAllBlogPostsAdminSummary();
   const publishedCount = posts.filter((p) => p.published).length;
   const draftCount = posts.length - publishedCount;
   const featuredCount = posts.filter((p) => p.featured).length;

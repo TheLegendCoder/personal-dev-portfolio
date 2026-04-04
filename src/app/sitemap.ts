@@ -1,6 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 import { MetadataRoute } from 'next';
+import { getAllBlogPostsForSitemap } from '@/lib/blog';
+import { getAllTutorialsForSitemap } from '@/lib/tutorial';
 import { getBlogPostsSummary } from '@/lib/blog';
 import { getTutorialsSummary } from '@/lib/tutorial';
 
@@ -42,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic blog posts
+  const posts = await getAllBlogPostsForSitemap();
   const posts = await getBlogPostsSummary();
   const blogPages: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${SITE_URL}/blog/${post.slug}`,
@@ -51,6 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic tutorials
+  const tutorials = await getAllTutorialsForSitemap();
   const tutorials = await getTutorialsSummary();
   const tutorialPages: MetadataRoute.Sitemap = tutorials.map((tutorial) => ({
     url: `${SITE_URL}/tutorials/${tutorial.slug}`,

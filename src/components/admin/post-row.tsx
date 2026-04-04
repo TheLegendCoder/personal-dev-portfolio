@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import type { BlogPost } from '@/lib/blog';
+import type { BlogPostSummary } from '@/lib/blog';
 import {
   togglePublishedAction,
   toggleFeaturedAction,
@@ -22,7 +22,7 @@ import {
 import { Pencil, Trash2 } from 'lucide-react';
 
 interface AdminPostRowProps {
-  post: BlogPost;
+  post: BlogPostSummary;
 }
 
 export function AdminPostRow({ post }: AdminPostRowProps) {

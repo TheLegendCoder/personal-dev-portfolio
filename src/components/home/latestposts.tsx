@@ -1,10 +1,12 @@
 import { BookOpen } from "lucide-react";
+import { getAllBlogPostsSummary } from "@/lib/blog";
 import { getTopBlogPosts } from "@/lib/blog";
 import { getBlogPostsSummary } from "@/lib/blog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
 
 export async function LatestPosts() {
+  const allPosts = await getAllBlogPostsSummary();
   const latestPosts = await getTopBlogPosts(3);
   const allPosts = await getBlogPostsSummary();
 

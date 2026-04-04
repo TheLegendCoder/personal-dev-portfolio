@@ -1,12 +1,12 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { getAllTutorialsAdmin } from '@/lib/tutorial';
+import { getAllTutorialsAdminSummary } from '@/lib/tutorial';
 import { AdminTutorialRow } from '@/components/admin/tutorial-row';
 import { PenLine, FileText, CheckCircle2, Star } from 'lucide-react';
 
 export default async function AdminTutorialsPage() {
-  const tutorials = await getAllTutorialsAdmin();
+  const tutorials = await getAllTutorialsAdminSummary();
   const publishedCount = tutorials.filter((p) => p.published).length;
   const draftCount = tutorials.length - publishedCount;
   const featuredCount = tutorials.filter((p) => p.featured).length;
