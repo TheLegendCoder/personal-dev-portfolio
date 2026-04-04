@@ -65,6 +65,36 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
 }
 
+export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_posts')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    }));
+  } catch (error) {
+    console.error('Error fetching blog post summaries:', error);
+    return [];
+  }
+}
+
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
     const supabase = createAnonClient();
