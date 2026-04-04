@@ -65,6 +65,46 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
 }
 
+export type BlogPostSummary = Omit<BlogPost, 'content'>;
+
+export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummary[]> {
+  try {
+    const supabase = createAnonClient();
+
+    // First, try to get featured posts
+    const { data: featuredData, error: featuredError } = await supabase
+      .from('portfolio_posts')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .eq('featured', true)
+      .order('date', { ascending: false })
+      .limit(limit);
+
+    if (featuredError) {
+      console.error('Error fetching featured blog posts:', featuredError);
+      return [];
+    }
+
+    let posts = featuredData || [];
+
+    // If there are no featured posts, fall back to recent posts
+    if (posts.length === 0) {
+      const { data: recentData, error: recentError } = await supabase
+        .from('portfolio_posts')
+        .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+        .eq('published', true)
+        .order('date', { ascending: false })
+        .limit(limit);
+
+      if (recentError) {
+        console.error('Error fetching recent blog posts:', recentError);
+      } else if (recentData) {
+        // If there were no featured posts at all, just use the recent posts directly
+        posts = recentData;
+      }
+    }
+
+    return posts.map((row) => ({
 export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]> {
   try {
     const supabase = createAnonClient();
@@ -90,6 +130,7 @@ export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]
       imageHint: row.image_hint,
     }));
   } catch (error) {
+    console.error('Error fetching top blog posts:', error);
     console.error('Error fetching blog post summaries:', error);
     return [];
   }
