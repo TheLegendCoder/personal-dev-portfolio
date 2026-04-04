@@ -105,6 +105,18 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
     }
 
     return posts.map((row) => ({
+export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_posts')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
       slug: row.slug,
       title: row.title,
       description: row.description,
@@ -119,6 +131,7 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
     }));
   } catch (error) {
     console.error('Error fetching top blog posts:', error);
+    console.error('Error fetching blog post summaries:', error);
     return [];
   }
 }
