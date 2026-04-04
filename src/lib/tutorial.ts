@@ -3,7 +3,7 @@
 import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
-import type { BlogPost as TutorialPost } from '@/lib/blog';
+import type { BlogPost as TutorialPost, BlogPostSummary as TutorialPostSummary } from '@/lib/blog';
 
 export type TutorialPostSummary = Omit<TutorialPost, 'content'>;
 export type TutorialPostSitemap = Pick<TutorialPost, 'slug' | 'date'>;
@@ -81,6 +81,36 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
     return posts;
   } catch (error) {
     console.error('Error fetching tutorials:', error);
+    return [];
+  }
+}
+
+export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_tutorials')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    } as TutorialPostSummary));
+  } catch (error) {
+    console.error('Error fetching tutorials summary:', error);
     return [];
   }
 }
