@@ -1,0 +1,46 @@
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 9003
+
+ ⚠ Invalid next.config.ts options detected:
+ ⚠     Unrecognized key(s) in object: 'staleTimes'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+   ▲ Next.js 15.5.12 (Turbopack)
+   - Local:        http://localhost:9003
+   - Network:      http://192.168.0.2:9003
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 707ms
+ ✓ Ready in 2.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 10.9s
+[getFeaturedProjects] Fetch exception: Error: supabaseUrl is required.
+    at createAnonClient (src/lib/supabase/server.ts:57:30)
+    at getFeaturedProjects (src/lib/projects.ts:46:38)
+    at FeaturedProjects (src/components/home/featuredprojects.tsx:9:45)
+  55 | /** Simple anon client — for public reads, no cookie/session management needed. */
+  56 | export function createAnonClient() {
+> 57 |   return createSupabaseClient(
+     |                              ^
+  58 |     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  59 |     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  60 |     {
+Error fetching top blog posts: Error: supabaseUrl is required.
+    at createAnonClient (src/lib/supabase/server.ts:57:30)
+    at getTopBlogPosts (src/lib/blog.ts:72:38)
+    at LatestPosts (src/components/home/latestposts.tsx:7:44)
+  55 | /** Simple anon client — for public reads, no cookie/session management needed. */
+  56 | export function createAnonClient() {
+> 57 |   return createSupabaseClient(
+     |                              ^
+  58 |     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  59 |     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  60 |     {
+ GET / 200 in 14259ms
+ ✓ Compiled in 14ms

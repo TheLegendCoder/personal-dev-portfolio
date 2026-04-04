@@ -1,4 +1,4 @@
-import { getTutorial, getAllTutorials } from "@/lib/tutorial";
+import { getTutorial, getTutorialsSummary } from "@/lib/tutorial";
 import { Layout } from "@/components/layout/layout";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -17,7 +17,7 @@ interface TutorialPageProps {
 }
 
 export async function generateStaticParams() {
-  const tutorials = await getAllTutorials();
+  const tutorials = await getTutorialsSummary();
   return tutorials.map((tutorial) => ({
     slug: tutorial.slug,
   }));
