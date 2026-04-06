@@ -2,7 +2,7 @@
 // Data-access layer for portfolio_projects (Supabase)
 // ---------------------------------------------------------------------------
 
-import { createClient, createServiceClient, createAnonClient } from '@/lib/supabase/server';
+import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type {
   PortfolioProject,
   DbProjectInsert,
