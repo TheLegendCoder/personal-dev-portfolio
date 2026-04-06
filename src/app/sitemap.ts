@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 import { MetadataRoute } from 'next';
-import { getAllBlogPosts } from '@/lib/blog';
-import { getAllTutorials } from '@/lib/tutorial';
+import { getAllBlogPostsForSitemap } from '@/lib/blog';
+import { getAllTutorialsForSitemap } from '@/lib/tutorial';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tsholofelondawonde.co.za';
 
@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic blog posts
-  const posts = await getAllBlogPosts();
+  const posts = await getAllBlogPostsForSitemap();
   const blogPages: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: new Date(post.date),
@@ -51,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic tutorials
-  const tutorials = await getAllTutorials();
+  const tutorials = await getAllTutorialsForSitemap();
   const tutorialPages: MetadataRoute.Sitemap = tutorials.map((tutorial) => ({
     url: `${SITE_URL}/tutorials/${tutorial.slug}`,
     lastModified: new Date(tutorial.date),

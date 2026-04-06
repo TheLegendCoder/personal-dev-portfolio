@@ -15,6 +15,7 @@ interface Post {
   date: string;
   readTime?: string;
   tags: string[];
+  content?: string;
 }
 
 interface LatestPostsGridProps {

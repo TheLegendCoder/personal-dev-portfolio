@@ -5,6 +5,10 @@ import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
 import type { BlogPost as TutorialPost } from '@/lib/blog';
 
+export type TutorialPostSummary = Omit<TutorialPost, 'content'>;
+export type TutorialPostSitemap = Pick<TutorialPost, 'slug' | 'date'>;
+
+
 // ---------------------------------------------------------------------------
 // Public tutorial API — reads from Supabase, only published posts
 // ---------------------------------------------------------------------------
@@ -81,9 +85,91 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
   }
 }
 
+export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_tutorials')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    } as TutorialPostSummary));
+  } catch (error) {
+    console.error('Error fetching tutorials summary:', error);
+    return [];
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Admin tutorial API — reads all posts (no published filter), uses service role
 // ---------------------------------------------------------------------------
+
+
+export async function getAllTutorialsSummary(): Promise<TutorialPostSummary[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_tutorials')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    }));
+  } catch (error) {
+    console.error('Error fetching tutorials summary:', error);
+    return [];
+  }
+}
+
+export async function getAllTutorialsForSitemap(): Promise<TutorialPostSitemap[]> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_tutorials')
+      .select('slug, date')
+      .eq('published', true)
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      date: row.date,
+    }));
+  } catch (error) {
+    console.error('Error fetching tutorials for sitemap:', error);
+    return [];
+  }
+}
 
 export async function getAllTutorialsAdmin(): Promise<TutorialPost[]> {
   try {
@@ -111,6 +197,36 @@ export async function getAllTutorialsAdmin(): Promise<TutorialPost[]> {
     }));
   } catch (error) {
     console.error('Error fetching admin tutorials:', error);
+    return [];
+  }
+}
+
+
+export async function getAllTutorialsAdminSummary(): Promise<TutorialPostSummary[]> {
+  try {
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from('portfolio_tutorials')
+      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
+      .order('date', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      date: row.date,
+      author: row.author,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      featured: row.featured,
+      image: row.image,
+      imageHint: row.image_hint,
+    }));
+  } catch (error) {
+    console.error('Error fetching admin tutorials summary:', error);
     return [];
   }
 }

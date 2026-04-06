@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import type { BlogPost as TutorialPost } from '@/lib/blog';
+import type { TutorialPostSummary } from '@/lib/tutorial';
 import {
   toggleTutorialPublishedAction,
   toggleTutorialFeaturedAction,
@@ -22,7 +22,7 @@ import {
 import { Pencil, Trash2 } from 'lucide-react';
 
 interface AdminTutorialRowProps {
-  tutorial: TutorialPost;
+  tutorial: TutorialPostSummary;
 }
 
 export function AdminTutorialRow({ tutorial }: AdminTutorialRowProps) {

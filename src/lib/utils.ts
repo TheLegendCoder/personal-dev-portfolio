@@ -40,11 +40,16 @@ export function triggerCelebration(options: CelebrationOptions = {}) {
 
 // Trigger confetti from a specific element
 export function triggerCelebrationFrom(element: HTMLElement, options: CelebrationOptions = {}) {
-  const { intensity = 'medium', colors = ['#4F93FF', '#3DB89F', '#FFD43B'] } = options;
-
   const rect = element.getBoundingClientRect();
   const x = (rect.left + rect.width / 2) / window.innerWidth;
   const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+  triggerCelebrationAt(x, y, options);
+}
+
+// Trigger confetti at specific screen coordinates (0-1 range)
+export function triggerCelebrationAt(x: number, y: number, options: CelebrationOptions = {}) {
+  const { intensity = 'medium', colors = ['#4F93FF', '#3DB89F', '#FFD43B'] } = options;
 
   const particleCount = {
     low: 20,
