@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Github, Linkedin, Twitter, Mail } from "lucide-react";
@@ -27,8 +28,33 @@ export function Footer() {
   const { toast } = useToast();
   const pathname = usePathname();
 
+  // Footer Easter Egg
+  const copyrightRef = useRef<HTMLSpanElement>(null);
+  const clickCountRef = useRef(0);
+  const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [copyrightSymbol, setCopyrightSymbol] = useState("©");
+
   // Never render the public footer inside the admin area
   if (pathname.startsWith('/admin')) return null;
+
+  const handleCopyrightClick = () => {
+    clickCountRef.current += 1;
+
+    if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    resetTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1500);
+
+    if (clickCountRef.current === 2) {
+      setCopyrightSymbol("🎉");
+      setTimeout(() => setCopyrightSymbol("©"), 300);
+    } else if (clickCountRef.current === 3) {
+      if (copyrightRef.current) {
+        triggerCelebrationFrom(copyrightRef.current, { intensity: 'low' });
+      }
+      clickCountRef.current = 0;
+    }
+  };
 
   const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>, email: string) => {
     e.preventDefault();
@@ -115,7 +141,14 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground font-mono">
-            © {currentYear} {personalInfo.name}. All rights reserved.
+            <span
+              ref={copyrightRef}
+              onClick={handleCopyrightClick}
+              className="cursor-pointer inline-block select-none"
+              title="Try clicking me..."
+            >
+              {copyrightSymbol}
+            </span> {currentYear} {personalInfo.name}. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground font-mono">
             {personalInfo.location}

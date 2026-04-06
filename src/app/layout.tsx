@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { GSAPProvider } from "@/components/providers/gsap-provider";
+import { EasterEggsInit } from "@/components/providers/easter-eggs-init";
 import { generateSEOMetadata, getSiteUrl } from "@/lib/seo/metadata";
 import { 
   generateOrganizationSchema, 
@@ -137,6 +138,7 @@ export default function Layout({ children }: LayoutProps) {
 
         <PostHogProvider>
           <GSAPProvider>
+            <EasterEggsInit />
             <div className="min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-1 pt-0">
