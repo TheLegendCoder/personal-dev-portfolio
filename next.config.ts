@@ -28,9 +28,11 @@ const nextConfig: NextConfig = {
   },
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
-  // Prevent the client-side router from serving stale RSC payloads when
-  // navigating back to a dynamic route (e.g. switching filter categories).
-  staleTimes: { dynamic: 0, static: 180 },
+  experimental: {
+    // Prevent the client-side router from serving stale RSC payloads when
+    // navigating back to a dynamic route (e.g. switching filter categories).
+    staleTimes: { dynamic: 0, static: 180 },
+  },
   images: {
     // Explicit domains (simple allow-list) plus remotePatterns (granular). Either works; keeping both for clarity.
     domains: ['images.unsplash.com', 'placehold.co'],
