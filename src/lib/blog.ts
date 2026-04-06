@@ -171,44 +171,6 @@ export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]
   }
 }
 
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
-  try {
-    const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_posts')
-      .select('*')
-      .eq('published', true)
-      .order('date', { ascending: false });
-
-    if (error || !data) return [];
-
-    const posts = await Promise.all(
-      data.map(async (row) => {
-        const htmlContent = await markdownToHtml(row.content);
-        return {
-          slug: row.slug,
-          title: row.title,
-          description: row.description,
-          date: row.date,
-          author: row.author,
-          tags: row.tags ?? [],
-          readTime: row.read_time,
-          published: row.published,
-          featured: row.featured,
-          image: row.image,
-          imageHint: row.image_hint,
-          content: htmlContent,
-        } as BlogPost;
-      })
-    );
-
-    return posts;
-  } catch (error) {
-    console.error('Error fetching blog posts:', error);
-    return [];
-  }
-}
-
 export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
   try {
     const supabase = createAnonClient();
