@@ -1,6 +1,5 @@
 import { Layout } from "@/components/layout/layout";
 import { BlogCard } from "@/components/blog/blogcard";
-import { getAllBlogPostsSummary } from "@/lib/blog";
 import { getBlogPostsSummary } from "@/lib/blog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { BookOpen } from "lucide-react";
@@ -15,7 +14,6 @@ export const metadata = generateSEOMetadata({
 });
 
 async function BlogPage() {
-  const posts = await getAllBlogPostsSummary();
   const posts = await getBlogPostsSummary();
   const breadcrumbs = generateBreadcrumbs('/blog');
 

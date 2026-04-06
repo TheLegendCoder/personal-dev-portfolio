@@ -1,18 +1,10 @@
 'use server';
 
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
 
-
-export type BlogPostSummary = Omit<BlogPost, 'content'>;
-export type BlogPostSitemap = Pick<BlogPost, 'slug' | 'date'>;
-
-export interface BlogPost {
-export interface BlogPostSummary {
+interface BlogPostBase {
   slug: string;
   title: string;
   description: string;
@@ -26,14 +18,40 @@ export interface BlogPostSummary {
   imageHint: string;
 }
 
-export interface BlogPost extends BlogPostSummary {
+export type BlogPostSummary = BlogPostBase;
+export type BlogPostSitemap = Pick<BlogPostBase, 'slug' | 'date'>;
+
+export interface BlogPost extends BlogPostBase {
   content: string;
 }
 
-// ---------------------------------------------------------------------------
-// Tutorials are still file-based (unchanged)
-// ---------------------------------------------------------------------------
-const tutorialsDirectory = path.join(process.cwd(), 'src/content/tutorial');
+function mapBlogPostSummary(row: {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  tags: string[] | null;
+  read_time: string;
+  published: boolean;
+  featured: boolean;
+  image: string;
+  image_hint: string;
+}): BlogPostSummary {
+  return {
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    date: row.date,
+    author: row.author,
+    tags: row.tags ?? [],
+    readTime: row.read_time,
+    published: row.published,
+    featured: row.featured,
+    image: row.image,
+    imageHint: row.image_hint,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Public blog API — reads from Supabase, only published posts
@@ -73,35 +91,16 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
 }
 
-export async function getTopBlogPosts(): Promise<Omit<BlogPost, 'content'>[]> {
-  try {
-    const supabase = createAnonClient();
-
-    // First try to get up to 3 featured posts
-    let { data, error } = await supabase
-export type BlogPostSummary = Omit<BlogPost, 'content'>;
-
 export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummary[]> {
   try {
     const supabase = createAnonClient();
 
-    // First, try to get featured posts
     const { data: featuredData, error: featuredError } = await supabase
       .from('portfolio_posts')
       .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
       .eq('published', true)
       .eq('featured', true)
       .order('date', { ascending: false })
-      .limit(3);
-
-    if (error) {
-      console.error('Error fetching featured blog posts:', error);
-      return [];
-    }
-
-    // If no featured posts, fallback to latest 3
-    if (!data || data.length === 0) {
-      const fallbackResult = await supabase
       .limit(limit);
 
     if (featuredError) {
@@ -109,64 +108,27 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
       return [];
     }
 
-    let posts = featuredData || [];
+    let posts = featuredData ?? [];
 
-    // If there are no featured posts, fall back to recent posts
     if (posts.length === 0) {
       const { data: recentData, error: recentError } = await supabase
         .from('portfolio_posts')
         .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
         .eq('published', true)
         .order('date', { ascending: false })
-        .limit(3);
-
-      if (fallbackResult.error) {
-        console.error('Error fetching latest blog posts:', fallbackResult.error);
-        return [];
-      }
-
-      data = fallbackResult.data;
-    }
-
-    if (!data) return [];
         .limit(limit);
 
       if (recentError) {
         console.error('Error fetching recent blog posts:', recentError);
-      } else if (recentData) {
-        // If there were no featured posts at all, just use the recent posts directly
-        posts = recentData;
+        return [];
       }
+
+      posts = recentData ?? [];
     }
 
-    return posts.map((row) => ({
-export async function getBlogPostsSummary(): Promise<Omit<BlogPost, 'content'>[]> {
-  try {
-    const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_posts')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .order('date', { ascending: false });
-
-    if (error || !data) return [];
-
-    return data.map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      date: row.date,
-      author: row.author,
-      tags: row.tags ?? [],
-      readTime: row.read_time,
-      published: row.published,
-      featured: row.featured,
-      image: row.image,
-      imageHint: row.image_hint,
-    }));
+    return posts.map(mapBlogPostSummary);
   } catch (error) {
     console.error('Error fetching top blog posts:', error);
-    console.error('Error fetching blog post summaries:', error);
     return [];
   }
 }
@@ -182,58 +144,19 @@ export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
 
     if (error || !data) return [];
 
-    return data.map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      date: row.date,
-      author: row.author,
-      tags: row.tags ?? [],
-      readTime: row.read_time,
-      published: row.published,
-      featured: row.featured,
-      image: row.image,
-      imageHint: row.image_hint,
-    } as BlogPostSummary));
+    return data.map(mapBlogPostSummary);
   } catch (error) {
-    console.error('Error fetching blog posts summary:', error);
+    console.error('Error fetching blog post summaries:', error);
     return [];
   }
 }
 
 // ---------------------------------------------------------------------------
-// Admin blog API — reads all posts (no published filter), uses service role
+// Backward-compatible summary API
 // ---------------------------------------------------------------------------
 
-
 export async function getAllBlogPostsSummary(): Promise<BlogPostSummary[]> {
-  try {
-    const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_posts')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .order('date', { ascending: false });
-
-    if (error || !data) return [];
-
-    return data.map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      date: row.date,
-      author: row.author,
-      tags: row.tags ?? [],
-      readTime: row.read_time,
-      published: row.published,
-      featured: row.featured,
-      image: row.image,
-      imageHint: row.image_hint,
-    }));
-  } catch (error) {
-    console.error('Error fetching blog posts summary:', error);
-    return [];
-  }
+  return getBlogPostsSummary();
 }
 
 export async function getAllBlogPostsForSitemap(): Promise<BlogPostSitemap[]> {
@@ -257,6 +180,10 @@ export async function getAllBlogPostsForSitemap(): Promise<BlogPostSitemap[]> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Admin blog API — reads all posts, uses service role
+// ---------------------------------------------------------------------------
+
 export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
   try {
     const supabase = createServiceClient();
@@ -279,14 +206,13 @@ export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
-      content: row.content, // raw markdown for admin
+      content: row.content,
     }));
   } catch (error) {
     console.error('Error fetching admin blog posts:', error);
     return [];
   }
 }
-
 
 export async function getAllBlogPostsAdminSummary(): Promise<BlogPostSummary[]> {
   try {
@@ -298,19 +224,7 @@ export async function getAllBlogPostsAdminSummary(): Promise<BlogPostSummary[]> 
 
     if (error || !data) return [];
 
-    return data.map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      date: row.date,
-      author: row.author,
-      tags: row.tags ?? [],
-      readTime: row.read_time,
-      published: row.published,
-      featured: row.featured,
-      image: row.image,
-      imageHint: row.image_hint,
-    }));
+    return data.map(mapBlogPostSummary);
   } catch (error) {
     console.error('Error fetching admin blog posts summary:', error);
     return [];
@@ -340,7 +254,7 @@ export async function getBlogPostAdmin(slug: string): Promise<BlogPost | null> {
       featured: data.featured,
       image: data.image,
       imageHint: data.image_hint,
-      content: data.content, // raw markdown for admin
+      content: data.content,
     };
   } catch (error) {
     console.error(`Error fetching admin blog post ${slug}:`, error);
@@ -398,4 +312,3 @@ export async function deleteBlogPost(
     return { success: false, error: String(err) };
   }
 }
-

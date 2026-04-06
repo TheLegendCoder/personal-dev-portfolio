@@ -3,7 +3,7 @@
 import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
-import type { BlogPost as TutorialPost, BlogPostSummary as TutorialPostSummary } from '@/lib/blog';
+import type { BlogPost as TutorialPost } from '@/lib/blog';
 
 export type TutorialPostSummary = Omit<TutorialPost, 'content'>;
 export type TutorialPostSitemap = Pick<TutorialPost, 'slug' | 'date'>;
