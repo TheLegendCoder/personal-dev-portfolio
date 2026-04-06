@@ -5,6 +5,10 @@ import { ScrollCelebrationWrapper } from '@/components/home/scroll-celebration-w
 import { generateSEOMetadata, getCanonicalUrl } from '@/lib/seo/metadata';
 import { personalInfo } from '@/components/data/content';
 
+// Cache home page for 1 hour, then regenerate on next request (Incremental Static Regeneration).
+// Admin actions that update featured projects/blog posts call revalidatePath('/') to trigger immediate re-generation.
+export const revalidate = 3600;
+
 export const metadata = generateSEOMetadata({
   title: personalInfo.name,
   description: personalInfo.tagline + ' — ' + personalInfo.bio,

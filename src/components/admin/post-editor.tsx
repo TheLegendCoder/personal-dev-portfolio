@@ -1,9 +1,8 @@
 'use client';
+'use no memo';
 
 import DOMPurify from 'isomorphic-dompurify';
-
 import { useState, useEffect, useCallback, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -68,7 +67,6 @@ interface PostEditorProps {
 }
 
 export function PostEditor({ post }: PostEditorProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [preview, setPreview] = useState('');
   const [serverError, setServerError] = useState<string | null>(null);

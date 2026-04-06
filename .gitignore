@@ -62,3 +62,7 @@ Cinematic_Portfolio_Design_Document.md
 # Copilot security skill and references
 .github/SKILL.md
 .github/references/
+.github/
+
+# Supabase local configuration
+supabase/

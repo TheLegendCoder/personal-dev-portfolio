@@ -68,7 +68,7 @@ export function createAnonClient() {
           return fetch(url, {
             ...options,
             signal: signals.length > 1 ? AbortSignal.any(signals) : signals[0],
-            cache: 'no-store',
+            cache: 'force-cache', // Allow route-level revalidate to apply (e.g., ISR on home page).
           }).finally(() => clearTimeout(timeout));
         },
       },
