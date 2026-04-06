@@ -1,6 +1,5 @@
 import { Layout } from "@/components/layout/layout";
-import { aboutContent, personalInfo } from "@/components/data/content";
-import { MapPin, Mail, Briefcase } from "lucide-react";
+import { aboutContent } from "@/components/data/content";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbs } from "@/lib/seo/breadcrumbs";
