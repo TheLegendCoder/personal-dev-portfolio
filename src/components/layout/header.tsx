@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, triggerCelebrationFrom } from "@/lib/utils";
 import { gsap, ScrollTrigger, EASE } from "@/lib/gsap";
 
 const navLinks = [
@@ -22,6 +22,12 @@ export function Navbar() {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const navLinkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  // Logo Easter Egg
+  const logoRef = useRef<HTMLAnchorElement>(null);
+  const hashRef = useRef<HTMLSpanElement>(null);
+  const clickCountRef = useRef(0);
+  const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // GSAP ScrollTrigger — drives the pill morph on scroll
   useEffect(() => {
@@ -65,6 +71,47 @@ export function Navbar() {
     return () => cleanups.forEach((fn) => fn());
   }, []);
 
+  // Konami Hint Listener
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    function onKonamiStep() {
+      if (hashRef.current) {
+        gsap.to(hashRef.current, { color: '#fff', duration: 0.1, yoyo: true, repeat: 1 });
+      }
+    }
+
+    window.addEventListener('konami-step', onKonamiStep as EventListener);
+    return () => window.removeEventListener('konami-step', onKonamiStep as EventListener);
+  }, []);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    clickCountRef.current += 1;
+
+    // If they are fast-clicking to trigger the easter egg, stop navigation
+    // On a single slow click, let it navigate normally
+    if (clickCountRef.current > 1) {
+      e.preventDefault();
+    }
+
+    if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    resetTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1000);
+
+    if (logoRef.current) {
+      if (clickCountRef.current === 2) {
+        gsap.to(logoRef.current, { x: 3, duration: 0.05, yoyo: true, repeat: 5 });
+      } else if (clickCountRef.current === 4) {
+        gsap.to(logoRef.current, { scale: 1.15, duration: 0.15, yoyo: true, repeat: 1 });
+      } else if (clickCountRef.current === 5) {
+        gsap.to(logoRef.current, { rotation: 360, duration: 0.7, ease: 'back.out(1.7)' });
+        triggerCelebrationFrom(logoRef.current, { intensity: 'low' });
+        clickCountRef.current = 0;
+      }
+    }
+  };
+
   // Never render the public navbar inside the admin area
   if (pathname.startsWith('/admin')) return null;
 
@@ -83,9 +130,12 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="text-lg font-display font-semibold text-foreground hover:text-primary transition-colors"
+            ref={logoRef}
+            onClick={handleLogoClick}
+            onDoubleClick={(e) => e.preventDefault()} // Help prevent text selection
+            className="text-lg font-display font-semibold text-foreground hover:text-primary transition-colors select-none inline-block relative hover:ring-1 hover:ring-primary/30 rounded px-1 -ml-1"
           >
-            TN<span className="text-primary">.</span>
+            TN<span ref={hashRef} className="text-primary">#</span>
           </Link>
 
           {/* Desktop Navigation */}
