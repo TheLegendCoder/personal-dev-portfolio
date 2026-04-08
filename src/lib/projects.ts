@@ -32,7 +32,6 @@ export async function getProjects(): Promise<PortfolioProject[]> {
       return [];
     }
 
-    console.log('[getProjects] Supabase returned', data?.length ?? 0, 'rows');
     return data ?? [];
   } catch (err) {
     console.error('[getProjects] Fetch exception:', err);
@@ -57,7 +56,6 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
       return [];
     }
 
-    console.log('[getFeaturedProjects] Supabase returned', data?.length ?? 0, 'rows');
     return data ?? [];
   } catch (err) {
     console.error('[getFeaturedProjects] Fetch exception:', err);
@@ -84,7 +82,6 @@ export async function getProjectsByCategory(
       return [];
     }
 
-    console.log('[getProjectsByCategory]', category, '— Supabase returned', data?.length ?? 0, 'rows');
     return data ?? [];
   } catch (err) {
     console.error('[getProjectsByCategory] Fetch exception:', err);
