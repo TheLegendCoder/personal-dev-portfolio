@@ -9,6 +9,8 @@ import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBlogPostBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
+// @ts-ignore - isomorphic-dompurify doesn't export types but matches DOMPurify
+import DOMPurify from "isomorphic-dompurify";
 
 interface TutorialPageProps {
   params: Promise<{
@@ -134,7 +136,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
           <div className="prose prose-sm sm:prose lg:prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-a:text-primary hover:prose-a:text-primary/80 prose-a:underline prose-code:bg-muted prose-code:text-foreground prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:p-4 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-blockquote:pl-6 prose-hr:border-border prose-strong:text-foreground prose-em:text-muted-foreground">
             <div
               dangerouslySetInnerHTML={{
-                __html: tutorial.content,
+                __html: DOMPurify.sanitize(tutorial.content),
               }}
             />
           </div>
