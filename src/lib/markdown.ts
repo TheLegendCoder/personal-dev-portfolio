@@ -5,19 +5,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 // @ts-ignore - isomorphic-dompurify doesn't export types but matches DOMPurify
 import DOMPurify from 'isomorphic-dompurify';
-
-export function sanitizeUrl(url: string): string {
-  if (!url) return '';
-  const decodedUrl = decodeURIComponent(url).toLowerCase().replace(/\s+/g, '');
-  if (
-    decodedUrl.startsWith('javascript:') ||
-    decodedUrl.startsWith('data:') ||
-    decodedUrl.startsWith('vbscript:')
-  ) {
-    return 'about:blank';
-  }
-  return url.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+import { sanitizeUrl } from './url-utils';
 
 // Simple rehype plugin to sanitize URLs in attributes
 function rehypeSanitizeUrls() {
