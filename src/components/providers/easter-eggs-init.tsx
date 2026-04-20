@@ -16,8 +16,8 @@ export function EasterEggsInit() {
     if (typeof window === 'undefined') return;
 
     // Only log once
-    if ((window as any).__easterEggLogged) return;
-    (window as any).__easterEggLogged = true;
+    if (window.__easterEggLogged) return;
+    window.__easterEggLogged = true;
 
     console.log(
       '%cTN# %c— Hey, fellow dev! Built with Next.js 15, TypeScript + Tailwind. Want to work together? → %c%s',
