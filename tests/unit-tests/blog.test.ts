@@ -44,6 +44,10 @@ function makeQueryBuilder(result: { data: unknown; error: unknown }) {
   return builder;
 }
 
+function makeMockAnonClient(from: (table: string) => unknown): ReturnType<typeof createAnonClient> {
+  return { from } as unknown as ReturnType<typeof createAnonClient>;
+}
+
 /** A DB row that satisfies the blog post shape */
 function makeDbRow(overrides: Record<string, unknown> = {}) {
   return {
@@ -74,7 +78,7 @@ describe('getBlogPost()', () => {
 
   it('returns null when Supabase reports an error', async () => {
     const builder = makeQueryBuilder({ data: null, error: { message: 'not found' } });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPost('missing-slug');
     expect(result).toBeNull();
@@ -82,7 +86,7 @@ describe('getBlogPost()', () => {
 
   it('returns null when Supabase returns no data', async () => {
     const builder = makeQueryBuilder({ data: null, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPost('empty-slug');
     expect(result).toBeNull();
@@ -91,7 +95,7 @@ describe('getBlogPost()', () => {
   it('maps snake_case DB fields to camelCase blog post shape', async () => {
     const row = makeDbRow();
     const builder = makeQueryBuilder({ data: row, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPost('test-slug');
 
@@ -106,7 +110,7 @@ describe('getBlogPost()', () => {
   it('uses empty array when DB tags column is null', async () => {
     const row = makeDbRow({ tags: null });
     const builder = makeQueryBuilder({ data: row, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPost('test-slug');
     expect(result!.tags).toEqual([]);
@@ -115,7 +119,7 @@ describe('getBlogPost()', () => {
   it('calls markdownToHtml() and stores the result in content', async () => {
     const row = makeDbRow({ content: '## Heading' });
     const builder = makeQueryBuilder({ data: row, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPost('test-slug');
 
@@ -133,7 +137,7 @@ describe('getBlogPostsSummary()', () => {
 
   it('returns an empty array on Supabase error', async () => {
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error' } });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPostsSummary();
     expect(result).toEqual([]);
@@ -145,7 +149,7 @@ describe('getBlogPostsSummary()', () => {
       makeDbRow({ slug: 'post-2', title: 'Post Two', tags: null }),
     ];
     const builder = makeQueryBuilder({ data: rows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getBlogPostsSummary();
 
@@ -169,7 +173,7 @@ describe('getTopBlogPosts()', () => {
 
     // First query (featured) returns data; second query (fallback) should not be called
     const featuredBuilder = makeQueryBuilder({ data: featuredRows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => featuredBuilder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => featuredBuilder));
 
     const result = await getTopBlogPosts(3);
 
@@ -193,7 +197,7 @@ describe('getTopBlogPosts()', () => {
         error: null,
       });
     });
-    vi.mocked(createAnonClient).mockReturnValue({ from: fromFn } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(fromFn));
 
     const result = await getTopBlogPosts(3);
 
@@ -204,7 +208,7 @@ describe('getTopBlogPosts()', () => {
   it('respects the limit parameter on the featured query', async () => {
     const featuredRows = [makeDbRow({ slug: 'f-1', featured: true })];
     const builder = makeQueryBuilder({ data: featuredRows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getTopBlogPosts(1);
     // limit is applied in the chain — verify Supabase .limit() was invoked
@@ -222,7 +226,7 @@ describe('getAllBlogPostsForSitemap()', () => {
 
   it('returns an empty array on Supabase error', async () => {
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error' } });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getAllBlogPostsForSitemap();
     expect(result).toEqual([]);
@@ -234,7 +238,7 @@ describe('getAllBlogPostsForSitemap()', () => {
       { slug: 'post-b', date: '2026-02-01' },
     ];
     const builder = makeQueryBuilder({ data: rows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getAllBlogPostsForSitemap();
 
