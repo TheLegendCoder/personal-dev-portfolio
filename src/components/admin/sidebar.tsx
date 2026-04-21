@@ -1,14 +1,43 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { PenLine, FolderKanban, ArrowLeft, LogOut, Zap } from 'lucide-react';
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const isPostsActive = pathname.startsWith('/admin/blog');
   const isProjectsActive = pathname.startsWith('/admin/projects');
   const isTutorialsActive = pathname.startsWith('/admin/tutorials');
+
+  const handleSignOut = async () => {
+    if (isSigningOut) return;
+
+    setIsSigningOut(true);
+    try {
+      const response = await fetch('/api/admin/signout', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.error('Sign out failed');
+        return;
+      }
+
+      router.replace('/admin/login');
+      router.refresh();
+    } catch (error) {
+      console.error('Sign out request failed', error);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <>
@@ -64,15 +93,15 @@ export function AdminSidebar() {
             </Link>
           </nav>
           {/* Sign out */}
-          <form action="/api/admin/signout" method="POST">
-            <button
-              type="submit"
-              className="flex items-center gap-1 px-2 py-1.5 rounded-md text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              Out
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-md text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-60 disabled:pointer-events-none"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Out
+          </button>
         </div>
       </header>
     </>
@@ -153,15 +182,15 @@ function SidebarContents({
           <ArrowLeft className="h-4 w-4 shrink-0" />
           Home
         </Link>
-        <form action="/api/admin/signout" method="POST">
-          <button
-            type="submit"
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-            Sign out
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          disabled={isSigningOut}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-60 disabled:pointer-events-none"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          Sign out
+        </button>
       </div>
     </>
   );
