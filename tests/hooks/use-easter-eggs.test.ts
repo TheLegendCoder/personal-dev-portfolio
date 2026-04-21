@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { isKonamiKeyMatch } from '../../src/lib/easter-egg-utils.ts';
+import { isKonamiKeyMatch } from '../../src/lib/easter-egg-utils.js';
 
 test('isKonamiKeyMatch', async (t) => {
   await t.test('returns false for missing or malformed keys', () => {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { sanitizeUrl } from '../../src/lib/url-utils.ts';
+import { sanitizeUrl } from '../../src/lib/url-utils.js';
 
 test('sanitizeUrl', async (t) => {
   await t.test('returns empty string for empty input', () => {
