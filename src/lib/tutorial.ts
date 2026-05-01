@@ -1,9 +1,20 @@
 'use server';
 
-import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
 import type { BlogPost as TutorialPost } from '@/lib/blog';
+
+type MarkdownToHtml = (markdown: string) => Promise<string>;
+
+let markdownToHtmlFn: MarkdownToHtml | null = null;
+
+async function renderMarkdown(markdown: string): Promise<string> {
+  if (!markdownToHtmlFn) {
+    const markdownModule = await import('@/lib/markdown');
+    markdownToHtmlFn = markdownModule.markdownToHtml;
+  }
+  return markdownToHtmlFn(markdown);
+}
 
 export type TutorialPostSummary = Omit<TutorialPost, 'content'>;
 export type TutorialPostSitemap = Pick<TutorialPost, 'slug' | 'date'>;
@@ -25,7 +36,7 @@ export async function getTutorial(slug: string): Promise<TutorialPost | null> {
 
     if (error || !data) return null;
 
-    const htmlContent = await markdownToHtml(data.content);
+    const htmlContent = await renderMarkdown(data.content);
 
     return {
       slug: data.slug,
@@ -60,7 +71,7 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
 
     const posts = await Promise.all(
       data.map(async (row) => {
-        const htmlContent = await markdownToHtml(row.content);
+        const htmlContent = await renderMarkdown(row.content);
         return {
           slug: row.slug,
           title: row.title,
