@@ -2,6 +2,7 @@ import { getBlogPost, getBlogPostsSummary } from "@/lib/blog";
 import { Layout } from "@/components/layout/layout";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import "highlight.js/styles/atom-one-dark.css";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
@@ -9,8 +10,6 @@ import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBlogPostBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
-// @ts-ignore - isomorphic-dompurify doesn't export types but matches DOMPurify
-import DOMPurify from "isomorphic-dompurify";
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -124,19 +123,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Featured Image */}
           {post.image && (
             <div className="mb-8 sm:mb-12 rounded-lg overflow-hidden bg-muted">
-              <img
+              <Image
                 src={post.image}
                 alt={post.imageHint || post.title}
+                width={1200}
+                height={675}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 768px"
                 className="w-full h-auto object-cover aspect-video"
+                priority
               />
             </div>
           )}
 
           {/* Content */}
-          <div className="prose prose-sm sm:prose lg:prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-a:text-primary hover:prose-a:text-primary/80 prose-a:underline prose-code:bg-muted prose-code:text-foreground prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:p-4 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-blockquote:pl-6 prose-hr:border-border prose-strong:text-foreground prose-em:text-muted-foreground">
+          <div className="prose prose-sm sm:prose lg:prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-a:text-primary hover:prose-a:text-primary/80 prose-a:underline prose-a:decoration-primary/40 hover:prose-a:decoration-primary prose-code:bg-muted prose-code:text-foreground prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:p-4 prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-blockquote:pl-6 prose-hr:border-border prose-strong:text-foreground prose-em:text-muted-foreground">
             <div
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(post.content),
+                __html: post.content,
               }}
             />
           </div>

@@ -1,9 +1,8 @@
 'use client';
 'use no memo';
 
-import DOMPurify from 'isomorphic-dompurify';
 import { useState, useEffect, useCallback, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { savePostAction, deletePostAction } from '@/app/admin/blog/actions';
@@ -74,9 +73,9 @@ export function PostEditor({ post }: PostEditorProps) {
   const isNew = !post;
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<PostForm>({
@@ -97,8 +96,10 @@ export function PostEditor({ post }: PostEditorProps) {
     },
   });
 
-  const content = watch('content');
-  const titleValue = watch('title');
+  const content = useWatch({ control, name: 'content' }) ?? '';
+  const titleValue = useWatch({ control, name: 'title' }) ?? '';
+  const published = useWatch({ control, name: 'published' }) ?? false;
+  const featured = useWatch({ control, name: 'featured' }) ?? false;
 
   // Auto-generate slug from title (only for new posts)
   useEffect(() => {
@@ -310,7 +311,7 @@ export function PostEditor({ post }: PostEditorProps) {
         <div className="px-5 py-5 flex flex-wrap gap-8">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('published')} />
-            <ToggleVisual checked={watch('published')} />
+            <ToggleVisual checked={published} />
             <div>
               <p className="text-sm font-medium text-foreground">Published</p>
               <p className="text-xs text-muted-foreground">Visible on the public blog</p>
@@ -318,7 +319,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </label>
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('featured')} />
-            <ToggleVisual checked={watch('featured')} color="amber" />
+            <ToggleVisual checked={featured} color="amber" />
             <div>
               <p className="text-sm font-medium text-foreground">Featured</p>
               <p className="text-xs text-muted-foreground">Pinned to the home page</p>
@@ -334,7 +335,10 @@ export function PostEditor({ post }: PostEditorProps) {
           <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Markdown source</span>
           </div>
-          <div className="flex-1 p-3">
+          <div className="flex-1 p-3 space-y-3">
+            <p className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+              Plain URLs like https://example.com and www.example.com render as clickable links that open in a new tab. Use [label](url) for custom link text, or paste HTML links like &lt;a href=&quot;https://example.com&quot;&gt;Example&lt;/a&gt;.
+            </p>
             <textarea
               id="content"
               {...register('content')}
@@ -356,7 +360,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </div>
           <div
             className="flex-1 p-5 overflow-auto min-h-[420px] prose prose-sm dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: preview ? DOMPurify.sanitize(preview) : '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
+            dangerouslySetInnerHTML={{ __html: preview || '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
           />
         </div>
       </div>

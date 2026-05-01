@@ -35,11 +35,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     // Explicit domains (simple allow-list) plus remotePatterns (granular). Either works; keeping both for clarity.
-    domains: ['images.unsplash.com', 'placehold.co'],
+    domains: ['images.unsplash.com', 'placehold.co', 'hfazxdhdnozlgnxfowpy.supabase.co'],
     remotePatterns: [
       { protocol: 'https', hostname: 'placehold.co', port: '', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
       { protocol: 'https', hostname: 'djfeucuujeenuvappydk.supabase.co', port: '', pathname: '/storage/v1/object/public/**' },
+      { protocol: 'https', hostname: 'hfazxdhdnozlgnxfowpy.supabase.co', port: '', pathname: '/storage/v1/object/public/**' },
     ],
   },
   webpack: (config, { isServer }) => {

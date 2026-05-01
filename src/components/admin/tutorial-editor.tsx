@@ -1,10 +1,8 @@
 'use client';
 
-import DOMPurify from 'isomorphic-dompurify';
-
 import { useState, useEffect, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { saveTutorialAction, deleteTutorialAction } from '@/app/admin/tutorials/actions';
@@ -76,9 +74,9 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
   const isNew = !tutorial;
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<PostForm>({
@@ -99,8 +97,10 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
     },
   });
 
-  const content = watch('content');
-  const titleValue = watch('title');
+  const content = useWatch({ control, name: 'content' }) ?? '';
+  const titleValue = useWatch({ control, name: 'title' }) ?? '';
+  const published = useWatch({ control, name: 'published' }) ?? false;
+  const featured = useWatch({ control, name: 'featured' }) ?? false;
 
   // Auto-generate slug from title (only for new posts)
   useEffect(() => {
@@ -312,7 +312,7 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
         <div className="px-5 py-5 flex flex-wrap gap-8">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('published')} />
-            <ToggleVisual checked={watch('published')} />
+            <ToggleVisual checked={published} />
             <div>
               <p className="text-sm font-medium text-foreground">Published</p>
               <p className="text-xs text-muted-foreground">Visible on the public blog</p>
@@ -320,7 +320,7 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
           </label>
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('featured')} />
-            <ToggleVisual checked={watch('featured')} color="amber" />
+            <ToggleVisual checked={featured} color="amber" />
             <div>
               <p className="text-sm font-medium text-foreground">Featured</p>
               <p className="text-xs text-muted-foreground">Pinned to the home page</p>
@@ -358,7 +358,7 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
           </div>
           <div
             className="flex-1 p-5 overflow-auto min-h-[420px] prose prose-sm dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: preview ? DOMPurify.sanitize(preview) : '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
+            dangerouslySetInnerHTML={{ __html: preview || '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
           />
         </div>
       </div>
