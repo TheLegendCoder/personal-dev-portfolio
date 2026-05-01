@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:public": "playwright test tests/end-to-end-tests/public --project=chromium",
     "test:e2e:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit",
     "seed": "node scripts/seed-blog-posts.mjs"
