@@ -12,8 +12,18 @@ vi.mock('@/lib/supabase/server', () => ({
 import {
   getProjects,
   getFeaturedProjects,
+  getProjectsByCategory,
+  getAllProjectsAdmin,
+  getProjectByIdAdmin,
+  upsertProject,
+  updateProjectFields,
+  deleteProject,
 } from '@/lib/projects';
-import { createAnonClient } from '@/lib/supabase/server';
+import { createAnonClient, createServiceClient } from '@/lib/supabase/server';
+
+function makeMockServiceClient(from: (table: string) => unknown): ReturnType<typeof createServiceClient> {
+  return { from } as unknown as ReturnType<typeof createServiceClient>;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -148,5 +158,220 @@ describe('getFeaturedProjects()', () => {
     await getFeaturedProjects();
     expect(builder.eq).toHaveBeenCalledWith('published', true);
     expect(builder.eq).toHaveBeenCalledWith('featured', true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getProjectsByCategory()
+// ---------------------------------------------------------------------------
+
+describe('getProjectsByCategory()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns an empty array on Supabase error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const builder = makeQueryBuilder({ data: null, error: { message: 'db error', code: '500' } });
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
+
+    const result = await getProjectsByCategory('web');
+    expect(result).toEqual([]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('returns an empty array when data is null with no error', async () => {
+    const builder = makeQueryBuilder({ data: null, error: null });
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
+
+    const result = await getProjectsByCategory('web');
+    expect(result).toEqual([]);
+  });
+
+  it('returns all rows for the given category', async () => {
+    const rows = [makeProjectRow({ id: 'w1', category: 'web' }), makeProjectRow({ id: 'w2', category: 'web' })];
+    const builder = makeQueryBuilder({ data: rows, error: null });
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
+
+    const result = await getProjectsByCategory('web');
+    expect(result).toHaveLength(2);
+  });
+
+  it('filters by the supplied category value', async () => {
+    const builder = makeQueryBuilder({ data: [], error: null });
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
+
+    await getProjectsByCategory('mobile');
+    expect(builder.eq).toHaveBeenCalledWith('category', 'mobile');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getAllProjectsAdmin()
+// ---------------------------------------------------------------------------
+
+describe('getAllProjectsAdmin()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns all rows on success', async () => {
+    const rows = [makeProjectRow({ id: 'a1' }), makeProjectRow({ id: 'a2' })];
+    const builder = makeQueryBuilder({ data: rows, error: null });
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await getAllProjectsAdmin();
+    expect(result).toHaveLength(2);
+  });
+
+  it('returns empty array when data is null and no error', async () => {
+    const builder = makeQueryBuilder({ data: null, error: null });
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await getAllProjectsAdmin();
+    expect(result).toEqual([]);
+  });
+
+  it('throws when Supabase returns an error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const builder = makeQueryBuilder({ data: null, error: { message: 'db failure', code: '500', details: '' } });
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    await expect(getAllProjectsAdmin()).rejects.toThrow('[getAllProjectsAdmin]');
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getProjectByIdAdmin()
+// ---------------------------------------------------------------------------
+
+describe('getProjectByIdAdmin()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns the project on success', async () => {
+    const row = makeProjectRow({ id: 'proj-abc' });
+    const builder = makeQueryBuilder({ data: row, error: null });
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await getProjectByIdAdmin('proj-abc');
+    expect(result).not.toBeNull();
+    expect(result!.id).toBe('proj-abc');
+  });
+
+  it('returns null when Supabase reports an error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const builder = makeQueryBuilder({ data: null, error: { message: 'not found', code: '404', details: '' } });
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await getProjectByIdAdmin('missing');
+    expect(result).toBeNull();
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// upsertProject()
+// ---------------------------------------------------------------------------
+
+describe('upsertProject()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns { success: true, data } on success', async () => {
+    const returnedRow = makeProjectRow({ id: 'new-id' });
+    const builder = {
+      upsert: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: returnedRow, error: null }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await upsertProject({ title: 'New Project' } as Parameters<typeof upsertProject>[0]);
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual(returnedRow);
+  });
+
+  it('returns { success: false, error } on Supabase error', async () => {
+    const builder = {
+      upsert: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: { message: 'upsert failed' } }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await upsertProject({ title: 'Bad' } as Parameters<typeof upsertProject>[0]);
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('upsert failed');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// updateProjectFields()
+// ---------------------------------------------------------------------------
+
+describe('updateProjectFields()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns { success: true } on success', async () => {
+    const builder = {
+      update: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await updateProjectFields('proj-id', { published: true });
+    expect(result).toEqual({ success: true });
+  });
+
+  it('returns { success: false, error } on Supabase error', async () => {
+    const builder = {
+      update: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockResolvedValue({ error: { message: 'update failed' } }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await updateProjectFields('bad-id', { published: false });
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('update failed');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// deleteProject()
+// ---------------------------------------------------------------------------
+
+describe('deleteProject()', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns { success: true } on success', async () => {
+    const builder = {
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await deleteProject('proj-id');
+    expect(result).toEqual({ success: true });
+  });
+
+  it('returns { success: false, error } on Supabase error', async () => {
+    const builder = {
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockResolvedValue({ error: { message: 'delete failed' } }),
+    };
+    vi.mocked(createServiceClient).mockReturnValue(makeMockServiceClient(() => builder));
+
+    const result = await deleteProject('bad-id');
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('delete failed');
   });
 });

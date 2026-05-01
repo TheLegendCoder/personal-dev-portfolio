@@ -238,5 +238,34 @@ describe('tutorial admin API', () => {
     expect(builder.delete).toHaveBeenCalled();
     expect(builder.eq).toHaveBeenCalledWith('slug', 'tutorial-1');
   });
-}
-);
+
+  it('upsertTutorial returns success false with error string when createServiceClient throws', async () => {
+    vi.mocked(createServiceClient).mockImplementation(() => {
+      throw new Error('client creation failed');
+    });
+
+    const result = await upsertTutorial({ slug: 'x' } as never);
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('client creation failed');
+  });
+
+  it('updateTutorialFields returns success false with error string when createServiceClient throws', async () => {
+    vi.mocked(createServiceClient).mockImplementation(() => {
+      throw new Error('client creation failed');
+    });
+
+    const result = await updateTutorialFields('tutorial-1', { title: 'X' } as never);
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('client creation failed');
+  });
+
+  it('deleteTutorial returns success false with error string when createServiceClient throws', async () => {
+    vi.mocked(createServiceClient).mockImplementation(() => {
+      throw new Error('client creation failed');
+    });
+
+    const result = await deleteTutorial('tutorial-1');
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('client creation failed');
+  });
+});
