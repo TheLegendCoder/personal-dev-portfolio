@@ -239,6 +239,11 @@ describe('blog detail page integration', () => {
     expect(html).toContain('#React');
     expect(html).toContain('#Testing');
     expect(html).toContain('First Post|https://portfolio.test/blog/first-post|blog');
+    // Breadcrumb navigation is rendered
+    expect(html).toContain('data-testid="breadcrumbs"');
+    expect(html).toContain('Blog &gt; First Post');
+    // BlogPosting structured-data script is injected
+    expect(html).toContain('"@type":"BlogPosting"');
   });
 
   it('calls notFound when the requested post is missing', async () => {

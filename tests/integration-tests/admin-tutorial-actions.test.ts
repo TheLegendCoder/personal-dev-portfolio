@@ -78,6 +78,7 @@ describe('admin tutorial actions integration', () => {
       published: false,
     });
     expectCommonTutorialRevalidations('testing-with-vitest');
+    expect(redirect).not.toHaveBeenCalled();
   });
 
   it('toggleTutorialFeaturedAction updates and revalidates', async () => {
@@ -90,6 +91,7 @@ describe('admin tutorial actions integration', () => {
       featured: true,
     });
     expectCommonTutorialRevalidations('testing-with-vitest');
+    expect(redirect).not.toHaveBeenCalled();
   });
 
   it('deleteTutorialAction deletes, revalidates, and redirects', async () => {

@@ -76,6 +76,7 @@ describe('admin project actions integration', () => {
       published: false,
     });
     expectCommonProjectRevalidations();
+    expect(redirect).not.toHaveBeenCalled();
   });
 
   it('toggleFeaturedAction updates and revalidates', async () => {
@@ -88,6 +89,7 @@ describe('admin project actions integration', () => {
       featured: true,
     });
     expectCommonProjectRevalidations();
+    expect(redirect).not.toHaveBeenCalled();
   });
 
   it('deleteProjectAction deletes, revalidates, and redirects', async () => {
