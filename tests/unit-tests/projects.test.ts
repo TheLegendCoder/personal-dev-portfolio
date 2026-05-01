@@ -50,7 +50,7 @@ function makeProjectRow(overrides: Record<string, unknown> = {}) {
     id: 'proj-1',
     title: 'My Project',
     description: 'A cool project',
-    category: 'web' as const,
+    category: 'professional' as const,
     tags: ['react', 'typescript'],
     image: 'https://example.com/img.jpg',
     image_hint: 'screenshot',
@@ -175,7 +175,7 @@ describe('getProjectsByCategory()', () => {
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error', code: '500' } });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
-    const result = await getProjectsByCategory('web');
+    const result = await getProjectsByCategory('professional');
     expect(result).toEqual([]);
     expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
@@ -185,16 +185,19 @@ describe('getProjectsByCategory()', () => {
     const builder = makeQueryBuilder({ data: null, error: null });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
-    const result = await getProjectsByCategory('web');
+    const result = await getProjectsByCategory('professional');
     expect(result).toEqual([]);
   });
 
   it('returns all rows for the given category', async () => {
-    const rows = [makeProjectRow({ id: 'w1', category: 'web' }), makeProjectRow({ id: 'w2', category: 'web' })];
+    const rows = [
+      makeProjectRow({ id: 'w1', category: 'professional' }),
+      makeProjectRow({ id: 'w2', category: 'professional' }),
+    ];
     const builder = makeQueryBuilder({ data: rows, error: null });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
-    const result = await getProjectsByCategory('web');
+    const result = await getProjectsByCategory('professional');
     expect(result).toHaveLength(2);
   });
 
@@ -202,8 +205,8 @@ describe('getProjectsByCategory()', () => {
     const builder = makeQueryBuilder({ data: [], error: null });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
-    await getProjectsByCategory('mobile');
-    expect(builder.eq).toHaveBeenCalledWith('category', 'mobile');
+    await getProjectsByCategory('personal');
+    expect(builder.eq).toHaveBeenCalledWith('category', 'personal');
   });
 });
 
