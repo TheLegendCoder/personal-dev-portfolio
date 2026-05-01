@@ -18,7 +18,7 @@ test.describe('Home page', () => {
   });
 
   test('navigation bar is visible with key links', async ({ page }) => {
-    const nav = page.getByRole('navigation');
+    const nav = page.getByRole('banner').getByRole('navigation');
     await expect(nav).toBeVisible();
     await expect(nav.getByRole('link', { name: /blog/i })).toBeVisible();
     await expect(nav.getByRole('link', { name: /projects/i })).toBeVisible();

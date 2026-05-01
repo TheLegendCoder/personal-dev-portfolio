@@ -16,8 +16,9 @@ test.describe('Projects page', () => {
   });
 
   test('category filter tabs are visible', async ({ page }) => {
-    // ProjectFilters renders filter buttons
-    await expect(page.getByRole('link', { name: /all/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /show all projects/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /show professional projects/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /show personal projects/i })).toBeVisible();
   });
 
   test('displays project cards or an empty state', async ({ page }) => {

@@ -20,6 +20,8 @@ test.describe('About page', () => {
   });
 
   test('breadcrumb shows Home and About links', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /home/i })).toBeVisible();
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect(breadcrumb.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect(breadcrumb.getByText('About')).toBeVisible();
   });
 });

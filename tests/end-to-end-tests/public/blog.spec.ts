@@ -25,18 +25,23 @@ test.describe('Blog post page', () => {
   test('navigating to a post slug renders the post content', async ({ page }) => {
     await page.goto('/blog');
 
-    // Find the first post link and navigate to it
-    const firstPostLink = page.locator('a[href^="/blog/"]').first();
-    const count = await firstPostLink.count();
+    // Target a stable link within the first post card.
+    const firstCard = page.locator('article').first();
+    const readMoreLink = firstCard.getByRole('link', { name: 'Read More' });
+    const count = await readMoreLink.count();
 
     if (count === 0) {
       test.skip(); // No posts to navigate to
     }
 
-    const href = await firstPostLink.getAttribute('href');
-    await firstPostLink.click();
+    await expect(readMoreLink).toHaveAttribute('href', /^\/blog\/[^/]+$/);
 
-    await expect(page).toHaveURL(new RegExp(`/blog/${href?.split('/blog/')[1]}`));
+    await Promise.all([
+      page.waitForURL('**/blog/*', { timeout: 15_000 }),
+      readMoreLink.click(),
+    ]);
+
+    await expect(page).toHaveURL(/\/blog\/[^/]+$/);
     // Post page should have an article heading
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
