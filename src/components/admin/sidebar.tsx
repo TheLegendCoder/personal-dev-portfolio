@@ -43,7 +43,13 @@ export function AdminSidebar() {
     <>
       {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
       <aside className="hidden md:flex w-56 min-h-screen bg-card border-r border-border flex-col shrink-0 sticky top-0 h-screen overflow-y-auto">
-        <SidebarContents isPostsActive={isPostsActive} isProjectsActive={isProjectsActive} isTutorialsActive={isTutorialsActive} />
+        <SidebarContents
+          isPostsActive={isPostsActive}
+          isProjectsActive={isProjectsActive}
+          isTutorialsActive={isTutorialsActive}
+          isSigningOut={isSigningOut}
+          handleSignOut={handleSignOut}
+        />
       </aside>
 
       {/* ── Mobile top bar ───────────────────────────────────────────────── */}
@@ -113,10 +119,14 @@ function SidebarContents({
   isPostsActive,
   isProjectsActive,
   isTutorialsActive,
+  isSigningOut,
+  handleSignOut,
 }: {
   isPostsActive: boolean;
   isProjectsActive: boolean;
   isTutorialsActive: boolean;
+  isSigningOut: boolean;
+  handleSignOut: () => Promise<void>;
 }) {
   return (
     <>

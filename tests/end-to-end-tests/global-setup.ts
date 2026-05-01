@@ -34,11 +34,17 @@ setup('authenticate as admin', async ({ page }) => {
 
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: /sign in/i }).click();
+  await Promise.all([
+    page.waitForURL('**/admin/blog', {
+      timeout: 30_000,
+      waitUntil: 'domcontentloaded',
+    }),
+    page.getByRole('button', { name: /sign in/i }).click(),
+  ]);
 
-  // After successful login, middleware redirects to /admin/blog
-  await page.waitForURL('**/admin/blog', { timeout: 15_000 });
+  // Assert a stable admin landing UI before saving state.
   await expect(page).toHaveURL(/\/admin\/blog/);
+  await expect(page.getByRole('heading', { name: /blog posts/i })).toBeVisible();
 
   // Save the authenticated session state
   await page.context().storageState({ path: authFile });
