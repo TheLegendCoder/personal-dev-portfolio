@@ -12,8 +12,11 @@ describe('markdown utilities', () => {
   it('markdownToHtml sanitizes malicious links via sanitizeUrl plugin', async () => {
     const html = await markdownToHtml('[click me](javascript:alert(1))');
 
-    expect(html).toContain('<a>click me</a>');
+    // rehypeSanitizeUrls rewrites dangerous schemes to about:blank rather than
+    // stripping the href entirely, so the link is rendered but points nowhere harmful.
+    expect(html).toContain('click me');
     expect(html).not.toContain('javascript:');
+    expect(html).toContain('about:blank');
   });
 
   it('markdownToHtmlSync escapes raw html characters', () => {

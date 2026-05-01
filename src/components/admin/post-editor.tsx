@@ -1,7 +1,6 @@
 'use client';
 'use no memo';
 
-import DOMPurify from 'isomorphic-dompurify';
 import { useState, useEffect, useCallback, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -356,7 +355,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </div>
           <div
             className="flex-1 p-5 overflow-auto min-h-[420px] prose prose-sm dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: preview ? DOMPurify.sanitize(preview) : '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
+            dangerouslySetInnerHTML={{ __html: preview || '<p class="text-muted-foreground text-sm italic">Start typing to see a live preview…</p>' }}
           />
         </div>
       </div>
