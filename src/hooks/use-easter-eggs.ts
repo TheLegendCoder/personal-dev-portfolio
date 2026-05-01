@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { triggerMilestoneCelebration, triggerCelebrationAt } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { isKonamiKeyMatch } from '@/lib/easter-egg-utils';
 
 const KONAMI_CODE = [
   'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
@@ -42,7 +43,7 @@ export function useEasterEggs({ onDevOverlay }: UseEasterEggsProps) {
       // Allow lowercase b/a even if caps lock is on, but match exact arrows
       const expectedKey = KONAMI_CODE[konamiIndexRef.current];
 
-      if (currentKey.toLowerCase() === expectedKey.toLowerCase() || currentKey === expectedKey) {
+      if (isKonamiKeyMatch(currentKey, expectedKey)) {
         konamiIndexRef.current++;
 
         // Dispatch custom event for visual hints (e.g., logo flashing)
