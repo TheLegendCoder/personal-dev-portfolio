@@ -333,7 +333,10 @@ export function PostEditor({ post }: PostEditorProps) {
           <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Markdown source</span>
           </div>
-          <div className="flex-1 p-3">
+          <div className="flex-1 p-3 space-y-3">
+            <p className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+              Plain URLs like https://example.com and www.example.com render as clickable links. Use [label](url) when you want custom link text.
+            </p>
             <textarea
               id="content"
               {...register('content')}

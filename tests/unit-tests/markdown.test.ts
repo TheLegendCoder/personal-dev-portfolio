@@ -9,6 +9,18 @@ describe('markdown utilities', () => {
     expect(html).toContain('<strong>bold</strong>');
   });
 
+  it('markdownToHtml autolinks plain https URLs', async () => {
+    const html = await markdownToHtml('Visit https://example.com for more');
+
+    expect(html).toContain('<a href="https://example.com">https://example.com</a>');
+  });
+
+  it('markdownToHtml autolinks plain www URLs', async () => {
+    const html = await markdownToHtml('Visit www.example.com for more');
+
+    expect(html).toContain('<a href="https://www.example.com">www.example.com</a>');
+  });
+
   it('markdownToHtml sanitizes malicious links via sanitizeUrl plugin', async () => {
     const html = await markdownToHtml('[click me](javascript:alert(1))');
 

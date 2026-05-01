@@ -5,13 +5,37 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 import { sanitizeUrl } from './url-utils';
 
+type HastProperties = {
+  href?: unknown;
+  src?: unknown;
+};
+
+type HastNode = {
+  type?: string;
+  tagName?: string;
+  value?: string;
+  properties?: HastProperties;
+  children?: HastNode[];
+};
+
 // Simple rehype plugin to sanitize URLs in attributes
 function rehypeSanitizeUrls() {
-  return (tree: any) => {
-    const walk = (node: any) => {
+  return (tree: HastNode) => {
+    const walk = (node: HastNode) => {
       if (node.properties) {
         if (typeof node.properties.href === 'string') {
-          node.properties.href = sanitizeUrl(node.properties.href);
+          const href = node.properties.href;
+          if (
+            node.tagName === 'a' &&
+            href.startsWith('http://www.') &&
+            Array.isArray(node.children) &&
+            node.children.length === 1 &&
+            node.children[0]?.type === 'text' &&
+            node.children[0]?.value === href.replace(/^http:\/\//, '')
+          ) {
+            node.properties.href = href.replace(/^http:\/\//, 'https://');
+          }
+          node.properties.href = sanitizeUrl(href);
         }
         if (typeof node.properties.src === 'string') {
           node.properties.src = sanitizeUrl(node.properties.src);
