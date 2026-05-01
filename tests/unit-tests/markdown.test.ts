@@ -12,13 +12,30 @@ describe('markdown utilities', () => {
   it('markdownToHtml autolinks plain https URLs', async () => {
     const html = await markdownToHtml('Visit https://example.com for more');
 
-    expect(html).toContain('<a href="https://example.com">https://example.com</a>');
+    expect(html).toContain('<a href="https://example.com"');
+    expect(html).toContain('>https://example.com</a>');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
   });
 
   it('markdownToHtml autolinks plain www URLs', async () => {
     const html = await markdownToHtml('Visit www.example.com for more');
 
-    expect(html).toContain('<a href="https://www.example.com">www.example.com</a>');
+    expect(html).toContain('<a href="https://www.example.com"');
+    expect(html).toContain('>www.example.com</a>');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
+  });
+
+  it('markdownToHtml renders raw HTML anchor snippets as clickable links', async () => {
+    const html = await markdownToHtml(
+      '<a href="https://github.com/TheLegendCoder/personal-dev-portfolio" target="_blank" rel="noopener noreferrer">project </a>'
+    );
+
+    expect(html).toContain('<a href="https://github.com/TheLegendCoder/personal-dev-portfolio"');
+    expect(html).toContain('>project</a>');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
   });
 
   it('markdownToHtml sanitizes malicious links via sanitizeUrl plugin', async () => {

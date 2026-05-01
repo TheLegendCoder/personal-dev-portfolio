@@ -337,7 +337,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </div>
           <div className="flex-1 p-3 space-y-3">
             <p className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-              Plain URLs like https://example.com and www.example.com render as clickable links that open in a new tab. Use [label](url) for custom link text.
+              Plain URLs like https://example.com and www.example.com render as clickable links that open in a new tab. Use [label](url) for custom link text, or paste HTML links like &lt;a href=&quot;https://example.com&quot;&gt;Example&lt;/a&gt;.
             </p>
             <textarea
               id="content"

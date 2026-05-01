@@ -20,6 +20,35 @@ type HastNode = {
   children?: HastNode[];
 };
 
+function escapeMarkdownLinkText(text: string): string {
+  return text.replace(/[\\[\]]/g, '\\$&');
+}
+
+function escapeMarkdownLinkDestination(url: string): string {
+  return url.replace(/[()]/g, '\\$&');
+}
+
+// Convert raw HTML anchors into markdown links so pasted anchor snippets are supported.
+function normalizeHtmlAnchorsToMarkdown(markdown: string): string {
+  return markdown.replace(/<a\s+([^>]*?)>([\s\S]*?)<\/a>/gi, (fullMatch, rawAttrs: string, rawText: string) => {
+    const hrefMatch = rawAttrs.match(/\bhref\s*=\s*(["'])(.*?)\1/i);
+    const href = hrefMatch?.[2]?.trim();
+
+    if (!href) {
+      return fullMatch;
+    }
+
+    const plainText = rawText.replace(/<[^>]+>/g, '').trim();
+    if (!plainText) {
+      return fullMatch;
+    }
+
+    const text = escapeMarkdownLinkText(plainText);
+    const destination = escapeMarkdownLinkDestination(href);
+    return `[${text}](${destination})`;
+  });
+}
+
 // Simple rehype plugin to open external links in a new tab safely
 function rehypeExternalLinks() {
   return (tree: HastNode) => {
@@ -92,7 +121,8 @@ const processor = remark()
   .use(rehypeStringify);
 
 export async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await processor.process(markdown);
+  const normalizedMarkdown = normalizeHtmlAnchorsToMarkdown(markdown);
+  const result = await processor.process(normalizedMarkdown);
   return result.toString();
 }
 
