@@ -31,6 +31,10 @@ function makeQueryBuilder(result: { data: unknown; error: unknown }) {
   return builder;
 }
 
+function makeMockAnonClient(from: (table: string) => unknown): ReturnType<typeof createAnonClient> {
+  return { from } as unknown as ReturnType<typeof createAnonClient>;
+}
+
 function makeProjectRow(overrides: Record<string, unknown> = {}) {
   return {
     id: 'proj-1',
@@ -61,16 +65,19 @@ describe('getProjects()', () => {
   });
 
   it('returns an empty array when Supabase reports an error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error', code: '500' } });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getProjects();
     expect(result).toEqual([]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it('returns an empty array when Supabase returns null data', async () => {
     const builder = makeQueryBuilder({ data: null, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getProjects();
     expect(result).toEqual([]);
@@ -79,7 +86,7 @@ describe('getProjects()', () => {
   it('returns all rows on success', async () => {
     const rows = [makeProjectRow({ id: 'p1' }), makeProjectRow({ id: 'p2' })];
     const builder = makeQueryBuilder({ data: rows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getProjects();
     expect(result).toHaveLength(2);
@@ -89,7 +96,7 @@ describe('getProjects()', () => {
 
   it('queries with published=true filter', async () => {
     const builder = makeQueryBuilder({ data: [], error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     await getProjects();
     expect(builder.eq).toHaveBeenCalledWith('published', true);
@@ -106,16 +113,19 @@ describe('getFeaturedProjects()', () => {
   });
 
   it('returns an empty array when Supabase reports an error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error', code: '500' } });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
     expect(result).toEqual([]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it('returns an empty array when Supabase returns null data', async () => {
     const builder = makeQueryBuilder({ data: null, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
     expect(result).toEqual([]);
@@ -124,7 +134,7 @@ describe('getFeaturedProjects()', () => {
   it('returns only featured rows on success', async () => {
     const rows = [makeProjectRow({ id: 'f1', featured: true })];
     const builder = makeQueryBuilder({ data: rows, error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
     expect(result).toHaveLength(1);
@@ -133,7 +143,7 @@ describe('getFeaturedProjects()', () => {
 
   it('queries with both published=true and featured=true filters', async () => {
     const builder = makeQueryBuilder({ data: [], error: null });
-    vi.mocked(createAnonClient).mockReturnValue({ from: () => builder } as any);
+    vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     await getFeaturedProjects();
     expect(builder.eq).toHaveBeenCalledWith('published', true);
