@@ -8,6 +8,8 @@ import { sanitizeUrl } from './url-utils';
 type HastProperties = {
   href?: unknown;
   src?: unknown;
+  target?: string;
+  rel?: string;
 };
 
 type HastNode = {
@@ -17,6 +19,27 @@ type HastNode = {
   properties?: HastProperties;
   children?: HastNode[];
 };
+
+// Simple rehype plugin to open external links in a new tab safely
+function rehypeExternalLinks() {
+  return (tree: HastNode) => {
+    const walk = (node: HastNode) => {
+      if (
+        node.tagName === 'a' &&
+        node.properties &&
+        typeof node.properties.href === 'string' &&
+        /^https?:\/\//.test(node.properties.href)
+      ) {
+        node.properties.target = '_blank';
+        node.properties.rel = 'noopener noreferrer';
+      }
+      if (node.children) {
+        node.children.forEach(walk);
+      }
+    };
+    walk(tree);
+  };
+}
 
 // Simple rehype plugin to sanitize URLs in attributes
 function rehypeSanitizeUrls() {
@@ -35,7 +58,7 @@ function rehypeSanitizeUrls() {
           ) {
             node.properties.href = href.replace(/^http:\/\//, 'https://');
           }
-          node.properties.href = sanitizeUrl(href);
+          node.properties.href = sanitizeUrl(node.properties.href as string);
         }
         if (typeof node.properties.src === 'string') {
           node.properties.src = sanitizeUrl(node.properties.src);
@@ -55,6 +78,7 @@ const processor = remark()
   .use(remarkGfm)
   .use(remarkRehype)
   .use(rehypeSanitizeUrls)
+  .use(rehypeExternalLinks)
   .use(rehypeHighlight, {
     detect: true,
     ignoreMissing: true,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { saveProjectAction, deleteProjectAction } from '@/app/admin/projects/actions';
@@ -54,10 +54,9 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
   const isNew = !project;
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
-    setValue,
     formState: { errors },
   } = useForm<ProjectForm>({
     resolver: zodResolver(projectSchema),
@@ -104,6 +103,9 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
     if (!project) return;
     startTransition(() => deleteProjectAction(project.id));
   };
+
+  const published = useWatch({ control, name: 'published' }) ?? false;
+  const featured = useWatch({ control, name: 'featured' }) ?? false;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -285,7 +287,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
           <div className="md:col-span-2 flex flex-wrap gap-8 pt-1">
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <input type="checkbox" className="sr-only" {...register('published')} />
-              <ToggleVisual checked={watch('published')} />
+              <ToggleVisual checked={published} />
               <div>
                 <p className="text-sm font-medium text-foreground">Published</p>
                 <p className="text-xs text-muted-foreground">Visible to the public</p>
@@ -293,7 +295,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
             </label>
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <input type="checkbox" className="sr-only" {...register('featured')} />
-              <ToggleVisual checked={watch('featured')} color="amber" />
+              <ToggleVisual checked={featured} color="amber" />
               <div>
                 <p className="text-sm font-medium text-foreground">Featured</p>
                 <p className="text-xs text-muted-foreground">Pinned to the home page</p>

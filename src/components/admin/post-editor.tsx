@@ -2,7 +2,7 @@
 'use no memo';
 
 import { useState, useEffect, useCallback, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { savePostAction, deletePostAction } from '@/app/admin/blog/actions';
@@ -73,9 +73,9 @@ export function PostEditor({ post }: PostEditorProps) {
   const isNew = !post;
 
   const {
+    control,
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<PostForm>({
@@ -96,8 +96,10 @@ export function PostEditor({ post }: PostEditorProps) {
     },
   });
 
-  const content = watch('content');
-  const titleValue = watch('title');
+  const content = useWatch({ control, name: 'content' }) ?? '';
+  const titleValue = useWatch({ control, name: 'title' }) ?? '';
+  const published = useWatch({ control, name: 'published' }) ?? false;
+  const featured = useWatch({ control, name: 'featured' }) ?? false;
 
   // Auto-generate slug from title (only for new posts)
   useEffect(() => {
@@ -309,7 +311,7 @@ export function PostEditor({ post }: PostEditorProps) {
         <div className="px-5 py-5 flex flex-wrap gap-8">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('published')} />
-            <ToggleVisual checked={watch('published')} />
+            <ToggleVisual checked={published} />
             <div>
               <p className="text-sm font-medium text-foreground">Published</p>
               <p className="text-xs text-muted-foreground">Visible on the public blog</p>
@@ -317,7 +319,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </label>
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input type="checkbox" className="sr-only" {...register('featured')} />
-            <ToggleVisual checked={watch('featured')} color="amber" />
+            <ToggleVisual checked={featured} color="amber" />
             <div>
               <p className="text-sm font-medium text-foreground">Featured</p>
               <p className="text-xs text-muted-foreground">Pinned to the home page</p>
@@ -335,7 +337,7 @@ export function PostEditor({ post }: PostEditorProps) {
           </div>
           <div className="flex-1 p-3 space-y-3">
             <p className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-              Plain URLs like https://example.com and www.example.com render as clickable links. Use [label](url) when you want custom link text.
+              Plain URLs like https://example.com and www.example.com render as clickable links that open in a new tab. Use [label](url) for custom link text.
             </p>
             <textarea
               id="content"
