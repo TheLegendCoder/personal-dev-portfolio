@@ -1,8 +1,19 @@
 'use server';
 
-import { markdownToHtml } from '@/lib/markdown';
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
+
+type MarkdownToHtml = (markdown: string) => Promise<string>;
+
+let markdownToHtmlFn: MarkdownToHtml | null = null;
+
+async function renderMarkdown(markdown: string): Promise<string> {
+  if (!markdownToHtmlFn) {
+    const markdownModule = await import('@/lib/markdown');
+    markdownToHtmlFn = markdownModule.markdownToHtml;
+  }
+  return markdownToHtmlFn(markdown);
+}
 
 interface BlogPostBase {
   slug: string;
@@ -69,7 +80,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
     if (error || !data) return null;
 
-    const htmlContent = await markdownToHtml(data.content);
+    const htmlContent = await renderMarkdown(data.content);
 
     return {
       slug: data.slug,
