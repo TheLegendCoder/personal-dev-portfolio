@@ -3,8 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
-  return NextResponse.redirect(new URL('/admin/login', process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:9003'), {
-    status: 302,
-  });
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }
