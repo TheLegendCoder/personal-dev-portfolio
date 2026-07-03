@@ -34,8 +34,8 @@ export function Footer() {
   const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [copyrightSymbol, setCopyrightSymbol] = useState("©");
 
-  // Never render the public footer inside the admin area
-  if (pathname.startsWith('/admin')) return null;
+  // Never render the public footer inside the admin area or the desktop shell
+  if (pathname.startsWith('/admin') || pathname.startsWith('/desktop')) return null;
 
   const handleCopyrightClick = () => {
     clickCountRef.current += 1;

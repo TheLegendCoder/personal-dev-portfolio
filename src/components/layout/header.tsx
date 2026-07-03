@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, Monitor, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn, triggerCelebrationFrom } from "@/lib/utils";
 import { gsap, ScrollTrigger, EASE } from "@/lib/gsap";
 
@@ -112,8 +113,8 @@ export function Navbar() {
     }
   };
 
-  // Never render the public navbar inside the admin area
-  if (pathname.startsWith('/admin')) return null;
+  // Never render the public navbar inside the admin area or the desktop shell
+  if (pathname.startsWith('/admin') || pathname.startsWith('/desktop')) return null;
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
@@ -155,6 +156,21 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
+            <ThemeToggle source="navbar" className="rounded-full" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:inline-flex rounded-full"
+              asChild
+            >
+              <Link
+                href="/desktop"
+                aria-label="Switch to desktop view"
+                title="Desktop view"
+              >
+                <Monitor className="h-5 w-5" />
+              </Link>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -188,6 +204,12 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              <div className="flex items-center justify-between px-4 py-1">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Theme
+                </span>
+                <ThemeToggle source="navbar" className="rounded-full" />
+              </div>
             </div>
           </div>
         )}

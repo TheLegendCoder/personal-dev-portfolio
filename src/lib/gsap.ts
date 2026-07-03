@@ -5,10 +5,13 @@
  */
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// 'gsap/all' rather than 'gsap/Draggable': the plugin's type file is named
+// draggable.d.ts, which collides with the import casing on Windows (TS1149)
+import { Draggable } from 'gsap/all';
 
 // Register plugins once — safe to call multiple times
 if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, Draggable);
 }
 
 // ─── Default easing (spec: power3.out) ───────────────────────────────────────
@@ -98,4 +101,4 @@ export function magneticHover(element: HTMLElement, strength = 0.35) {
   };
 }
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, Draggable };

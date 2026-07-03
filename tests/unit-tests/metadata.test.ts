@@ -46,7 +46,9 @@ describe('seo metadata helpers', () => {
       }),
     );
 
-    expect(metadata.openGraph?.images?.[0]).toEqual(
+    const ogImages = metadata.openGraph?.images;
+    const firstImage = Array.isArray(ogImages) ? ogImages[0] : ogImages;
+    expect(firstImage).toEqual(
       expect.objectContaining({
         url: 'https://example.com/og.jpg',
         alt: 'Deep Dive OG image',
