@@ -105,7 +105,11 @@ test.describe('Desktop mode', () => {
 
   test('taskbar exit button returns to the regular site', async ({ page }) => {
     await page.goto('/desktop');
-    await page.getByRole('button', { name: /exit desktop mode/i }).click();
+    // Dispatch a real DOM click directly — the Next.js dev-mode toolbar
+    // portal can sit on top of the taskbar and steal a coordinate-based click.
+    await page
+      .getByRole('button', { name: /exit desktop mode/i })
+      .evaluate((el) => (el as HTMLElement).click());
     await expect(page).toHaveURL('/');
     await expect(page.getByRole('banner')).toBeVisible();
   });
