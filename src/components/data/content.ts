@@ -70,6 +70,26 @@ export const projects: Project[] = [
   },
 ];
 
+export interface SkillGroup {
+  group: string;
+  items: string[];
+}
+
+export interface ExperienceItem {
+  period: string;
+  role: string;
+  company: string;
+  description: string;
+}
+
+/**
+ * Real skills/experience content — intentionally empty until populated.
+ * The desktop-mode About panel only renders a Skills/Experience tab when
+ * the corresponding array here is non-empty.
+ */
+export const skills: SkillGroup[] = [];
+export const experience: ExperienceItem[] = [];
+
 export const aboutContent = {
   intro: "Hi, I’m Tsholofelo Ndawonde — a software engineer.",
   story: "This website serves as a platform where I document my learning process, share project insights, and reflect on my growth as a software engineer in the real world. My goal is to help others by sharing clear and practical lessons from my own journey.",
