@@ -227,34 +227,35 @@ export const WindowFrame = forwardRef<WindowFrameHandle, WindowFrameProps>(funct
         onDoubleClick={toggleMaximize}
         className="flex h-10 shrink-0 select-none items-center gap-2 border-b border-border bg-secondary/80 px-3 cursor-grab active:cursor-grabbing"
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={`Close ${app.title}`}
-          className="group flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <X className="h-2.5 w-2.5 text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-        </button>
-        <button
-          type="button"
-          onClick={onMinimize}
-          aria-label={`Minimize ${app.title}`}
-          className="group flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Minus className="h-2.5 w-2.5 text-amber-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-        </button>
-        <button
-          type="button"
-          onClick={toggleMaximize}
-          aria-label={maximized ? `Restore ${app.title}` : `Maximize ${app.title}`}
-          className="group flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Maximize2 className="h-2 w-2 text-emerald-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-        </button>
-        <span className="flex-1 truncate text-center text-sm font-medium text-foreground">
+        <span className="flex-1 truncate pl-1 text-sm font-medium text-foreground">
           {title}
         </span>
-        <span className="w-[54px]" aria-hidden="true" />
+        <div className="ml-auto flex items-center gap-1">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={`Close ${app.title}`}
+            className="group flex h-3 w-3 items-center justify-center rounded-full bg-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <X className="h-2 w-2 text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+          </button>
+          <button
+            type="button"
+            onClick={onMinimize}
+            aria-label={`Minimize ${app.title}`}
+            className="group flex h-3 w-3 items-center justify-center rounded-full bg-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Minus className="h-2 w-2 text-amber-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+          </button>
+          <button
+            type="button"
+            onClick={toggleMaximize}
+            aria-label={maximized ? `Restore ${app.title}` : `Maximize ${app.title}`}
+            className="group flex h-3 w-3 items-center justify-center rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Maximize2 className="h-1.5 w-1.5 text-emerald-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+          </button>
+        </div>
       </div>
 
       <div className="min-h-0 flex-1">

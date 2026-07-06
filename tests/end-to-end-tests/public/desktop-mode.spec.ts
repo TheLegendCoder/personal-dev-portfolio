@@ -3,7 +3,9 @@ import { test, expect, type Page } from '@playwright/test';
 async function skipBoot(page: Page) {
   const skip = page.getByRole('button', { name: 'skip →' });
   if (await skip.isVisible().catch(() => false)) {
-    await skip.click();
+    // The boot timer can auto-dismiss between the visibility check above and
+    // this click, detaching the button — that's success, not a failure.
+    await skip.click().catch(() => {});
   }
   await expect(page.getByText('initializing environment')).toHaveCount(0);
 }
