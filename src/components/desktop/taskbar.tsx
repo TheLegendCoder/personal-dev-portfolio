@@ -44,7 +44,10 @@ export function Taskbar({
   }, []);
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-50 flex h-12 items-center gap-2 border-t border-border bg-card/80 px-3 backdrop-blur-md">
+    <div
+      data-testid="desktop-taskbar"
+      className="absolute inset-x-0 bottom-0 z-50 flex h-12 items-center gap-2 border-t border-border bg-card/80 px-3 backdrop-blur-md"
+    >
       <button
         type="button"
         onClick={onToggleLauncher}

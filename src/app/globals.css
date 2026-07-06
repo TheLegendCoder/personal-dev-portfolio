@@ -156,9 +156,10 @@
     animation: slideIn 0.4s ease-out forwards;
   }
 
-  /* Desktop wallpaper — faint dot grid layered over the hero gradient */
+  /* Desktop wallpaper — faint dot grid + a soft primary-tinted glow over the hero gradient */
   .desktop-wallpaper {
     background:
+      radial-gradient(900px 520px at 82% -10%, hsl(var(--primary) / 0.12), transparent 60%),
       radial-gradient(hsl(var(--foreground) / 0.05) 1px, transparent 1px) 0 0 / 24px 24px,
       var(--gradient-hero);
   }
