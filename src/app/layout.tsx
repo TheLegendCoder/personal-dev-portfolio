@@ -77,8 +77,20 @@ export default function Layout({ children }: LayoutProps) {
   });
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Theme no-flash + embed detection — must run before first paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{
+var t=localStorage.getItem('theme');
+var d=t==='dark'||((t===null||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+var c=document.documentElement.classList;
+d?c.add('dark'):c.remove('dark');
+if(window.self!==window.top)c.add('embedded');
+}catch(e){}})();`,
+          }}
+        />
         {/* Google Analytics - Only render if valid GA ID is present */}
         {validGAId && (
           <>

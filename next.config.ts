@@ -5,8 +5,9 @@ import createMDX from '@next/mdx';
 const securityHeaders = [
   // Prevent MIME-type sniffing
   { key: 'X-Content-Type-Options', value: 'nosniff' },
-  // Block the site from being embedded in iframes (clickjacking)
-  { key: 'X-Frame-Options', value: 'DENY' },
+  // Block third-party sites from framing us (clickjacking), but allow the
+  // site to frame itself — desktop mode embeds its own pages in iframes.
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   // Limit referrer information sent on navigation
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   // Disable browser features that are not used by this site

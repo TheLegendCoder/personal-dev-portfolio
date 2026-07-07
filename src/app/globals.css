@@ -155,6 +155,25 @@
   .animate-slide-in {
     animation: slideIn 0.4s ease-out forwards;
   }
+
+  /* Desktop wallpaper — faint dot grid + a soft primary-tinted glow over the hero gradient */
+  .desktop-wallpaper {
+    background:
+      radial-gradient(900px 520px at 82% -10%, hsl(var(--primary) / 0.12), transparent 60%),
+      radial-gradient(hsl(var(--foreground) / 0.05) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--gradient-hero);
+  }
+
+  /* During-drag helper: iframes swallow pointer events mid-drag */
+  .desktop-window-dragging iframe {
+    pointer-events: none;
+  }
+}
+
+/* Embedded (inside a desktop-mode iframe): hide site chrome, no flash */
+html.embedded header,
+html.embedded footer {
+  display: none !important;
 }
 
 /* Highlight.js code block styling for blog posts */
@@ -240,5 +259,15 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
   }
 }

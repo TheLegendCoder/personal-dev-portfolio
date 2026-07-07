@@ -1,16 +1,23 @@
+'use server';
+
 // ---------------------------------------------------------------------------
 // Data-access layer for portfolio_projects (Supabase)
 // ---------------------------------------------------------------------------
 
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type {
-  PortfolioProject,
+  PortfolioProject as PortfolioProjectRow,
   DbProjectInsert,
   DbProjectUpdate,
-  ProjectCategory,
+  ProjectCategory as ProjectCategoryRow,
 } from '@/lib/supabase/types';
 
-export type { PortfolioProject, ProjectCategory };
+// Inline type-alias declarations, not a re-export statement (`export type {...}`) —
+// in a 'use server' file, Next.js scans named re-exports to build the server-action
+// manifest and chokes on ones that turn out to be type-only. Alias declarations are
+// stripped before that transform runs, matching the working pattern in blog.ts/tutorial.ts.
+export type PortfolioProject = PortfolioProjectRow;
+export type ProjectCategory = ProjectCategoryRow;
 
 // ---------------------------------------------------------------------------
 // Public reads (published only — uses anon client / RLS)
