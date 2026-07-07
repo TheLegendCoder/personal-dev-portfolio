@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react';
 import { useGSAP } from '@gsap/react';
-import { Maximize2, Minus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { gsap, EASE } from '@/lib/gsap';
 import type { DesktopApp } from './apps';
@@ -230,31 +229,25 @@ export const WindowFrame = forwardRef<WindowFrameHandle, WindowFrameProps>(funct
         <span className="flex-1 truncate pl-1 text-sm font-medium text-foreground">
           {title}
         </span>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-0.5">
           <button
             type="button"
             onClick={onClose}
             aria-label={`Close ${app.title}`}
-            className="group flex h-3 w-3 items-center justify-center rounded-full bg-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <X className="h-2 w-2 text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-          </button>
+            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-destructive transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
           <button
             type="button"
             onClick={onMinimize}
             aria-label={`Minimize ${app.title}`}
-            className="group flex h-3 w-3 items-center justify-center rounded-full bg-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Minus className="h-2 w-2 text-amber-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-          </button>
+            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-amber-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
           <button
             type="button"
             onClick={toggleMaximize}
             aria-label={maximized ? `Restore ${app.title}` : `Maximize ${app.title}`}
-            className="group flex h-3 w-3 items-center justify-center rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Maximize2 className="h-1.5 w-1.5 text-emerald-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-          </button>
+            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-emerald-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
         </div>
       </div>
 

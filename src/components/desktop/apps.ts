@@ -1,6 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
 import {
-  Home,
   User,
   FolderKanban,
   PenSquare,
@@ -23,7 +22,7 @@ export interface DesktopApp {
   id: string;
   title: string;
   icon: LucideIcon;
-  href?: string; // iframe src for content apps (currently only Home)
+  href?: string; // iframe src for content apps
   component?: DesktopComponent; // native window body
   /** The real route this app represents, for the mobile fallback card and the launcher. */
   pageHref: string;
@@ -34,15 +33,6 @@ export interface DesktopApp {
 }
 
 export const desktopApps: DesktopApp[] = [
-  {
-    id: 'home',
-    title: 'Home',
-    icon: Home,
-    href: '/',
-    pageHref: '/',
-    defaultSize: { w: 960, h: 640 },
-    tint: 'primary',
-  },
   {
     id: 'about',
     title: 'About',
