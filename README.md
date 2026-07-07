@@ -31,7 +31,7 @@ Personal portfolio website built with Next.js 15+, TypeScript, Tailwind CSS, and
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/TheLegendCoder/personal-dev-portfolio.git
+git clone https://github.com/tsholofelondawonde/personal-dev-portfolio.git
 cd personal-dev-portfolio
 ```
 
@@ -211,7 +211,7 @@ Personal portfolio - all rights reserved.
 
 ## Contact
 
-- **GitHub**: [@TheLegendCoder](https://github.com/tsholofelondawonde)
+- **GitHub**: [@tsholofelondawonde](https://github.com/tsholofelondawonde)
 - **LinkedIn**: [Tsholofelo Ndawonde](https://www.linkedin.com/in/ndawonde/)
 - **Twitter**: [@tsholofelo_dev](https://x.com/tsholo_dev)
 - **Website**: [tsholofelondawonde.co.za](https://tsholofelondawonde.co.za)
