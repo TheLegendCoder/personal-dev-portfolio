@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { gsap, ScrollTrigger, EASE } from '@/lib/gsap';
+import { gsap, ScrollTrigger, EASE, prefersReducedMotion } from '@/lib/gsap';
 import { protocolSteps } from '@/components/data/sections';
 
 export function Protocol() {
@@ -11,6 +11,13 @@ export function Protocol() {
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+
+    if (prefersReducedMotion()) {
+      if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
+      const cards = stackRef.current?.querySelectorAll('[data-protocol-card]');
+      if (cards) gsap.set(cards, { opacity: 1, y: 0 });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // Header fade-up

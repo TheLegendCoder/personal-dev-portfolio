@@ -77,12 +77,12 @@ const EmotionalHero = React.forwardRef<HTMLDivElement, EmotionalHeroProps>(
           {/* Main title with word reveal animation */}
           <div
             ref={textRef as React.Ref<HTMLDivElement>}
-            className="animate-bounce-up mb-6 opacity-0"
+            className="animate-fade-up mb-6 opacity-0"
             style={{ animationDelay: "0.2s", animationFillMode: "forwards" } as React.CSSProperties}
           >
             {typeof title === "string" ? (
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse-color">
+                <span className="text-foreground">
                   {title}
                 </span>
               </h1>
@@ -106,7 +106,7 @@ const EmotionalHero = React.forwardRef<HTMLDivElement, EmotionalHeroProps>(
           {/* CTA Button with spring animation */}
           {cta && (
             <div
-              className="animate-bounce-up opacity-0"
+              className="animate-fade-up opacity-0"
               style={{ animationDelay: "0.4s", animationFillMode: "forwards" } as React.CSSProperties}
             >
               <button

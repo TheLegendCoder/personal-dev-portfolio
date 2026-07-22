@@ -101,4 +101,13 @@ export function magneticHover(element: HTMLElement, strength = 0.35) {
   };
 }
 
+/**
+ * True when the user has requested reduced motion at the OS/browser level.
+ * SSR-safe: returns false on the server.
+ */
+export function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export { gsap, ScrollTrigger, Draggable };

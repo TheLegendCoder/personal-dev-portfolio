@@ -74,11 +74,11 @@ html {
 
 /* Glow effect utilities */
 .glow-primary {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
 }
 
 .glow-accent {
-  box-shadow: 0 0 20px rgba(0, 200, 200, 0.3);
+  box-shadow: 0 0 20px hsl(var(--accent) / 0.3);
 }
 
 .glow-pulse {

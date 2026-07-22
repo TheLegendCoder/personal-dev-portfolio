@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Github } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectCategory } from "@/lib/projects";
@@ -30,10 +31,12 @@ export function ProjectCard({
 		<article className="group gradient-card rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300 hover:-translate-y-1">
 			{/* Image */}
 			<Link href={liveUrl} className="block relative overflow-hidden aspect-video" target="_blank" rel="noopener noreferrer">
-				<img
+				<Image
 					src={image}
 					alt={title}
-					className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+					fill
+					sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+					className="object-cover group-hover:scale-105 transition-transform duration-500"
 				/>
 				<div className="absolute top-4 left-4 flex gap-2">
 					{featured && (
@@ -43,8 +46,8 @@ export function ProjectCard({
 						<Badge
 							className={
 								category === 'professional'
-									? 'bg-blue-600 text-white'
-									: 'bg-violet-600 text-white'
+									? 'bg-primary text-primary-foreground'
+									: 'bg-accent text-accent-foreground'
 							}
 						>
 							{category === 'professional' ? 'Professional' : 'Personal'}

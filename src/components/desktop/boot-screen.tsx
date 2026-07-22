@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Monitor } from 'lucide-react';
+import { prefersReducedMotion } from '@/lib/gsap';
 
 interface BootScreenProps {
   onDone: () => void;
@@ -11,8 +12,7 @@ export function BootScreen({ onDone }: BootScreenProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) {
+    if (prefersReducedMotion()) {
       onDone();
       return;
     }

@@ -110,7 +110,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Sticky action bar */}
-      <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-card/95 backdrop-blur border-b border-border border-l-4 border-l-primary flex items-center justify-between gap-4 mb-2">
+      <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-card/95 backdrop-blur border-b border-border flex items-center justify-between gap-4 mb-2">
         <div className="min-w-0">
           <h1 className="text-sm font-semibold text-foreground truncate">
             {isNew ? 'New project' : project.title}

@@ -2,6 +2,7 @@ import { getTutorial, getTutorialsSummary } from "@/lib/tutorial";
 import { Layout } from "@/components/layout/layout";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import "highlight.js/styles/atom-one-dark.css";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
@@ -121,11 +122,13 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
 
           {/* Featured Image */}
           {tutorial.image && (
-            <div className="mb-8 sm:mb-12 rounded-lg overflow-hidden bg-muted">
-              <img
+            <div className="relative aspect-video mb-8 sm:mb-12 rounded-lg overflow-hidden bg-muted">
+              <Image
                 src={tutorial.image}
                 alt={tutorial.imageHint || tutorial.title}
-                className="w-full h-auto object-cover aspect-video"
+                fill
+                sizes="(min-width: 768px) 768px, 100vw"
+                className="object-cover"
               />
             </div>
           )}

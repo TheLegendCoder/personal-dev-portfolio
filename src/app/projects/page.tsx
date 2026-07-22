@@ -36,7 +36,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
       <section className="py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
           <div className="flex flex-col items-center text-center mb-12 lg:mb-16">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-secondary mb-4 animate-fade-in">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4 animate-fade-in">
               My Projects
             </h1>
 

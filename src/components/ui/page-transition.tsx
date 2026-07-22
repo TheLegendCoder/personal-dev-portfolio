@@ -52,7 +52,7 @@ export function PageTransition({ children, variant = 'cascade' }: PageTransition
       className={cn(
         'transition-all duration-500 ease-out',
         isAnimating ? classes.initial : classes.animate,
-        variant === 'bounce' && !isAnimating && 'animate-bounce-in'
+        variant === 'bounce' && !isAnimating && 'animate-fade-up'
       )}
     >
       {children}

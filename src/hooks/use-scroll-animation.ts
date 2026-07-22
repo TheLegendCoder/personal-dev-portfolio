@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { prefersReducedMotion } from "@/lib/gsap"
 
 interface UseInViewOptions {
   threshold?: number | number[]
@@ -95,27 +96,30 @@ export function useParallax(options: { strength?: number } = {}) {
  */
 export function useCursorFollow() {
   const ref = useRef<HTMLElement>(null)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     if (!ref.current) return
+    if (prefersReducedMotion()) return
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = ref.current!.getBoundingClientRect()
+      const el = ref.current
+      if (!el) return
+
+      const rect = el.getBoundingClientRect()
       const x = e.clientX - rect.left - rect.width / 2
       const y = e.clientY - rect.top - rect.height / 2
 
       // Limit the movement to a certain distance
       const maxDistance = 15
       const distance = Math.sqrt(x * x + y * y)
-      const limitedX = (x / distance) * Math.min(distance, maxDistance)
-      const limitedY = (y / distance) * Math.min(distance, maxDistance)
+      const limitedX = distance === 0 ? 0 : (x / distance) * Math.min(distance, maxDistance)
+      const limitedY = distance === 0 ? 0 : (y / distance) * Math.min(distance, maxDistance)
 
-      setPosition({ x: limitedX, y: limitedY })
+      el.style.transform = `translate(${limitedX}px, ${limitedY}px)`
     }
 
     const handleMouseLeave = () => {
-      setPosition({ x: 0, y: 0 })
+      if (ref.current) ref.current.style.transform = "translate(0px, 0px)"
     }
 
     const element = ref.current
@@ -131,7 +135,6 @@ export function useCursorFollow() {
   return {
     ref,
     style: {
-      transform: `translate(${position.x}px, ${position.y}px)`,
       transition: "transform 0.3s ease-out",
     },
   }

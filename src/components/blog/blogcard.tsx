@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -35,10 +36,12 @@ export function BlogCard({
 		<article className="group gradient-card rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300 hover:-translate-y-1">
 			{/* Image */}
 			<Link href={`/blog/${id}`} className="block relative overflow-hidden aspect-video">
-				<img
+				<Image
 					src={image}
 					alt={title}
-					className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+					fill
+					sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+					className="object-cover group-hover:scale-105 transition-transform duration-500"
 				/>
 				<Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
 					{category}
