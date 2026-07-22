@@ -373,14 +373,14 @@ export default {
         'slide-in-right': 'slide-in-from-right 0.3s ease-out',
         
         // Playful entrance animations with bouncy easing
-        'bounce-in': 'bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'bounce-up': 'bounce-up 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'bounce-down': 'bounce-down 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'bounce-in': 'bounce-in 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+        'bounce-up': 'bounce-up 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+        'bounce-down': 'bounce-down 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
         'cascade-in': 'cascade-in 0.5s ease-out',
-        
+
         // Spring and hover effects
-        'spring-scale': 'spring-scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'elastic-scale': 'elastic-scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'spring-scale': 'spring-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        'elastic-scale': 'elastic-scale 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         
         // Floating animations
         'float': 'float 3s ease-in-out infinite',
@@ -397,8 +397,8 @@ export default {
         'wiggle': 'wiggle 0.3s ease-in-out',
         
         // Page transitions
-        'swipe-in-right': 'swipe-in-right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'swipe-in-left': 'swipe-in-left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'swipe-in-right': 'swipe-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'swipe-in-left': 'swipe-in-left 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
         
         // Stagger children
         'stagger-child': 'stagger-child 0.5s ease-out backwards',
@@ -408,9 +408,7 @@ export default {
         'text-reveal': 'text-reveal 0.6s ease-out',
       },
       transitionTimingFunction: {
-        'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'elastic': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'expo-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },
