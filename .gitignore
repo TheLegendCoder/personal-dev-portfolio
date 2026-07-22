@@ -33,6 +33,7 @@
 # IDE settings
 .vscode/
 .idx/
+.claude/
 
 # Debug
 npm-debug.log*
