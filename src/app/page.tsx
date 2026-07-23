@@ -10,7 +10,6 @@ import { personalInfo } from '@/components/data/content';
 export const revalidate = 3600;
 
 export const metadata = generateSEOMetadata({
-  title: personalInfo.name,
   description: personalInfo.tagline + ' — ' + personalInfo.bio,
   canonicalUrl: getCanonicalUrl('/'),
 });

@@ -22,7 +22,6 @@ interface LayoutProps {
 }
 
 export const metadata = generateSEOMetadata({
-  title: personalInfo.name,
   description: personalInfo.bio,
   canonicalUrl: getSiteUrl(),
 });

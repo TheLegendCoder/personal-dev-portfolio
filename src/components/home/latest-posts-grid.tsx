@@ -99,7 +99,7 @@ export function LatestPostsGrid({ posts }: LatestPostsGridProps) {
     <div ref={sectionRef}>
       {/* Section Header */}
       <div ref={headerRef} className="text-center mb-12">
-        <p className="text-xs font-mono text-primary tracking-widest uppercase mb-3">
+        <p className="text-xs font-mono text-accent tracking-widest uppercase mb-3">
           Blog
         </p>
         <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-4">
