@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-23T12:04:48.122Z",
+  "title": "Design System: Tsholofelo Ndawonde — Personal Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Confident Blue",
+        "canonical": "hsl(220 90% 56%)",
+        "tonalRamp": [
+          "hsl(220 90% 12%)",
+          "hsl(220 90% 22%)",
+          "hsl(220 90% 34%)",
+          "hsl(220 90% 48%)",
+          "hsl(220 90% 60%)",
+          "hsl(220 90% 72%)",
+          "hsl(220 90% 84%)",
+          "hsl(220 90% 95%)"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "Muted Teal",
+        "canonical": "hsl(160 60% 45%)",
+        "tonalRamp": [
+          "hsl(160 60% 12%)",
+          "hsl(160 60% 22%)",
+          "hsl(160 60% 34%)",
+          "hsl(160 60% 48%)",
+          "hsl(160 60% 60%)",
+          "hsl(160 60% 72%)",
+          "hsl(160 60% 84%)",
+          "hsl(160 60% 95%)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "hsl(60 20% 99%)",
+        "tonalRamp": [
+          "hsl(60 20% 8%)",
+          "hsl(60 20% 18%)",
+          "hsl(60 20% 30%)",
+          "hsl(60 20% 45%)",
+          "hsl(60 20% 60%)",
+          "hsl(60 20% 75%)",
+          "hsl(60 20% 88%)",
+          "hsl(60 20% 99%)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink Navy",
+        "canonical": "hsl(220 25% 10%)",
+        "tonalRamp": [
+          "hsl(220 25% 6%)",
+          "hsl(220 25% 14%)",
+          "hsl(220 25% 24%)",
+          "hsl(220 25% 36%)",
+          "hsl(220 25% 50%)",
+          "hsl(220 25% 65%)",
+          "hsl(220 25% 80%)",
+          "hsl(220 25% 92%)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Pure White",
+        "canonical": "hsl(0 0% 100%)",
+        "tonalRamp": [
+          "hsl(0 0% 8%)",
+          "hsl(0 0% 18%)",
+          "hsl(0 0% 30%)",
+          "hsl(0 0% 45%)",
+          "hsl(0 0% 60%)",
+          "hsl(0 0% 75%)",
+          "hsl(0 0% 88%)",
+          "hsl(0 0% 100%)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary Surface",
+        "canonical": "hsl(220 20% 96%)",
+        "tonalRamp": [
+          "hsl(220 20% 10%)",
+          "hsl(220 20% 20%)",
+          "hsl(220 20% 32%)",
+          "hsl(220 20% 46%)",
+          "hsl(220 20% 60%)",
+          "hsl(220 20% 74%)",
+          "hsl(220 20% 86%)",
+          "hsl(220 20% 96%)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Quiet Gray",
+        "canonical": "hsl(220 15% 95%)",
+        "tonalRamp": [
+          "hsl(220 15% 10%)",
+          "hsl(220 15% 20%)",
+          "hsl(220 15% 32%)",
+          "hsl(220 15% 46%)",
+          "hsl(220 15% 60%)",
+          "hsl(220 15% 74%)",
+          "hsl(220 15% 86%)",
+          "hsl(220 15% 95%)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline Border",
+        "canonical": "hsl(220 15% 90%)",
+        "tonalRamp": [
+          "hsl(220 15% 10%)",
+          "hsl(220 15% 20%)",
+          "hsl(220 15% 32%)",
+          "hsl(220 15% 46%)",
+          "hsl(220 15% 60%)",
+          "hsl(220 15% 74%)",
+          "hsl(220 15% 86%)",
+          "hsl(220 15% 90%)"
+        ]
+      },
+      "destructive": {
+        "role": "status",
+        "displayName": "Alert Red",
+        "canonical": "hsl(0 84.2% 60.2%)",
+        "tonalRamp": [
+          "hsl(0 84% 12%)",
+          "hsl(0 84% 22%)",
+          "hsl(0 84% 34%)",
+          "hsl(0 84% 48%)",
+          "hsl(0 84% 60%)",
+          "hsl(0 84% 72%)",
+          "hsl(0 84% 84%)",
+          "hsl(0 84% 95%)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero H1 only. Playfair Display, 600 weight, clamp(2.25rem, 5vw, 4.5rem)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section and page headings (h2/h3). Playfair Display, 700 weight."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraph copy and taglines. Inter, 400 weight, with cv02/cv03/cv04/cv11 stylistic sets enabled."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrow labels, nav/footer meta, status readouts. Monospace, uppercase, 0.1em tracking."
+      }
+    },
+    "shadows": [
+      {
+        "name": "soft",
+        "value": "0 4px 20px -4px hsl(220 25% 10% / 0.08)",
+        "purpose": "Resting elevation for small surfaces (social icon buttons). Dark mode: 0 4px 20px -4px hsl(0 0% 0% / 0.3)."
+      },
+      {
+        "name": "card",
+        "value": "0 8px 30px -8px hsl(220 25% 10% / 0.12)",
+        "purpose": "Resting elevation for content cards. Dark mode: 0 8px 30px -8px hsl(0 0% 0% / 0.4)."
+      },
+      {
+        "name": "hover",
+        "value": "0 12px 40px -12px hsl(220 90% 56% / 0.2)",
+        "purpose": "Primary-tinted glow on hover, paired with a -translate-y lift. Dark mode: 0 12px 40px -12px hsl(220 90% 60% / 0.3)."
+      },
+      {
+        "name": "focus-glow",
+        "value": "0 0 0 1px hsl(220 90% 56% / 0.15), 0 20px 50px -15px hsl(220 90% 56% / 0.35)",
+        "purpose": "Ring + deep glow reserved for the desktop mode's focused window."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-scroll-reveal",
+        "value": "power3.out (GSAP easing function)",
+        "purpose": "Default ease for all GSAP scroll reveals, hero entrance, and magnetic hover."
+      },
+      {
+        "name": "ease-expo-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Easing for pure-CSS Tailwind animate-* utilities (bounce-in, spring-scale, elastic-scale)."
+      },
+      {
+        "name": "duration-fast",
+        "value": "200ms",
+        "purpose": "Focus rings, color transitions, base interactive state changes."
+      },
+      {
+        "name": "duration-standard",
+        "value": "300ms",
+        "purpose": "Card hover, image hover-scale, link-underline growth, badge/social hover."
+      },
+      {
+        "name": "duration-nav-morph",
+        "value": "500ms",
+        "purpose": "Nav pill scroll-state transition (transparent to glass panel)."
+      },
+      {
+        "name": "duration-entrance",
+        "value": "600-900ms",
+        "purpose": "GSAP hero entrance stagger items."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Confident Blue filled button; the main call-to-action shape.",
+      "html": "<button class=\"ds-btn-primary\">View Project</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.5rem; padding: 0.5rem 1rem; background: hsl(220 90% 56%); color: hsl(0 0% 100%); border: none; border-radius: 1.875rem; font-family: Inter, sans-serif; font-size: 0.875rem; font-weight: 500; white-space: nowrap; transition: box-shadow 0.2s, transform 0.2s; } .ds-btn-primary:hover { box-shadow: 0 12px 40px -12px hsl(220 90% 56% / 0.2); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(60 20% 99%), 0 0 0 4px hsl(220 90% 56%); } .ds-btn-primary:active { transform: scale(0.95) translateY(0); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action button; transparent fill, hairline border, fills to muted teal accent on hover.",
+      "html": "<button class=\"ds-btn-outline\">Learn More</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0.5rem 1rem; background: transparent; color: hsl(220 25% 10%); border: 1px solid hsl(220 15% 90%); border-radius: 1.875rem; font-family: Inter, sans-serif; font-size: 0.875rem; font-weight: 500; transition: background 0.2s, transform 0.2s; } .ds-btn-outline:hover { background: hsl(160 60% 45% / 0.12); transform: translateY(-2px); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(60 20% 99%), 0 0 0 4px hsl(220 90% 56%); } .ds-btn-outline:active { transform: scale(0.95) translateY(0); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard text field; shares the button's 2px primary focus-ring language.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Your email\" />",
+      "css": ".ds-input { height: 2.5rem; width: 100%; padding: 0.5rem 0.75rem; background: hsl(60 20% 99%); color: hsl(220 25% 10%); border: 1px solid hsl(220 15% 90%); border-radius: 1.875rem; font-family: Inter, sans-serif; font-size: 0.875rem; } .ds-input::placeholder { color: hsl(220 10% 45%); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(60 20% 99%), 0 0 0 4px hsl(220 90% 56%); } .ds-input:disabled { cursor: not-allowed; opacity: 0.5; }"
+    },
+    {
+      "name": "Project Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The canonical content card — large 2xl radius, tinted resting shadow, lift + glow + border-tint on hover.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-image\"></div><div class=\"ds-card-body\"><h3 class=\"ds-card-title\">Real-time Chat Application</h3><p class=\"ds-card-desc\">Node.js, React, Socket.io, MongoDB.</p></div></div>",
+      "css": ".ds-card { background: hsl(0 0% 100%); border-radius: 2rem; overflow: hidden; box-shadow: 0 8px 30px -8px hsl(220 25% 10% / 0.12); border: 1px solid transparent; transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s; } .ds-card:hover { box-shadow: 0 12px 40px -12px hsl(220 90% 56% / 0.2); transform: translateY(-4px); border-color: hsl(220 90% 56% / 0.5); } .ds-card-image { height: 10rem; background: hsl(220 15% 95%); } .ds-card-body { padding: 1.5rem; } .ds-card-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: hsl(220 25% 10%); margin: 0 0 0.5rem; } .ds-card-desc { font-family: Inter, sans-serif; font-size: 0.875rem; color: hsl(220 10% 45%); margin: 0; }"
+    },
+    {
+      "name": "Nav Pill + Links",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Floating glass nav pill with active/inactive link states.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" class=\"ds-nav-link ds-nav-link-active\">Home</a><a href=\"#\" class=\"ds-nav-link\">Projects</a></nav>",
+      "css": ".ds-nav { display: inline-flex; gap: 0.25rem; padding: 0.5rem; border-radius: 9999px; background: hsl(60 20% 99% / 0.8); backdrop-filter: blur(8px); border: 1px solid hsl(220 15% 90% / 0.5); } .ds-nav-link { padding: 0.5rem 1rem; border-radius: 9999px; font-family: Inter, sans-serif; font-size: 0.875rem; font-weight: 500; color: hsl(220 10% 45%); text-decoration: none; transition: background 0.3s, color 0.3s; } .ds-nav-link:hover { color: hsl(220 25% 10%); background: hsl(220 15% 95% / 0.5); } .ds-nav-link-active { color: hsl(220 90% 56%); background: hsl(220 90% 56% / 0.1); }"
+    },
+    {
+      "name": "Eyebrow Label",
+      "kind": "custom",
+      "refersTo": "label",
+      "description": "Monospace uppercase kicker used above section headings — the 'system status' typographic accent.",
+      "html": "<span class=\"ds-eyebrow\">Featured Work</span>",
+      "css": ".ds-eyebrow { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: hsl(220 90% 56%); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Engineer's Notebook",
+    "overview": "The system reads as a personal notebook kept by an engineer who writes carefully: editorial serif headlines (Playfair Display) carry narrative and credibility, while clipped monospace status lines — \"System Operational,\" timestamps, eyebrow labels — stand in for handwritten margin annotations. Surfaces are warm rather than sterile: off-white paper backgrounds, primary-tinted soft shadows instead of flat neutral ones, and generously rounded interactive chrome that never feels corporate or cold. Underneath the warmth sits real technical craft: focus rings, hover-lift, and a full alternate \"desktop OS\" mode (boot screen, window chrome, taskbar) that exists purely to demonstrate engineering depth to the half of the audience qualified to notice it. Playful details — a confetti-triggering logo Easter egg, magnetic cursor-follow links, a hinted Konami code — signal personality without undercutting the credibility the serif/mono pairing establishes.",
+    "keyCharacteristics": [
+      "Editorial serif display headlines (Playfair Display, 600–700 weight) paired with monospace \"system status\" accents for meta/label text.",
+      "Warm, off-white/blue-tinted surfaces with primary-hued soft shadows — never plain neutral black shadows.",
+      "Rounded-full pills for interactive chrome (nav, buttons, toggles); large 2xl–3xl radii for content containers (cards, mobile nav panel).",
+      "Tactile, springy micro-interactions: hover-lift, active:scale-95, magnetic hover, mousedown ripple.",
+      "A signature desktop-OS \"Easter egg\" mode (boot screen, draggable windows, taskbar) proving craft depth beyond the surface page."
+    ],
+    "rules": [
+      {
+        "name": "The Singular Accent Rule",
+        "body": "Confident Blue is the only color permitted to mean \"active, selected, or important\" — links, focus rings, active nav state, glows. Muted Teal only labels; it never takes on that role.",
+        "section": "colors"
+      },
+      {
+        "name": "The Serif-Only-For-Headings Rule",
+        "body": "Playfair Display is applied globally to h1–h6 and nowhere else. Body copy, buttons, and UI chrome never use the display face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tinted-Not-Neutral Rule",
+        "body": "Shadows always carry the primary hue at low opacity — never a plain black/gray shadow. Depth and brand identity are the same visual cue.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep Confident Blue as the only color that signals active/selected/important (links, focus rings, active nav, glows) — The Singular Accent Rule.",
+      "Do tint shadows with the primary hue instead of neutral black — The Tinted-Not-Neutral Rule.",
+      "Do reserve Playfair Display strictly for headings — The Serif-Only-For-Headings Rule.",
+      "Do pair hover states on cards and elevated buttons with a -translate-y lift plus a shadow increase, not a color change alone.",
+      "Do gate any new motion on prefers-reduced-motion, matching every existing GSAP/CSS animation in the codebase."
+    ],
+    "donts": [
+      "Don't introduce a second saturated brand color competing with Confident Blue — Muted Teal stays a rare, quiet label color.",
+      "Don't use the base Card primitive's default neutral, 0.5rem-radius styling for new content surfaces — match ProjectCard's rounded-2xl + shadow-card/shadow-hover tokens instead.",
+      "Don't reach for the unused custom breakpoints (xs, 3xl) or spacing steps (18, 88, 128, 144) without a real layout need — they're reserved capacity, not the working rhythm.",
+      "Don't add a custom cursor or new Easter-egg mechanics without matching the existing confetti palette (#4F93FF / #3DB89F / #FFD43B) and the reduced-motion gating pattern already used everywhere else."
+    ]
+  }
+}

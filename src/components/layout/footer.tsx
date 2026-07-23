@@ -12,7 +12,11 @@ const socialLinks = [
   { name: "GitHub", icon: Github, url: personalInfo.socialLinks.github },
   { name: "LinkedIn", icon: Linkedin, url: personalInfo.socialLinks.linkedin },
   { name: "Twitter", icon: Twitter, url: personalInfo.socialLinks.twitter },
-  { name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, email: true },
+  // Email link only appears once personalInfo.email is populated — an empty
+  // address would otherwise render a dead mailto: link.
+  ...(personalInfo.email
+    ? [{ name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, email: true }]
+    : []),
 ];
 
 const footerLinks = [
