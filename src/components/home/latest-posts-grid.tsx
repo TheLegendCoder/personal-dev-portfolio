@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BlogCard } from '@/components/blog/blogcard';
-import { gsap, ScrollTrigger, EASE, STAGGER_CARD } from '@/lib/gsap';
+import { gsap, ScrollTrigger, EASE, STAGGER_CARD, prefersReducedMotion } from '@/lib/gsap';
 
 interface Post {
   slug: string;
@@ -34,6 +34,19 @@ export function LatestPostsGrid({ posts }: LatestPostsGridProps) {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) {
+        if (headerRef.current?.children) {
+          gsap.set(Array.from(headerRef.current.children), { y: 0, opacity: 1 });
+        }
+        if (gridRef.current?.children) {
+          gsap.set(Array.from(gridRef.current.children), { y: 0, opacity: 1 });
+        }
+        if (ctaRef.current) {
+          gsap.set(ctaRef.current, { y: 0, opacity: 1 });
+        }
+        return;
+      }
+
       // Header stagger
       if (headerRef.current?.children) {
         gsap.from(Array.from(headerRef.current.children), {

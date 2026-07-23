@@ -6,7 +6,7 @@ import { ArrowRight, ChevronDown, Github, Linkedin, Twitter } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { personalInfo } from "@/components/data/content";
-import { gsap, ScrollTrigger, EASE, STAGGER_TEXT } from "@/lib/gsap";
+import { gsap, ScrollTrigger, EASE, STAGGER_TEXT, prefersReducedMotion } from "@/lib/gsap";
 
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -21,6 +21,21 @@ export function Hero() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) {
+        gsap.set(
+          [
+            badgeRef.current,
+            headlineRef.current,
+            taglineRef.current,
+            ctaRef.current,
+            socialsRef.current,
+            scrollCueRef.current,
+          ],
+          { opacity: 1, y: 0 }
+        );
+        return;
+      }
+
       // Entrance timeline — staggered fade-up per spec (stagger: 0.08)
       const tl = gsap.timeline({ defaults: { ease: EASE } });
 

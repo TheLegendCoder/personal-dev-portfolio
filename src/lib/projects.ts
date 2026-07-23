@@ -46,8 +46,12 @@ export async function getProjects(): Promise<PortfolioProject[]> {
   }
 }
 
-/** Published + featured projects — used on the home page */
-export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
+/**
+ * Published + featured projects — used on the home page.
+ * `error: true` distinguishes a real fetch failure from a genuinely empty
+ * result, so the UI can tell "Supabase is down" apart from "nothing published yet".
+ */
+export async function getFeaturedProjects(): Promise<{ data: PortfolioProject[]; error: boolean }> {
   try {
     const supabase = createAnonClient();
     const { data, error } = await supabase
@@ -60,13 +64,13 @@ export async function getFeaturedProjects(): Promise<PortfolioProject[]> {
 
     if (error) {
       console.error('[getFeaturedProjects] Supabase error:', error.message, '| code:', error.code);
-      return [];
+      return { data: [], error: true };
     }
 
-    return data ?? [];
+    return { data: data ?? [], error: false };
   } catch (err) {
     console.error('[getFeaturedProjects] Fetch exception:', err);
-    return [];
+    return { data: [], error: true };
   }
 }
 

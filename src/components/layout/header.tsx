@@ -7,7 +7,7 @@ import { Menu, Monitor, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn, triggerCelebrationFrom } from "@/lib/utils";
-import { gsap, ScrollTrigger, EASE } from "@/lib/gsap";
+import { gsap, ScrollTrigger, EASE, prefersReducedMotion } from "@/lib/gsap";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -48,6 +48,7 @@ export function Navbar() {
   // Magnetic hover on desktop nav links
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (prefersReducedMotion()) return;
     const cleanups: (() => void)[] = [];
 
     navLinkRefs.current.forEach((el) => {

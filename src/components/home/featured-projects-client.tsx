@@ -2,18 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Code2 } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Code2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/projectcards';
 import { EmptyState } from '@/components/ui/empty-state';
-import { gsap, ScrollTrigger, EASE, STAGGER_CARD } from '@/lib/gsap';
+import { gsap, ScrollTrigger, EASE, STAGGER_CARD, prefersReducedMotion } from '@/lib/gsap';
 import type { PortfolioProject } from '@/lib/projects';
 
 interface FeaturedProjectsClientProps {
   projects: PortfolioProject[];
+  error?: boolean;
 }
 
-export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps) {
+export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClientProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -25,6 +26,19 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) {
+        if (headerRef.current?.children) {
+          gsap.set(Array.from(headerRef.current.children), { y: 0, opacity: 1 });
+        }
+        if (gridRef.current?.children) {
+          gsap.set(Array.from(gridRef.current.children), { y: 0, opacity: 1 });
+        }
+        if (ctaRef.current) {
+          gsap.set(ctaRef.current, { y: 0, opacity: 1 });
+        }
+        return;
+      }
+
       // Header children stagger up
       if (headerRef.current?.children) {
         gsap.from(Array.from(headerRef.current.children), {
@@ -90,7 +104,14 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
           </p>
         </div>
 
-        {projects.length === 0 ? (
+        {error ? (
+          <EmptyState
+            icon={<AlertTriangle className="h-12 w-12 text-primary" />}
+            title="Having trouble loading this"
+            description="Something went wrong on our end — this isn't an empty portfolio, just a hiccup. Please check back shortly."
+            actionText="Check back soon"
+          />
+        ) : projects.length === 0 ? (
           <EmptyState
             icon={<Code2 className="h-12 w-12 text-primary" />}
             title="I am working on it."

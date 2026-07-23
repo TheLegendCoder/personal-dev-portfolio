@@ -144,7 +144,7 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
   }
 }
 
-export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
+async function fetchBlogPostsSummary(): Promise<{ data: BlogPostSummary[]; error: boolean }> {
   try {
     const supabase = createAnonClient();
     const { data, error } = await supabase
@@ -153,13 +153,31 @@ export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
       .eq('published', true)
       .order('date', { ascending: false });
 
-    if (error || !data) return [];
+    if (error) {
+      console.error('Error fetching blog post summaries:', error.message);
+      return { data: [], error: true };
+    }
+    if (!data) return { data: [], error: false };
 
-    return data.map(mapBlogPostSummary);
+    return { data: data.map(mapBlogPostSummary), error: false };
   } catch (error) {
     console.error('Error fetching blog post summaries:', error);
-    return [];
+    return { data: [], error: true };
   }
+}
+
+export async function getBlogPostsSummary(): Promise<BlogPostSummary[]> {
+  const { data } = await fetchBlogPostsSummary();
+  return data;
+}
+
+/**
+ * Same query as getBlogPostsSummary, but preserves whether the fetch itself
+ * failed vs. genuinely returned no rows — used on the home page so a Supabase
+ * outage doesn't render identically to "nothing published yet".
+ */
+export async function getBlogPostsSummaryWithStatus(): Promise<{ data: BlogPostSummary[]; error: boolean }> {
+  return fetchBlogPostsSummary();
 }
 
 // ---------------------------------------------------------------------------

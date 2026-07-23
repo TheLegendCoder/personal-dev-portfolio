@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { triggerMilestoneCelebration } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { prefersReducedMotion } from '@/lib/gsap';
 
 interface ScrollCelebrationOptions {
   threshold?: number; // Percentage (0-100) of page to scroll before celebrating
@@ -16,6 +17,8 @@ export function useScrollCelebration(options: ScrollCelebrationOptions = {}) {
   const { toast } = useToast();
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
+
     // Check localStorage if once is true
     if (once && typeof window !== 'undefined') {
       const celebrated = localStorage.getItem('scroll-celebration');
