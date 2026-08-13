@@ -32,7 +32,9 @@ const toastVariants = cva(
         default: "border-primary/20 bg-card text-foreground shadow-hover backdrop-blur-sm",
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
-        success: "border-accent/30 bg-gradient-to-br from-card via-card to-accent/5 text-foreground shadow-hover backdrop-blur-sm",
+        // Semantic status color, exempt from the single-accent rule the same
+        // way `destructive` is — this signals success, not a second brand hue.
+        success: "border-emerald-500/30 bg-card text-foreground shadow-hover backdrop-blur-sm",
       },
     },
     defaultVariants: {

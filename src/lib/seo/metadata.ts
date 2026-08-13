@@ -36,7 +36,9 @@ export function generateSEOMetadata({
 }: SEOMetadataProps): Metadata {
   const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_TITLE;
   const pageDescription = description || SITE_DESCRIPTION;
-  const pageImage = image || `${SITE_URL}/images/og-default.jpg`;
+  // No /public folder exists in this repo — the default share image is the
+  // generated route at src/app/opengraph-image.tsx, not a static file.
+  const pageImage = image || `${SITE_URL}/opengraph-image`;
   const pageImageAlt = imageAlt || title || SITE_NAME;
 
   const metadata: Metadata = {

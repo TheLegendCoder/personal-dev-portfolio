@@ -63,7 +63,7 @@ export default function ShareButtons({ title, url, type = 'blog' }: ShareButtons
           onClick={handleShareX}
           className={cn(
             'inline-flex items-center gap-2 px-4 py-2',
-            'rounded-lg bg-black text-white',
+            'rounded-full bg-black text-white',
             'hover:bg-gray-800',
             'transition-colors duration-200',
             'text-sm font-medium'
@@ -78,7 +78,7 @@ export default function ShareButtons({ title, url, type = 'blog' }: ShareButtons
           onClick={handleShareLinkedIn}
           className={cn(
             'inline-flex items-center gap-2 px-4 py-2',
-            'rounded-lg bg-[#0A66C2] text-white',
+            'rounded-full bg-[#0A66C2] text-white',
             'hover:bg-[#094B9E]',
             'transition-colors duration-200',
             'text-sm font-medium'
@@ -94,7 +94,7 @@ export default function ShareButtons({ title, url, type = 'blog' }: ShareButtons
           onClick={handleCopyLink}
           className={cn(
             'inline-flex items-center gap-2 px-4 py-2',
-            'rounded-lg bg-accent text-accent-foreground',
+            'rounded-full bg-accent text-accent-foreground',
             'hover:bg-accent/90',
             'transition-colors duration-200',
             'text-sm font-medium'

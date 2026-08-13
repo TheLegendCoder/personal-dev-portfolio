@@ -1,12 +1,22 @@
 import { Layout } from "@/components/layout/layout";
-import { aboutContent } from "@/components/data/content";
+import { AboutIntro } from "@/components/about/about-intro";
+import { aboutContent, personalInfo } from "@/components/data/content";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbs } from "@/lib/seo/breadcrumbs";
 
+function initials(name: string): string {
+  return name
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
 export const metadata = generateSEOMetadata({
   title: 'About',
-  description: aboutContent.intro + ' ' + aboutContent.story.substring(0, 100) + '...',
+  description: `${aboutContent.intro} ${aboutContent.story.substring(0, 100)}...`,
   canonicalUrl: getCanonicalUrl('/about'),
 });
 
@@ -15,18 +25,22 @@ const About = () => {
 
   return (
     <Layout>
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-          <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-4">About Me</h1>
-          
-          {/* Breadcrumb Navigation */}
+      <section className="py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Graphic anchor in place of a photo — echoes the header logo and
+              the desktop-mode About panel's monogram device. */}
+          <div className="flex h-20 w-20 items-center justify-center bg-primary font-display text-3xl font-bold text-primary-foreground mb-10">
+            {initials(personalInfo.name)}
+          </div>
+
           <BreadcrumbWithSchema items={breadcrumbs} className="mb-8" />
-          
-          <div className="prose prose-lg max-w-none">
-            <p className="text-xl text-muted-foreground mb-8">{aboutContent.intro}</p>
-            <p className="text-muted-foreground mb-6">{aboutContent.story}</p>
-            <p className="text-muted-foreground mb-12">{aboutContent.approach}</p>
-          </div>       
+
+          <AboutIntro text={aboutContent.intro} />
+
+          <div className="max-w-[65ch] space-y-6 text-lg text-muted-foreground leading-relaxed">
+            <p>{aboutContent.story}</p>
+            <p>{aboutContent.approach}</p>
+          </div>
         </div>
       </section>
     </Layout>

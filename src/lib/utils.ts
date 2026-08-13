@@ -13,7 +13,7 @@ interface CelebrationOptions {
 }
 
 export function triggerCelebration(options: CelebrationOptions = {}) {
-  const { intensity = 'medium', colors = ['#4F93FF', '#3DB89F', '#FFD43B'] } = options;
+  const { intensity = 'medium', colors = ['#2474F5', '#64748B', '#FFD43B'] } = options;
 
   const particleCount = {
     low: 30,
@@ -49,7 +49,7 @@ export function triggerCelebrationFrom(element: HTMLElement, options: Celebratio
 
 // Trigger confetti at specific screen coordinates (0-1 range)
 export function triggerCelebrationAt(x: number, y: number, options: CelebrationOptions = {}) {
-  const { intensity = 'medium', colors = ['#4F93FF', '#3DB89F', '#FFD43B'] } = options;
+  const { intensity = 'medium', colors = ['#2474F5', '#64748B', '#FFD43B'] } = options;
 
   const particleCount = {
     low: 20,
@@ -73,7 +73,7 @@ export function triggerCelebrationAt(x: number, y: number, options: CelebrationO
 // Milestone celebration (used for scroll milestones, achievements)
 export function triggerMilestoneCelebration() {
   const end = Date.now() + 500;
-  const colors = ['#4F93FF', '#3DB89F', '#FFD43B'];
+  const colors = ['#2474F5', '#64748B', '#FFD43B'];
 
   (function frame() {
     confetti({

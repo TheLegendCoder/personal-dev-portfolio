@@ -10,9 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       screens: {
         'xs': '475px',
@@ -85,15 +85,19 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      // Shape Consistency Lock: full-pill for interactive chrome (buttons/nav/badges),
+      // rounded-none for content cards/images/panels, rounded-md for inputs.
+      // xl/2xl/3xl are a restrained legacy tier — desktop-OS window chrome is the
+      // one documented exception (rounded-lg), see window-frame.tsx.
       borderRadius: {
         'none': '0',
         'sm': 'calc(var(--radius) - 4px)',
         DEFAULT: 'var(--radius)',
         'md': 'calc(var(--radius) - 2px)',
         'lg': 'var(--radius)',
-        'xl': '1.5rem',
-        '2xl': '2rem',     // spec: 2rem
-        '3xl': '3rem',     // spec: 3rem
+        'xl': '1rem',
+        '2xl': '1.25rem',
+        '3xl': '1.5rem',
         'full': '9999px',
       },
       fontSize: {
@@ -264,14 +268,6 @@ export default {
             boxShadow: '0 0 0 10px rgba(59, 130, 246, 0)'
           },
         },
-        'pulse-color': {
-          '0%, 100%': {
-            color: 'hsl(var(--primary))'
-          },
-          '50%': {
-            color: 'hsl(160, 60%, 45%)'
-          },
-        },
         // Shimmer and loading effects
         'shimmer': {
           '0%': {
@@ -386,8 +382,7 @@ export default {
         'float': 'float 3s ease-in-out infinite',
         'gentle-float': 'gentle-float 4s ease-in-out infinite',
         'pulse-glow': 'pulse-glow 2s infinite',
-        'pulse-color': 'pulse-color 2s ease-in-out infinite',
-        
+
         // Loading states
         'shimmer': 'shimmer 2s infinite',
         'skeleton-pulse': 'skeleton-pulse 2s ease-in-out infinite',

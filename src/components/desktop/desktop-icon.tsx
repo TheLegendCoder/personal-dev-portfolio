@@ -19,7 +19,7 @@ export function DesktopIcon({ app, isOpen, onOpen }: DesktopIconProps) {
       aria-label={`Open ${app.title}`}
       className="group flex w-20 flex-col items-center gap-1.5 rounded-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-border/50 gradient-card shadow-soft transition-transform duration-200 group-hover:scale-105">
+      <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-border/50 bg-card shadow-soft transition-transform duration-200 group-hover:scale-105">
         <Icon className="h-6 w-6 text-primary" />
         {isOpen && (
           <span

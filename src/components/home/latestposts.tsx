@@ -21,13 +21,13 @@ export async function LatestPosts() {
   }
 
   return (
-    <section className="w-full py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
         {error ? (
           <EmptyState
             icon={<AlertTriangle className="h-12 w-12 text-primary" />}
             title="Having trouble loading this"
-            description="Something went wrong on our end — this isn't an empty portfolio, just a hiccup. Please check back shortly."
+            description="Something went wrong on our end. This isn't an empty portfolio, just a temporary hiccup. Please check back shortly."
             actionText="Check back soon"
           />
         ) : latestPosts.length === 0 ? (

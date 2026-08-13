@@ -100,6 +100,29 @@ export async function getProjectsByCategory(
   }
 }
 
+/** Single published project by id — public detail-page read (anon client, RLS-filtered) */
+export async function getPublishedProjectById(id: string): Promise<PortfolioProject | null> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('id', id)
+      .eq('published', true)
+      .single();
+
+    if (error) {
+      console.error('[getPublishedProjectById] Supabase error:', error.message, '| code:', error.code);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('[getPublishedProjectById] Fetch exception:', err);
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Admin reads (all rows — uses service-role client, bypasses RLS)
 // ---------------------------------------------------------------------------

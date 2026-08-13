@@ -61,7 +61,7 @@ export const releaseSchedule: ReleaseCell[] = DAYS.flatMap((day, di) =>
 // ─── Engineering Manifesto ────────────────────────────────────────────────────
 
 export const manifestoText =
-  "Most developers focus on shipping features. I focus on building systems that survive production. The difference is in what you optimise for \u2014 velocity now, or resilience at scale. Every architectural decision is a bet. I make mine deliberately.";
+  "Most developers focus on shipping features. I focus on building systems that survive production. The difference is in what you optimise for. Velocity now, or resilience at scale. Every architectural decision is a bet. I make mine deliberately.";
 
 // ─── Protocol — How I Build ───────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ export const protocolSteps = [
     title: "Design the System",
     summary: "Schema decisions. API contracts. Trade-offs documented.",
     detail:
-      "Before writing a line of code, I define the data model, service boundaries, and integration contracts. Trade-offs are made explicit and recorded \u2014 not assumed.",
+      "Before writing a line of code, I define the data model, service boundaries, and integration contracts. Trade-offs are made explicit and recorded, not assumed.",
   },
   {
     number: "02",

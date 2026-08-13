@@ -1,5 +1,7 @@
 import { Hero } from '@/components/home/hero';
+import { EngineeringManifesto } from '@/components/home/engineering-manifesto';
 import { FeaturedProjects } from '@/components/home/featuredprojects';
+import { Protocol } from '@/components/home/protocol';
 import { LatestPosts } from '@/components/home/latestposts';
 import { ScrollCelebrationWrapper } from '@/components/home/scroll-celebration-wrapper';
 import { generateSEOMetadata, getCanonicalUrl } from '@/lib/seo/metadata';
@@ -10,7 +12,7 @@ import { personalInfo } from '@/components/data/content';
 export const revalidate = 3600;
 
 export const metadata = generateSEOMetadata({
-  description: personalInfo.tagline + ' — ' + personalInfo.bio,
+  description: `${personalInfo.tagline}. ${personalInfo.bio}`,
   canonicalUrl: getCanonicalUrl('/'),
 });
 
@@ -19,7 +21,9 @@ export default function Home() {
     <ScrollCelebrationWrapper>
       <div className="flex flex-col items-center w-full overflow-x-hidden">
         <Hero />
+        <EngineeringManifesto />
         <FeaturedProjects />
+        <Protocol />
         <LatestPosts />
       </div>
     </ScrollCelebrationWrapper>

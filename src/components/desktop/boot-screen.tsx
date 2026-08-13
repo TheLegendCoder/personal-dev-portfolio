@@ -55,7 +55,7 @@ export function BootScreen({ onDone }: BootScreenProps) {
       <button
         type="button"
         onClick={onDone}
-        className="rounded-lg border border-border px-3.5 py-1.5 font-mono text-xs text-muted-foreground hover:border-primary hover:text-primary"
+        className="rounded-full border border-border px-3.5 py-1.5 font-mono text-xs text-muted-foreground hover:border-primary hover:text-primary"
       >
         skip →
       </button>

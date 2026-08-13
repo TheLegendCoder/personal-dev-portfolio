@@ -2,129 +2,86 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { personalInfo } from "@/components/data/content";
-import { gsap, ScrollTrigger, EASE, STAGGER_TEXT, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, EASE, EASE_SNAPPY, STAGGER_TEXT, wordReveal, prefersReducedMotion } from "@/lib/gsap";
 
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const socialsRef = useRef<HTMLDivElement>(null);
-  const scrollCueRef = useRef<HTMLDivElement>(null);
+  const monogramRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
       if (prefersReducedMotion()) {
-        gsap.set(
-          [
-            badgeRef.current,
-            headlineRef.current,
-            taglineRef.current,
-            ctaRef.current,
-            socialsRef.current,
-            scrollCueRef.current,
-          ],
-          { opacity: 1, y: 0 }
-        );
+        gsap.set([taglineRef.current, ctaRef.current, monogramRef.current], { opacity: 1, y: 0, x: 0 });
+        if (headlineRef.current) headlineRef.current.style.opacity = "1";
         return;
       }
 
-      // Entrance timeline — staggered fade-up per spec (stagger: 0.08)
-      const tl = gsap.timeline({ defaults: { ease: EASE } });
+      // Kinetic word-by-word reveal for the headline
+      if (headlineRef.current) wordReveal(headlineRef.current);
 
-      tl.from(badgeRef.current, { y: 24, opacity: 0, duration: 0.7 })
+      const tl = gsap.timeline({ defaults: { ease: EASE }, delay: 0.5 });
+
+      tl.from(taglineRef.current, { y: 24, opacity: 0, duration: 0.7 })
+        .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.6 }, "-=0.4")
         .from(
-          headlineRef.current,
-          { y: 40, opacity: 0, duration: 0.9 },
-          `-=${STAGGER_TEXT * 2}`
-        )
-        .from(
-          taglineRef.current,
-          { y: 32, opacity: 0, duration: 0.8 },
-          `-=${STAGGER_TEXT * 4}`
-        )
-        .from(
-          ctaRef.current,
-          { y: 24, opacity: 0, duration: 0.7 },
-          `-=${STAGGER_TEXT * 4}`
-        )
-        .from(
-          socialsRef.current,
-          { y: 20, opacity: 0, duration: 0.6 },
-          `-=${STAGGER_TEXT * 4}`
-        )
-        .from(
-          scrollCueRef.current,
-          { opacity: 0, duration: 0.5 },
-          "-=0.2"
+          monogramRef.current,
+          { opacity: 0, x: 40, scale: 0.92, duration: 1, ease: EASE_SNAPPY },
+          "-=0.9"
         );
 
-      // Looping bounce on scroll-cue chevron
-      gsap.to(scrollCueRef.current?.querySelector("svg") ?? [], {
-        y: 8,
-        duration: 0.9,
-        ease: "power1.inOut",
-        yoyo: true,
-        repeat: -1,
+      // Subtle scroll-linked drift on the monogram device
+      gsap.to(monogramRef.current, {
+        y: -40,
+        rotation: 4,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
       });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  const firstName = personalInfo.name.split(" ")[0];
+
   return (
     <section
       ref={sectionRef}
-      className="gradient-hero w-full min-h-screen flex flex-col items-center justify-center py-24 px-0 relative"
+      className="w-full min-h-[100dvh] flex items-center px-4 sm:px-6 lg:px-8 py-24 lg:py-0 relative overflow-hidden"
     >
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-4xl text-center px-4 sm:px-6 lg:px-8 mx-auto">
-
-          {/* Availability badge */}
-          <div
-            ref={badgeRef}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-            </span>
-            {personalInfo.availability}
-          </div>
-
-          {/* Main heading */}
+      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-8 items-center">
+        {/* Left: headline / subtext / CTAs */}
+        <div className="text-left">
           <h1
             ref={headlineRef}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-foreground leading-tight mb-6"
+            className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold text-foreground leading-[0.95] mb-6"
           >
-            Hi, I&apos;m{" "}
-            <span className="text-gradient">
-              {personalInfo.name.split(" ")[0]}
-            </span>
-            <br />
-            <span className="text-muted-foreground">{personalInfo.title}</span>
+            {personalInfo.name}
+            <span className="text-primary">.</span>{" "}
+            <span className="text-muted-foreground">{personalInfo.title}.</span>
           </h1>
 
-          {/* Tagline */}
           <p
             ref={taglineRef}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
+            className="text-lg sm:text-xl text-muted-foreground max-w-xl mb-10"
           >
             {personalInfo.bio}
           </p>
 
-          {/* CTA Buttons */}
-          <div
-            ref={ctaRef}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
-          >
+          <div ref={ctaRef} className="flex flex-col sm:flex-row items-start gap-4">
             <MagneticButton>
               <Button asChild size="lg" className="group">
                 <Link href="/projects">
@@ -145,41 +102,20 @@ export function Hero() {
               </Button>
             </MagneticButton>
           </div>
+        </div>
 
-          {/* Social Links */}
+        {/* Right: oversized kinetic monogram — the graphic anchor in place of a photo */}
+        <div className="hidden lg:flex items-center justify-center">
           <div
-            ref={socialsRef}
-            className="flex items-center justify-center gap-4"
+            ref={monogramRef}
+            className="font-display font-bold text-[16rem] leading-none text-primary/10 select-none"
+            aria-hidden="true"
           >
-            {[
-              { href: personalInfo.socialLinks.github, Icon: Github, label: "GitHub" },
-              { href: personalInfo.socialLinks.linkedin, Icon: Linkedin, label: "LinkedIn" },
-              { href: personalInfo.socialLinks.twitter, Icon: Twitter, label: "Twitter" },
-            ].map(({ href, Icon, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-card shadow-soft hover:shadow-hover hover:-translate-y-1 transition-all duration-300"
-                aria-label={label}
-              >
-                <Icon className="h-5 w-5 text-foreground" />
-              </a>
-            ))}
+            {firstName[0]}
+            <span className="text-foreground/[0.06]">#</span>
           </div>
         </div>
-      </div>
-
-      {/* Scroll cue */}
-      <div
-        ref={scrollCueRef}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-muted-foreground/60 text-xs tracking-widest uppercase"
-      >
-        <span>Scroll</span>
-        <ChevronDown className="h-4 w-4" />
       </div>
     </section>
   );
 }
-
