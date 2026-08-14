@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 @layer base {
-  /* Bold Kinetic Editorial: Geist Display, tight tracking, no serif */
+  /* Telemetry Noir: Hanken Grotesk display, dense industrial tracking */
   .font-display {
     font-family: theme('fontFamily.display');
     font-weight: 700;
@@ -13,41 +13,46 @@
   }
 
   :root {
-    /* Cobalt + off-black/off-white — cool neutrals, one saturated accent */
-    --background: 210 20% 98%;
-    --foreground: 222 47% 8%;
+    /* Telemetry Day (light complement) — same racing-red/tertiary-blue brand
+       hues as the dark spec, laid over light engineered-grey surfaces. */
+    --background: 210 10% 96%;
+    --foreground: 210 10% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 8%;
+    --card-foreground: 210 10% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 8%;
+    --popover-foreground: 210 10% 8%;
 
-    --primary: 217 91% 55%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 2 100% 44%;
+    --primary-foreground: 12 29% 97%;
 
-    --secondary: 220 14% 95%;
-    --secondary-foreground: 222 30% 20%;
+    --secondary: 200 7% 91%;
+    --secondary-foreground: 192 5% 19%;
 
-    --muted: 220 14% 93%;
-    --muted-foreground: 220 10% 40%;
+    --muted: 200 9% 93%;
+    --muted-foreground: 204 5% 38%;
 
-    /* Neutral emphasis surface — NOT a second brand color (Color Consistency Lock) */
-    --accent: 220 14% 93%;
-    --accent-foreground: 222 30% 20%;
+    /* Functional accent — tertiary blue, reserved for links/metadata */
+    --accent: 217 100% 42%;
+    --accent-foreground: 240 100% 98%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 356 100% 29%;
+    --destructive-foreground: 8 100% 97%;
 
-    --border: 220 14% 88%;
-    --input: 220 14% 88%;
-    --ring: 217 91% 55%;
+    --border: 204 7% 86%;
+    --input: 204 7% 86%;
+    --ring: 2 100% 44%;
 
-    --radius: 0.5rem;
+    --status-active: 2 100% 44%;
+    --telemetry-grid: rgba(18, 20, 22, 0.06);
 
-    /* Shadows tinted to the near-black foreground hue; hover keeps the primary glow */
-    --shadow-soft: 0 4px 20px -4px hsl(222 47% 8% / 0.08);
-    --shadow-card: 0 8px 30px -8px hsl(222 47% 8% / 0.12);
-    --shadow-hover: 0 12px 40px -12px hsl(217 91% 55% / 0.25);
+    --radius: 0px;
+
+    /* No blurred elevation shadows — 1px borders carry depth. Hover keeps a
+       primary-red glow per the Telemetry Noir component spec. */
+    --shadow-soft: none;
+    --shadow-card: none;
+    --shadow-hover: 0 4px 20px rgba(225, 6, 0, 0.2);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -60,37 +65,41 @@
   }
 
   .dark {
-    --background: 222 47% 4%;
-    --foreground: 210 20% 96%;
+    /* Telemetry Noir — motorsport/terminal dark theme, see DESIGN-f1.md */
+    --background: 210 14% 5%;
+    --foreground: 240 5% 89%;
 
-    --card: 222 40% 8%;
-    --card-foreground: 210 20% 96%;
+    --card: 210 18% 9%;
+    --card-foreground: 240 5% 89%;
 
-    --popover: 222 40% 8%;
-    --popover-foreground: 210 20% 96%;
+    --popover: 210 18% 9%;
+    --popover-foreground: 240 5% 89%;
 
-    --primary: 217 91% 63%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 2 100% 44%;
+    --primary-foreground: 200 13% 95%;
 
-    --secondary: 222 30% 14%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 195 4% 78%;
+    --secondary-foreground: 192 5% 19%;
 
-    --muted: 222 30% 14%;
-    --muted-foreground: 220 10% 62%;
+    --muted: 210 6% 13%;
+    --muted-foreground: 195 3% 72%;
 
-    --accent: 222 30% 14%;
-    --accent-foreground: 210 20% 90%;
+    --accent: 217 100% 50%;
+    --accent-foreground: 240 100% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 356 100% 29%;
+    --destructive-foreground: 6 100% 92%;
 
-    --border: 222 25% 18%;
-    --input: 222 25% 18%;
-    --ring: 217 91% 63%;
+    --border: 212 15% 19%;
+    --input: 212 15% 19%;
+    --ring: 2 100% 44%;
 
-    --shadow-soft: 0 4px 20px -4px hsl(222 47% 2% / 0.4);
-    --shadow-card: 0 8px 30px -8px hsl(222 47% 2% / 0.5);
-    --shadow-hover: 0 12px 40px -12px hsl(217 91% 63% / 0.35);
+    --status-active: 2 100% 44%;
+    --telemetry-grid: rgba(41, 48, 56, 0.15);
+
+    --shadow-soft: none;
+    --shadow-card: none;
+    --shadow-hover: 0 4px 20px rgba(225, 6, 0, 0.2);
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -153,6 +162,24 @@
   /* During-drag helper: iframes swallow pointer events mid-drag */
   .desktop-window-dragging iframe {
     pointer-events: none;
+  }
+
+  /* Telemetry Noir: 16px diagonal corner-clip for featured technical cards */
+  .clip-corner {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+  }
+
+  /* Telemetry Noir: faint 32px grid, Level-0 background texture */
+  .telemetry-grid-bg {
+    background-image:
+      linear-gradient(to right, var(--telemetry-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--telemetry-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Telemetry Noir: shared mono metadata/status label voice */
+  .mono-label {
+    @apply font-mono text-2xs uppercase tracking-wide text-muted-foreground;
   }
 }
 

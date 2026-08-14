@@ -65,20 +65,19 @@ async function BlogPage() {
             </p>
           </div>
 
-          {/* Featured-first bento — sized exactly to the current post count, no empty cells */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="md:col-span-2">
-              <BlogCard
-                id={featuredPost.slug}
-                title={featuredPost.title}
-                excerpt={featuredPost.description}
-                image={featuredPost.image}
-                date={featuredPost.date}
-                readTime={featuredPost.readTime}
-                category={featuredPost.tags[0] || "Article"}
-                large
-              />
-            </div>
+          {/* Editorial stacked list — matches /projects; the lead post gets
+              the clip-corner accent, everything else is a plain row. */}
+          <div className="flex flex-col gap-16 lg:gap-24">
+            <BlogCard
+              id={featuredPost.slug}
+              title={featuredPost.title}
+              excerpt={featuredPost.description}
+              image={featuredPost.image}
+              date={featuredPost.date}
+              readTime={featuredPost.readTime}
+              category={featuredPost.tags[0] || "Article"}
+              large
+            />
             {restPosts.map((post) => (
               <BlogCard
                 key={post.slug}

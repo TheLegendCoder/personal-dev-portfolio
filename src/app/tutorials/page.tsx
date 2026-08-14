@@ -65,20 +65,19 @@ async function TutorialsPage() {
             </p>
           </div>
 
-          {/* Featured-first bento — sized exactly to the current tutorial count, no empty cells */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="md:col-span-2">
-              <TutorialCard
-                id={featuredTutorial.slug}
-                title={featuredTutorial.title}
-                excerpt={featuredTutorial.description}
-                image={featuredTutorial.image}
-                date={featuredTutorial.date}
-                readTime={featuredTutorial.readTime}
-                category={featuredTutorial.tags[0] || "Tutorial"}
-                large
-              />
-            </div>
+          {/* Editorial stacked list — matches /projects; the lead tutorial gets
+              the clip-corner accent, everything else is a plain row. */}
+          <div className="flex flex-col gap-16 lg:gap-24">
+            <TutorialCard
+              id={featuredTutorial.slug}
+              title={featuredTutorial.title}
+              excerpt={featuredTutorial.description}
+              image={featuredTutorial.image}
+              date={featuredTutorial.date}
+              readTime={featuredTutorial.readTime}
+              category={featuredTutorial.tags[0] || "Tutorial"}
+              large
+            />
             {restTutorials.map((tutorial) => (
               <TutorialCard
                 key={tutorial.slug}

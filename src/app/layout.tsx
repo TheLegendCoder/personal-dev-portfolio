@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { GSAPProvider } from "@/components/providers/gsap-provider";
 import { EasterEggsInit } from "@/components/providers/easter-eggs-init";
-import { geistSans, geistMono } from "@/lib/fonts";
+import { fontDisplay, fontSans, fontMono } from "@/lib/fonts";
 import { generateSEOMetadata, getSiteUrl } from "@/lib/seo/metadata";
 import { 
   generateOrganizationSchema, 
@@ -77,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
   });
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable}`}>
       <head>
         {/* Theme no-flash + embed detection — must run before first paint */}
         <script

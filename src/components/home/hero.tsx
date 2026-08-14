@@ -60,14 +60,14 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="w-full min-h-[100dvh] flex items-center px-4 sm:px-6 lg:px-8 py-24 lg:py-0 relative overflow-hidden"
+      className="telemetry-grid-bg w-full min-h-[100dvh] flex items-center px-4 sm:px-6 lg:px-8 py-24 lg:py-0 relative overflow-hidden"
     >
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-8 items-center">
         {/* Left: headline / subtext / CTAs */}
         <div className="text-left">
           <h1
             ref={headlineRef}
-            className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold text-foreground leading-[0.95] mb-6"
+            className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-[-0.04em] text-foreground leading-[0.95] mb-6"
           >
             {personalInfo.name}
             <span className="text-primary">.</span>{" "}

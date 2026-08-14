@@ -36,7 +36,7 @@ export function ProjectCard({
 		<article className="group grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 border-b border-border/60 pb-16 last:border-b-0 last:pb-0">
 			<Link
 				href={`/projects/${id}`}
-				className="block relative overflow-hidden aspect-video bg-muted"
+				className={`block relative overflow-hidden aspect-video bg-muted border border-border ${featured ? 'clip-corner' : ''}`}
 			>
 				<Image
 					src={image}
@@ -48,7 +48,7 @@ export function ProjectCard({
 			</Link>
 
 			<div className="flex flex-col justify-center">
-				<div className="flex items-center gap-2 mb-3 text-xs font-mono uppercase tracking-wider text-muted-foreground">
+				<div className="mono-label flex items-center gap-2 mb-3 pb-3 border-b border-border">
 					{category && <span>{category === 'professional' ? 'Professional' : 'Personal'}</span>}
 					{featured && (
 						<>
@@ -77,7 +77,7 @@ export function ProjectCard({
 				<div className="flex flex-wrap items-center gap-x-6 gap-y-2">
 					<Link
 						href={`/projects/${id}`}
-						className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+						className="mono-label inline-flex items-center text-primary hover:text-primary/80 transition-colors"
 					>
 						View Project
 						<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -87,7 +87,7 @@ export function ProjectCard({
 							href={liveUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+							className="mono-label inline-flex items-center hover:text-foreground transition-colors"
 						>
 							<ExternalLink className="mr-1 h-3.5 w-3.5" />
 							Live
@@ -98,7 +98,7 @@ export function ProjectCard({
 							href={githubUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+							className="mono-label inline-flex items-center hover:text-foreground transition-colors"
 						>
 							<Github className="mr-1 h-3.5 w-3.5" />
 							Source

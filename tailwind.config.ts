@@ -11,7 +11,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       screens: {
@@ -67,6 +67,9 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        status: {
+          active: 'hsl(var(--status-active))',
+        },
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
@@ -85,16 +88,17 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
-      // Shape Consistency Lock: full-pill for interactive chrome (buttons/nav/badges),
-      // rounded-none for content cards/images/panels, rounded-md for inputs.
+      // Shape Consistency Lock (Telemetry Noir): sharp/flat by default —
+      // cards, panels, inputs, and buttons are all rounded-none. `full` is
+      // reserved for status dots, progress-bar caps, and tag/badge chips.
       // xl/2xl/3xl are a restrained legacy tier — desktop-OS window chrome is the
       // one documented exception (rounded-lg), see window-frame.tsx.
       borderRadius: {
         'none': '0',
-        'sm': 'calc(var(--radius) - 4px)',
-        DEFAULT: 'var(--radius)',
-        'md': 'calc(var(--radius) - 2px)',
-        'lg': 'var(--radius)',
+        'sm': '0',
+        DEFAULT: '0',
+        'md': '0',
+        'lg': '0',
         'xl': '1rem',
         '2xl': '1.25rem',
         '3xl': '1.5rem',
@@ -262,10 +266,10 @@ export default {
         'pulse-glow': {
           '0%, 100%': {
             opacity: '1',
-            boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.7)'
+            boxShadow: '0 0 0 0 hsl(var(--primary) / 0.7)'
           },
           '50%': {
-            boxShadow: '0 0 0 10px rgba(59, 130, 246, 0)'
+            boxShadow: '0 0 0 10px hsl(var(--primary) / 0)'
           },
         },
         // Shimmer and loading effects
