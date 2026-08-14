@@ -75,3 +75,6 @@ supabase/
 # Impeccable design/product docs (local only)
 DESIGN.md
 PRODUCT.md
+
+.impeccable/
+DESIGN-f1.md
