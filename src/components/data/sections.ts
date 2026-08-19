@@ -66,20 +66,20 @@ export const protocolSteps = [
     title: "Design the System",
     summary: "Schema decisions. API contracts. Trade-offs documented.",
     detail:
-      "Before writing a line of code, I define the data model, service boundaries, and integration contracts. Trade-offs are made explicit and recorded, not assumed.",
+      "I sketch the data model in SQL Server or Postgres first, write the API contract before any endpoint exists, and note down the trade-offs I'm making, not just the decision I landed on.",
   },
   {
     number: "02",
     title: "Engineer for Failure",
     summary: "Validation. Logging. Load testing.",
     detail:
-      "Every external call has a timeout. Every boundary has validation. Every failure path produces a structured log. Systems are load-tested before they meet users.",
+      "External calls get a timeout and a retry policy instead of a bare try/catch. Input is validated at the boundary with FluentValidation or a schema library, and failures log enough context that I can debug them without reproducing them first.",
   },
   {
     number: "03",
     title: "Ship With Confidence",
     summary: "CI/CD. Monitoring. Iteration.",
     detail:
-      "Deployments are automated, gated by tests, and observable. Post-deploy monitoring confirms the system behaves as designed. Then iteration begins.",
+      "Tests run before a merge is allowed, and deploys ship automatically once they pass. After release, I check real usage and error logs, not just that the build succeeded, before calling it done.",
   },
 ];
