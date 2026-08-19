@@ -39,7 +39,15 @@ const About = () => {
 
           <div className="max-w-[65ch] space-y-6 text-lg text-muted-foreground leading-relaxed">
             <p>{aboutContent.story}</p>
-            <p>{aboutContent.approach}</p>
+          </div>
+
+          <div className="max-w-[65ch] mt-12 space-y-10">
+            {aboutContent.approachSections.map((section) => (
+              <div key={section.label}>
+                <p className="mono-label mb-3 pb-2 border-b border-border">{section.label}</p>
+                <p className="text-lg text-muted-foreground leading-relaxed">{section.text}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

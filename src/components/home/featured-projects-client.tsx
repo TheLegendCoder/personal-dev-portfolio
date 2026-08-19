@@ -68,7 +68,7 @@ export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClie
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8 border-t border-border/50">
       <div className="max-w-6xl mx-auto">
         <h2
           ref={headerRef}
