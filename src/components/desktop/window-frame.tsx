@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useGSAP } from '@gsap/react';
 import { cn } from '@/lib/utils';
-import { gsap, EASE } from '@/lib/gsap';
+import { gsap, EASE, prefersReducedMotion } from '@/lib/gsap';
 import type { DesktopApp } from './apps';
 import { TASKBAR_HEIGHT, WINDOW_MIN_H, WINDOW_MIN_W } from './constants';
 import { type Bounds, type ResizeDir, useWindowResize } from './use-window-resize';
@@ -131,8 +131,7 @@ export const WindowFrame = forwardRef<WindowFrameHandle, WindowFrameProps>(funct
     () => {
       const el = windowRef.current;
       if (!el) return;
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reducedMotion) return;
+      if (prefersReducedMotion()) return;
       gsap.from(el, { scale: 0.92, opacity: 0, y: 24, duration: 0.35, ease: EASE });
     },
     { scope: windowRef, dependencies: [] }
@@ -214,6 +213,9 @@ export const WindowFrame = forwardRef<WindowFrameHandle, WindowFrameProps>(funct
       tabIndex={-1}
       onMouseDown={onFocus}
       className={cn(
+        // rounded-xl is a documented exception to the sitewide sharp-card shape
+        // rule (Shape Consistency Lock, tailwind.config.ts) — native-OS window
+        // chrome reads as broken at 0px corners.
         'absolute flex flex-col overflow-hidden rounded-xl border bg-card shadow-card transition-[opacity,box-shadow] duration-150 focus:outline-none',
         focused ? 'border-primary/50 opacity-100 shadow-[0_0_0_1px_hsl(var(--primary)/0.15),0_20px_50px_-15px_hsl(var(--primary)/0.35)]' : 'border-border opacity-90',
         minimized && 'hidden',
@@ -234,19 +236,19 @@ export const WindowFrame = forwardRef<WindowFrameHandle, WindowFrameProps>(funct
             type="button"
             onClick={onClose}
             aria-label={`Close ${app.title}`}
-            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-destructive transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="relative h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-destructive transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring after:absolute after:-inset-2"
           />
           <button
             type="button"
             onClick={onMinimize}
             aria-label={`Minimize ${app.title}`}
-            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-amber-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="relative h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-amber-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring after:absolute after:-inset-2"
           />
           <button
             type="button"
             onClick={toggleMaximize}
             aria-label={maximized ? `Restore ${app.title}` : `Maximize ${app.title}`}
-            className="h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-emerald-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="relative h-2.5 w-2.5 min-h-0 min-w-0 rounded-full bg-emerald-400 transition-transform hover:scale-125 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring after:absolute after:-inset-2"
           />
         </div>
       </div>

@@ -7,7 +7,7 @@ import { Menu, Monitor, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn, triggerCelebrationFrom } from "@/lib/utils";
-import { gsap, ScrollTrigger, EASE } from "@/lib/gsap";
+import { gsap, ScrollTrigger, EASE, prefersReducedMotion } from "@/lib/gsap";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -48,6 +48,7 @@ export function Navbar() {
   // Magnetic hover on desktop nav links
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (prefersReducedMotion()) return;
     const cleanups: (() => void)[] = [];
 
     navLinkRefs.current.forEach((el) => {
@@ -117,103 +118,99 @@ export function Navbar() {
   if (pathname.startsWith('/admin') || pathname.startsWith('/desktop')) return null;
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-      <nav
-        ref={navRef}
-        className={cn(
-          "pointer-events-auto transition-all duration-500 ease-out rounded-full border",
-          scrolled
-            ? "bg-background/80 backdrop-blur-md border-border/50 shadow-lg py-2 px-6"
-            : "bg-transparent border-transparent py-4 px-4"
-        )}
-      >
-        <div className="flex items-center justify-between gap-8">
-          {/* Logo */}
-          <Link
-            href="/"
-            ref={logoRef}
-            onClick={handleLogoClick}
-            onDoubleClick={(e) => e.preventDefault()} // Help prevent text selection
-            className="text-lg font-display font-semibold text-foreground hover:text-primary transition-colors select-none inline-block relative hover:ring-1 hover:ring-primary/30 rounded px-1 -ml-1"
-          >
-            TN<span ref={hashRef} className="text-primary">#</span>
-          </Link>
+    <header
+      ref={navRef}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ease-out",
+        scrolled
+          ? "bg-background border-border"
+          : "bg-transparent border-transparent"
+      )}
+    >
+      <nav className="mx-auto flex max-w-[1440px] items-center justify-between gap-8 px-4 py-4 sm:px-6 lg:px-16">
+        {/* Logo */}
+        <Link
+          href="/"
+          ref={logoRef}
+          onClick={handleLogoClick}
+          onDoubleClick={(e) => e.preventDefault()} // Help prevent text selection
+          className="inline-block select-none font-mono text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
+        >
+          TN<span ref={hashRef} className="text-primary">#</span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link, i) => (
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link, i) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              ref={(el) => { navLinkRefs.current[i] = el; }}
+              className={cn(
+                "mono-label border-b-2 py-1 transition-colors duration-200 inline-block",
+                pathname === link.path
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <ThemeToggle source="navbar" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden md:inline-flex"
+            asChild
+          >
+            <Link
+              href="/desktop"
+              aria-label="Switch to desktop view"
+              title="Desktop view"
+            >
+              <Monitor className="h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+      </nav>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden border-t border-border bg-background animate-fade-in">
+          <div className="flex flex-col gap-1 px-4 py-4">
+            {navLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                ref={(el) => { navLinkRefs.current[i] = el; }}
+                onClick={() => setIsOpen(false)}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 inline-block",
+                  "mono-label border-l-2 px-4 py-3 transition-colors duration-200",
                   pathname === link.path
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "border-primary text-primary bg-primary/5"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {link.name}
               </Link>
             ))}
-            <ThemeToggle source="navbar" className="rounded-full" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:inline-flex rounded-full"
-              asChild
-            >
-              <Link
-                href="/desktop"
-                aria-label="Switch to desktop view"
-                title="Desktop view"
-              >
-                <Monitor className="h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden rounded-full"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 mt-4 p-4 bg-background/95 backdrop-blur-xl border border-border/50 rounded-3xl shadow-xl animate-fade-in">
-            <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200",
-                    pathname === link.path
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="flex items-center justify-between px-4 py-1">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Theme
-                </span>
-                <ThemeToggle source="navbar" className="rounded-full" />
-              </div>
+            <div className="flex items-center justify-between px-4 py-2">
+              <span className="mono-label">Theme</span>
+              <ThemeToggle source="navbar" />
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </header>
   );
 }

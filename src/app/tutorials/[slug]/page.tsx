@@ -2,7 +2,8 @@ import { getTutorial, getTutorialsSummary } from "@/lib/tutorial";
 import { Layout } from "@/components/layout/layout";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import "highlight.js/styles/atom-one-dark.css";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-data";
@@ -83,8 +84,8 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
         dangerouslySetInnerHTML={{ __html: generateJSONLD(blogPostingSchema) }}
       />
 
-      <article className="py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+      <article className="py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
           {/* Back Button */}
           <Link
             href="/tutorials"
@@ -96,7 +97,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
 
           {/* Header */}
           <header className="mb-8 sm:mb-12">
-            <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-4">
+            <h1 className="text-4xl sm:text-5xl font-display font-bold tracking-tight text-foreground mb-4">
               {tutorial.title}
             </h1>
 
@@ -107,25 +108,32 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
               {tutorial.description}
             </p>
 
-            {/* Metadata */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground border-t border-border pt-6">
-              <div>
+            {/* Metadata — icon+label pairs, not middot-separated (max 1 middot per line) */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground border-t border-border pt-6">
+              <span className="flex items-center gap-1.5">
+                <User className="h-4 w-4" />
                 <span className="font-semibold text-foreground">{tutorial.author}</span>
-              </div>
-              <span className="hidden sm:inline">•</span>
-              <time dateTime={tutorial.date}>{formattedDate}</time>
-              <span className="hidden sm:inline">•</span>
-              <span>{tutorial.readTime}</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" />
+                <time dateTime={tutorial.date}>{formattedDate}</time>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                {tutorial.readTime}
+              </span>
             </div>
           </header>
 
           {/* Featured Image */}
           {tutorial.image && (
-            <div className="mb-8 sm:mb-12 rounded-lg overflow-hidden bg-muted">
-              <img
+            <div className="relative aspect-video mb-8 sm:mb-12 overflow-hidden bg-muted">
+              <Image
                 src={tutorial.image}
                 alt={tutorial.imageHint || tutorial.title}
-                className="w-full h-auto object-cover aspect-video"
+                fill
+                sizes="(min-width: 768px) 768px, 100vw"
+                className="object-cover"
               />
             </div>
           )}

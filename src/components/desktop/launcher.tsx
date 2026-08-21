@@ -13,7 +13,6 @@ interface LauncherProps {
 export function Launcher({ open, onOpenApp, onExit }: LauncherProps) {
   return (
     <div
-      role="menu"
       aria-hidden={!open}
       className={cn(
         'absolute bottom-14 left-3 z-50 flex w-64 flex-col gap-0.5 rounded-2xl border border-border bg-card/95 p-2 shadow-card backdrop-blur-xl transition-all duration-150',
@@ -31,7 +30,7 @@ export function Launcher({ open, onOpenApp, onExit }: LauncherProps) {
           <button
             key={app.id}
             type="button"
-            role="menuitem"
+            tabIndex={open ? 0 : -1}
             onClick={() => onOpenApp(app.id)}
             className="flex items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-foreground hover:bg-muted/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
@@ -50,7 +49,7 @@ export function Launcher({ open, onOpenApp, onExit }: LauncherProps) {
       <div className="my-1 h-px bg-border" />
       <button
         type="button"
-        role="menuitem"
+        tabIndex={open ? 0 : -1}
         onClick={onExit}
         className="flex items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-destructive hover:bg-destructive/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >

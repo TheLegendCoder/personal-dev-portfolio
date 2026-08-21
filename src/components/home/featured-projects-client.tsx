@@ -2,21 +2,22 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Code2 } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Code2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/projectcards';
 import { EmptyState } from '@/components/ui/empty-state';
-import { gsap, ScrollTrigger, EASE, STAGGER_CARD } from '@/lib/gsap';
+import { gsap, ScrollTrigger, EASE, STAGGER_CARD, prefersReducedMotion } from '@/lib/gsap';
 import type { PortfolioProject } from '@/lib/projects';
 
 interface FeaturedProjectsClientProps {
   projects: PortfolioProject[];
+  error?: boolean;
 }
 
-export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps) {
+export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClientProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLHeadingElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,47 +26,40 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Header children stagger up
-      if (headerRef.current?.children) {
-        gsap.from(Array.from(headerRef.current.children), {
-          y: 28,
-          duration: 0.7,
-          ease: EASE,
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 85%',
-            once: true,
-          },
-        });
+      if (prefersReducedMotion()) {
+        gsap.set([headerRef.current, ctaRef.current], { y: 0, opacity: 1 });
+        if (listRef.current?.children) {
+          gsap.set(Array.from(listRef.current.children), { y: 0, opacity: 1 });
+        }
+        return;
       }
 
-      // Cards stagger up on scroll
-      if (gridRef.current?.children) {
-        gsap.from(Array.from(gridRef.current.children), {
+      gsap.from(headerRef.current, {
+        y: 28,
+        opacity: 0,
+        duration: 0.7,
+        ease: EASE,
+        scrollTrigger: { trigger: headerRef.current, start: 'top 85%', once: true },
+      });
+
+      if (listRef.current?.children) {
+        gsap.from(Array.from(listRef.current.children), {
           y: 60,
+          opacity: 0,
           duration: 0.85,
           ease: EASE,
           stagger: STAGGER_CARD,
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 82%',
-            once: true,
-          },
+          scrollTrigger: { trigger: listRef.current, start: 'top 82%', once: true },
         });
       }
 
-      // CTA lifts in last
       if (ctaRef.current) {
         gsap.from(ctaRef.current, {
           y: 20,
+          opacity: 0,
           duration: 0.6,
           ease: EASE,
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: 'top 92%',
-            once: true,
-          },
+          scrollTrigger: { trigger: ctaRef.current, start: 'top 92%', once: true },
         });
       }
     }, sectionRef);
@@ -74,23 +68,23 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-24 bg-secondary/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8 border-t border-border/50">
+      <div className="max-w-6xl mx-auto">
+        <h2
+          ref={headerRef}
+          className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-foreground mb-16 lg:mb-20 max-w-2xl"
+        >
+          Featured Projects
+        </h2>
 
-        {/* Section Header */}
-        <div ref={headerRef} className="text-center mb-12">
-          <p className="text-xs font-mono text-primary tracking-widest uppercase mb-3">
-            Featured Work
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-4">
-            Featured Projects
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            A selection of projects that showcase my skills and passion for building great software.
-          </p>
-        </div>
-
-        {projects.length === 0 ? (
+        {error ? (
+          <EmptyState
+            icon={<AlertTriangle className="h-12 w-12 text-primary" />}
+            title="Having trouble loading this"
+            description="Something went wrong on our end. This isn't an empty portfolio, just a temporary hiccup. Please check back shortly."
+            actionText="Check back soon"
+          />
+        ) : projects.length === 0 ? (
           <EmptyState
             icon={<Code2 className="h-12 w-12 text-primary" />}
             title="I am working on it."
@@ -99,27 +93,25 @@ export function FeaturedProjectsClient({ projects }: FeaturedProjectsClientProps
           />
         ) : (
           <>
-            <div
-              ref={gridRef}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
-            >
-              {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  id={project.id}
-                  title={project.title}
-                  description={project.description}
-                  image={project.image}
-                  tags={project.tags}
-                  liveUrl={project.live_url}
-                  githubUrl={project.github_url}
-                  featured={project.featured}
-                  category={project.category}
-                />
+            <div ref={listRef} className="flex flex-col gap-16 lg:gap-24">
+              {projects.map((project, i) => (
+                <div key={project.id} className={i % 2 === 1 ? 'lg:ml-16' : undefined}>
+                  <ProjectCard
+                    id={project.id}
+                    title={project.title}
+                    description={project.description}
+                    image={project.image}
+                    tags={project.tags}
+                    liveUrl={project.live_url}
+                    githubUrl={project.github_url}
+                    featured={project.featured}
+                    category={project.category}
+                  />
+                </div>
               ))}
             </div>
 
-            <div ref={ctaRef} className="text-center">
+            <div ref={ctaRef} className="mt-16">
               <Button asChild variant="outline" size="lg" className="group">
                 <Link href="/projects">
                   View All Projects

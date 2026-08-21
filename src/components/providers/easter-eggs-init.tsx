@@ -20,10 +20,10 @@ export function EasterEggsInit() {
     window.__easterEggLogged = true;
 
     console.log(
-      '%cTN# %c— Hey, fellow dev! Built with Next.js 15, TypeScript + Tailwind. Want to work together? → %c%s',
-      'color: #4F93FF; font-weight: bold; font-size: 16px; font-family: sans-serif;',
+      '%cTN# %cHey, fellow dev! Built with Next.js 15, TypeScript + Tailwind. Want to work together? → %c%s',
+      'color: #2474F5; font-weight: bold; font-size: 16px; font-family: sans-serif;',
       'color: inherit; font-size: 14px; font-family: sans-serif;',
-      'color: #3DB89F; font-size: 14px; font-weight: bold; font-family: sans-serif;',
+      'color: #64748B; font-size: 14px; font-weight: bold; font-family: sans-serif;',
       personalInfo.email
     );
   }, []);

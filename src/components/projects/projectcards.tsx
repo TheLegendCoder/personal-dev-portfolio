@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Github } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ExternalLink, Github } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectCategory } from "@/lib/projects";
 
@@ -15,6 +16,11 @@ interface ProjectCardProps {
 	category?: ProjectCategory;
 }
 
+/**
+ * Editorial case-card: full width, real visual weight per project.
+ * Title/image click through to the internal /projects/[id] detail page;
+ * live/GitHub are explicit, secondary, external links.
+ */
 export function ProjectCard({
 	id,
 	title,
@@ -27,64 +33,64 @@ export function ProjectCard({
 	category,
 }: ProjectCardProps) {
 	return (
-		<article className="group gradient-card rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300 hover:-translate-y-1">
-			{/* Image */}
-			<Link href={liveUrl} className="block relative overflow-hidden aspect-video" target="_blank" rel="noopener noreferrer">
-				<img
+		<article className="group grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 border-b border-border/60 pb-16 last:border-b-0 last:pb-0">
+			<Link
+				href={`/projects/${id}`}
+				className={`block relative overflow-hidden aspect-video bg-muted border border-border ${featured ? 'clip-corner' : ''}`}
+			>
+				<Image
 					src={image}
 					alt={title}
-					className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+					fill
+					sizes="(min-width: 768px) 50vw, 100vw"
+					className="object-cover group-hover:scale-105 transition-transform duration-500"
 				/>
-				<div className="absolute top-4 left-4 flex gap-2">
-					{featured && (
-						<Badge className="bg-primary text-primary-foreground">Featured</Badge>
-					)}
-					{category && (
-						<Badge
-							className={
-								category === 'professional'
-									? 'bg-blue-600 text-white'
-									: 'bg-violet-600 text-white'
-							}
-						>
-							{category === 'professional' ? 'Professional' : 'Personal'}
-						</Badge>
-					)}
-				</div>
 			</Link>
 
-			{/* Content */}
-			<div className="p-6">
-				{/* Tags */}
-				<div className="flex flex-wrap gap-2 mb-3">
-					{tags.map((tag) => (
-						<Badge key={tag} className="bg-muted text-muted-foreground">{tag}</Badge>
-					))}
+			<div className="flex flex-col justify-center">
+				<div className="mono-label flex items-center gap-2 mb-3 pb-3 border-b border-border">
+					{category && <span>{category === 'professional' ? 'Professional' : 'Personal'}</span>}
+					{featured && (
+						<>
+							<span aria-hidden="true">·</span>
+							<span className="text-primary">Featured</span>
+						</>
+					)}
 				</div>
 
-				{/* Title */}
-				<Link href={liveUrl} target="_blank" rel="noopener noreferrer">
-					<h3 className="text-xl font-display font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+				<Link href={`/projects/${id}`}>
+					<h3 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
 						{title}
 					</h3>
 				</Link>
 
-				{/* Description */}
-				<p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+				<p className="text-muted-foreground mb-5 leading-relaxed">
 					{description}
 				</p>
 
-				{/* Links */}
-				<div className="flex items-center gap-4">
+				<div className="flex flex-wrap gap-2 mb-6">
+					{tags.map((tag) => (
+						<Badge key={tag} variant="secondary">{tag}</Badge>
+					))}
+				</div>
+
+				<div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+					<Link
+						href={`/projects/${id}`}
+						className="mono-label inline-flex items-center text-primary hover:text-primary/80 transition-colors"
+					>
+						View Project
+						<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+					</Link>
 					{liveUrl && liveUrl !== '#' && (
 						<Link
 							href={liveUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+							className="mono-label inline-flex items-center hover:text-foreground transition-colors"
 						>
-							Live Demo
-							<ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+							<ExternalLink className="mr-1 h-3.5 w-3.5" />
+							Live
 						</Link>
 					)}
 					{githubUrl && (
@@ -92,10 +98,10 @@ export function ProjectCard({
 							href={githubUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+							className="mono-label inline-flex items-center hover:text-foreground transition-colors"
 						>
-							<Github className="mr-1 h-4 w-4" />
-							GitHub
+							<Github className="mr-1 h-3.5 w-3.5" />
+							Source
 						</Link>
 					)}
 				</div>

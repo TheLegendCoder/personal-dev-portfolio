@@ -1,7 +1,7 @@
 import { Hero } from '@/components/home/hero';
 import { FeaturedProjects } from '@/components/home/featuredprojects';
+import { Protocol } from '@/components/home/protocol';
 import { LatestPosts } from '@/components/home/latestposts';
-import { ScrollCelebrationWrapper } from '@/components/home/scroll-celebration-wrapper';
 import { generateSEOMetadata, getCanonicalUrl } from '@/lib/seo/metadata';
 import { personalInfo } from '@/components/data/content';
 
@@ -10,20 +10,18 @@ import { personalInfo } from '@/components/data/content';
 export const revalidate = 3600;
 
 export const metadata = generateSEOMetadata({
-  title: personalInfo.name,
-  description: personalInfo.tagline + ' — ' + personalInfo.bio,
+  description: `${personalInfo.tagline}. ${personalInfo.bio}`,
   canonicalUrl: getCanonicalUrl('/'),
 });
 
 export default function Home() {
   return (
-    <ScrollCelebrationWrapper>
-      <div className="flex flex-col items-center w-full overflow-x-hidden">
-        <Hero />
-        <FeaturedProjects />
-        <LatestPosts />
-      </div>
-    </ScrollCelebrationWrapper>
+    <div className="flex flex-col items-center w-full overflow-x-hidden">
+      <Hero />
+      <FeaturedProjects />
+      <Protocol />
+      <LatestPosts />
+    </div>
   );
 }
 

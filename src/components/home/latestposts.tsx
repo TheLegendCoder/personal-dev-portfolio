@@ -1,10 +1,10 @@
-import { BookOpen } from "lucide-react";
-import { getBlogPostsSummary } from "@/lib/blog";
+import { AlertTriangle, BookOpen } from "lucide-react";
+import { getBlogPostsSummaryWithStatus } from "@/lib/blog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
 
 export async function LatestPosts() {
-  const allPosts = await getBlogPostsSummary();
+  const { data: allPosts, error } = await getBlogPostsSummaryWithStatus();
 
   // Extract featured posts
   const featuredPosts = allPosts.filter((p) => p.featured);
@@ -21,9 +21,16 @@ export async function LatestPosts() {
   }
 
   return (
-    <section className="w-full py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {latestPosts.length === 0 ? (
+    <section className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {error ? (
+          <EmptyState
+            icon={<AlertTriangle className="h-12 w-12 text-primary" />}
+            title="Having trouble loading this"
+            description="Something went wrong on our end. This isn't an empty portfolio, just a temporary hiccup. Please check back shortly."
+            actionText="Check back soon"
+          />
+        ) : latestPosts.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-12 w-12 text-primary" />}
             title="Blog posts coming soon"

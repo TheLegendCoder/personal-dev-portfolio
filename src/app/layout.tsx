@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { GSAPProvider } from "@/components/providers/gsap-provider";
 import { EasterEggsInit } from "@/components/providers/easter-eggs-init";
+import { fontDisplay, fontSans, fontMono } from "@/lib/fonts";
 import { generateSEOMetadata, getSiteUrl } from "@/lib/seo/metadata";
 import { 
   generateOrganizationSchema, 
@@ -22,7 +23,6 @@ interface LayoutProps {
 }
 
 export const metadata = generateSEOMetadata({
-  title: personalInfo.name,
   description: personalInfo.bio,
   canonicalUrl: getSiteUrl(),
 });
@@ -77,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
   });
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable}`}>
       <head>
         {/* Theme no-flash + embed detection — must run before first paint */}
         <script

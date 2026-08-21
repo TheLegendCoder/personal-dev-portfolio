@@ -6,6 +6,6 @@ import { FeaturedProjectsClient } from './featured-projects-client';
  * them to the GSAP-animated client component.
  */
 export async function FeaturedProjects() {
-  const projects = await getFeaturedProjects();
-  return <FeaturedProjectsClient projects={projects} />;
+  const { data: projects, error } = await getFeaturedProjects();
+  return <FeaturedProjectsClient projects={projects} error={error} />;
 }
