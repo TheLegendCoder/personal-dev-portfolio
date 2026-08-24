@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { useSearchParams } from 'next/navigation';
+import { signInAction } from './actions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,7 +27,6 @@ export default function AdminLoginPage() {
 }
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,24 +41,14 @@ function LoginForm() {
     setLoading(true);
     setServerError(null);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    });
+    const redirectedFrom = searchParams.get('redirectedFrom') ?? '';
+    const result = await signInAction(values.email, values.password, redirectedFrom);
 
-    if (error) {
-      setServerError(error.message);
+    // A successful sign-in redirects server-side and never returns here.
+    if (result?.error) {
+      setServerError(result.error);
       setLoading(false);
-      return;
     }
-
-    // Validate the redirect target to prevent open-redirect attacks.
-    // Only allow relative paths that start with /admin; discard anything else.
-    const raw = searchParams.get('redirectedFrom') ?? '';
-    const redirectTo = raw.startsWith('/admin') && !raw.startsWith('//') ? raw : '/admin/blog';
-    router.push(redirectTo);
-    router.refresh();
   };
 
   return (
@@ -129,11 +118,13 @@ function LoginForm() {
                 type="email"
                 placeholder="you@example.com"
                 autoComplete="email"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
                 className="h-11 focus-visible:ring-primary"
                 {...register('email')}
               />
               {errors.email && (
-                <p className="text-xs text-destructive flex items-center gap-1">
+                <p id="email-error" className="text-xs text-destructive flex items-center gap-1">
                   {errors.email.message}
                 </p>
               )}
@@ -148,16 +139,18 @@ function LoginForm() {
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? 'password-error' : undefined}
                 className="h-11 focus-visible:ring-primary"
                 {...register('password')}
               />
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p id="password-error" className="text-xs text-destructive">{errors.password.message}</p>
               )}
             </div>
 
             {serverError && (
-              <div className="flex items-start gap-2.5 text-sm text-destructive bg-destructive/10 border border-destructive/20 px-3 py-2.5 rounded-lg">
+              <div role="alert" className="flex items-start gap-2.5 text-sm text-destructive bg-destructive/10 border border-destructive/20 px-3 py-2.5 rounded-lg">
                 <Lock className="h-4 w-4 shrink-0 mt-0.5" />
                 {serverError}
               </div>

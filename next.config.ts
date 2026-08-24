@@ -1,6 +1,28 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
+// Content-Security-Policy, scoped to what this app actually loads:
+// Supabase (auth/storage), PostHog (analytics), optional Google Analytics,
+// next/font (self-hosted, same-origin). 'unsafe-inline' is required for
+// script-src (the theme no-flash bootstrap script and conditional GA tags
+// use dangerouslySetInnerHTML without a nonce) and for style-src (several
+// components set inline `style` attributes) — tightening these to a
+// nonce-based policy is a follow-up, not a blocker for a first CSP.
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://images.unsplash.com https://placehold.co https://*.supabase.co",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.supabase.co https://*.posthog.com https://www.google-analytics.com",
+  "worker-src 'self' blob:",
+  "frame-src 'self'",
+  "frame-ancestors 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
 /** Security headers applied to every response. */
 const securityHeaders = [
   // Prevent MIME-type sniffing
@@ -14,6 +36,8 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
   // Enforce HTTPS for 1 year (only sent over HTTPS by browsers)
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+  // Restrict where scripts/styles/connections/frames can come from
+  { key: 'Content-Security-Policy', value: contentSecurityPolicy },
 ];
 
 // Base Next.js config

@@ -7,6 +7,7 @@ import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { personalInfo } from "@/components/data/content";
 import { useToast } from "@/hooks/use-toast";
 import { triggerCelebrationFrom } from "@/lib/utils";
+import { clearConsent } from "@/lib/consent";
 
 const socialLinks = [
   { name: "GitHub", icon: Github, url: personalInfo.socialLinks.github },
@@ -25,6 +26,7 @@ const footerLinks = [
   { name: "Projects", path: "/projects" },
   { name: "Blog", path: "/blog" },
   { name: "Tutorials", path: "/tutorials" },
+  { name: "Privacy", path: "/privacy" },
 ];
 
 export function Footer() {
@@ -154,9 +156,18 @@ export function Footer() {
               {copyrightSymbol}
             </span> {currentYear} {personalInfo.name}. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground font-mono">
-            {personalInfo.location}
-          </p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={clearConsent}
+              className="text-xs text-muted-foreground font-mono underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              Cookie preferences
+            </button>
+            <p className="text-xs text-muted-foreground font-mono">
+              {personalInfo.location}
+            </p>
+          </div>
         </div>
       </div>
     </footer>

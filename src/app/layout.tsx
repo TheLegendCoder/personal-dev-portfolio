@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { GSAPProvider } from "@/components/providers/gsap-provider";
 import { EasterEggsInit } from "@/components/providers/easter-eggs-init";
+import { CookieConsentBanner } from "@/components/consent/cookie-consent-banner";
 import { fontDisplay, fontSans, fontMono } from "@/lib/fonts";
 import { generateSEOMetadata, getSiteUrl } from "@/lib/seo/metadata";
 import { 
@@ -158,6 +159,7 @@ if(window.self!==window.top)c.add('embedded');
               </main>
               <Footer />
               <Toaster />
+              <CookieConsentBanner />
             </div>
           </GSAPProvider>
         </PostHogProvider>
