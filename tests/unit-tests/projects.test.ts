@@ -122,23 +122,23 @@ describe('getFeaturedProjects()', () => {
     vi.clearAllMocks();
   });
 
-  it('returns an empty array when Supabase reports an error', async () => {
+  it('returns an empty array and error:true when Supabase reports an error', async () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const builder = makeQueryBuilder({ data: null, error: { message: 'db error', code: '500' } });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
-    expect(result).toEqual([]);
+    expect(result).toEqual({ data: [], error: true });
     expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 
-  it('returns an empty array when Supabase returns null data', async () => {
+  it('returns an empty array and error:false when Supabase returns null data', async () => {
     const builder = makeQueryBuilder({ data: null, error: null });
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
-    expect(result).toEqual([]);
+    expect(result).toEqual({ data: [], error: false });
   });
 
   it('returns only featured rows on success', async () => {
@@ -147,8 +147,9 @@ describe('getFeaturedProjects()', () => {
     vi.mocked(createAnonClient).mockReturnValue(makeMockAnonClient(() => builder));
 
     const result = await getFeaturedProjects();
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('f1');
+    expect(result.error).toBe(false);
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].id).toBe('f1');
   });
 
   it('queries with both published=true and featured=true filters', async () => {

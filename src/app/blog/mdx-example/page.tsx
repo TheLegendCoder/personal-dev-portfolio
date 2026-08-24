@@ -189,7 +189,7 @@ export default function MDXBlogPost() {
             </p>
 
             <ul className="list-disc list-inside space-y-2 ml-4 text-foreground/90 my-4">
-              <li><strong>Keep it simple</strong>: Don't overuse components—maintain readability</li>
+              <li><strong>Keep it simple</strong>: Don't overuse components. Maintain readability</li>
               <li><strong>Performance matters</strong>: Components are rendered at build time</li>
               <li><strong>Accessibility first</strong>: Ensure all interactive elements are keyboard accessible</li>
               <li><strong>Type safety</strong>: Use TypeScript for component props to catch errors early</li>

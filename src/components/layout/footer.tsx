@@ -7,12 +7,17 @@ import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { personalInfo } from "@/components/data/content";
 import { useToast } from "@/hooks/use-toast";
 import { triggerCelebrationFrom } from "@/lib/utils";
+import { clearConsent } from "@/lib/consent";
 
 const socialLinks = [
   { name: "GitHub", icon: Github, url: personalInfo.socialLinks.github },
   { name: "LinkedIn", icon: Linkedin, url: personalInfo.socialLinks.linkedin },
   { name: "Twitter", icon: Twitter, url: personalInfo.socialLinks.twitter },
-  { name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, email: true },
+  // Email link only appears once personalInfo.email is populated — an empty
+  // address would otherwise render a dead mailto: link.
+  ...(personalInfo.email
+    ? [{ name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, email: true }]
+    : []),
 ];
 
 const footerLinks = [
@@ -21,6 +26,7 @@ const footerLinks = [
   { name: "Projects", path: "/projects" },
   { name: "Blog", path: "/blog" },
   { name: "Tutorials", path: "/tutorials" },
+  { name: "Privacy", path: "/privacy" },
 ];
 
 export function Footer() {
@@ -100,10 +106,10 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 mt-4">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
               </span>
-              <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">System Operational</span>
+              <span className="mono-label">{personalInfo.availability}</span>
             </div>
           </div>
 
@@ -150,9 +156,18 @@ export function Footer() {
               {copyrightSymbol}
             </span> {currentYear} {personalInfo.name}. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground font-mono">
-            {personalInfo.location}
-          </p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={clearConsent}
+              className="text-xs text-muted-foreground font-mono underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              Cookie preferences
+            </button>
+            <p className="text-xs text-muted-foreground font-mono">
+              {personalInfo.location}
+            </p>
+          </div>
         </div>
       </div>
     </footer>

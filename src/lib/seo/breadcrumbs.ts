@@ -46,7 +46,7 @@ function formatSegmentLabel(segment: string): string {
  */
 export function generateBlogPostBreadcrumbs(postTitle: string): BreadcrumbItem[] {
   const siteUrl = getSiteUrl();
-  
+
   return [
     {
       name: 'Blog',
@@ -54,6 +54,24 @@ export function generateBlogPostBreadcrumbs(postTitle: string): BreadcrumbItem[]
     },
     {
       name: postTitle,
+      url: '', // Current page, no URL needed
+    },
+  ];
+}
+
+/**
+ * Generate breadcrumbs for project detail pages (simplified: Projects > Project Title)
+ */
+export function generateProjectBreadcrumbs(projectTitle: string): BreadcrumbItem[] {
+  const siteUrl = getSiteUrl();
+
+  return [
+    {
+      name: 'Projects',
+      url: `${siteUrl}/projects`,
+    },
+    {
+      name: projectTitle,
       url: '', // Current page, no URL needed
     },
   ];

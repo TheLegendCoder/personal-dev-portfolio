@@ -20,19 +20,16 @@ async function BlogPage() {
   if (posts.length === 0) {
     return (
       <Layout>
-        <section className="py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-4">
+        <section className="py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-12 max-w-2xl">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-foreground mb-4">
                 Blog
               </h1>
-              
-              {/* Breadcrumb Navigation */}
-              <div className="flex justify-center mb-4">
-                <BreadcrumbWithSchema items={breadcrumbs} />
-              </div>
-              
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+
+              <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
+
+              <p className="text-lg text-muted-foreground">
                 Thoughts, tutorials, and insights about software development.
               </p>
             </div>
@@ -48,30 +45,40 @@ async function BlogPage() {
     );
   }
 
+  const [featuredPost, ...restPosts] = posts;
+
   return (
     <Layout>
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-4">
+          <div className="mb-16 max-w-2xl">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-foreground mb-4">
               Blog
             </h1>
-            
-            {/* Breadcrumb Navigation */}
-            <div className="flex justify-center mb-4">
-              <BreadcrumbWithSchema items={breadcrumbs} />
-            </div>
-            
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+
+            <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
+
+            <p className="text-lg text-muted-foreground">
               Thoughts, tutorials, and insights about software development, React, and modern web
               technologies.
             </p>
           </div>
 
-          {/* Blog Grid - 3 Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
+          {/* Editorial stacked list — matches /projects; the lead post gets
+              the clip-corner accent, everything else is a plain row. */}
+          <div className="flex flex-col gap-16 lg:gap-24">
+            <BlogCard
+              id={featuredPost.slug}
+              title={featuredPost.title}
+              excerpt={featuredPost.description}
+              image={featuredPost.image}
+              date={featuredPost.date}
+              readTime={featuredPost.readTime}
+              category={featuredPost.tags[0] || "Article"}
+              large
+            />
+            {restPosts.map((post) => (
               <BlogCard
                 key={post.slug}
                 id={post.slug}

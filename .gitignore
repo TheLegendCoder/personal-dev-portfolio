@@ -33,6 +33,8 @@
 # IDE settings
 .vscode/
 .idx/
+.claude/
+.agents/
 
 # Debug
 npm-debug.log*
@@ -66,6 +68,14 @@ Cinematic_Portfolio_Design_Document.md
 .github/SKILL.md
 .github/references/
 .github/
+.claude/
 
 # Supabase local configuration
 supabase/
+
+# Impeccable design/product docs (local only)
+DESIGN.md
+PRODUCT.md
+
+.impeccable/
+DESIGN-f1.md

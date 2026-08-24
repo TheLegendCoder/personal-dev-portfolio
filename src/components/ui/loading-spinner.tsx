@@ -144,7 +144,7 @@ export function FullPageLoading({ message, context = 'general', variant = 'pulse
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm animate-fade-in">
-      <div className="flex flex-col items-center justify-center space-y-6 rounded-lg bg-card p-12 shadow-xl border border-primary/20 animate-bounce-up">
+      <div className="flex flex-col items-center justify-center space-y-6 rounded-lg bg-card p-12 shadow-xl border border-primary/20 animate-fade-up">
         <LoadingSpinner size="lg" className="text-primary" variant={variant} />
         <div className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground animate-pulse transition-all duration-300">{displayMessage}</p>

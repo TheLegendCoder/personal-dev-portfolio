@@ -10,9 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       screens: {
         'xs': '475px',
@@ -67,6 +67,9 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        status: {
+          active: 'hsl(var(--status-active))',
+        },
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
@@ -85,15 +88,20 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      // Shape Consistency Lock (Telemetry Noir): sharp/flat by default —
+      // cards, panels, inputs, and buttons are all rounded-none. `full` is
+      // reserved for status dots, progress-bar caps, and tag/badge chips.
+      // xl/2xl/3xl are a restrained legacy tier — desktop-OS window chrome is the
+      // one documented exception (rounded-lg), see window-frame.tsx.
       borderRadius: {
         'none': '0',
-        'sm': 'calc(var(--radius) - 4px)',
-        DEFAULT: 'var(--radius)',
-        'md': 'calc(var(--radius) - 2px)',
-        'lg': 'var(--radius)',
-        'xl': '1.5rem',
-        '2xl': '2rem',     // spec: 2rem
-        '3xl': '3rem',     // spec: 3rem
+        'sm': '0',
+        DEFAULT: '0',
+        'md': '0',
+        'lg': '0',
+        'xl': '1rem',
+        '2xl': '1.25rem',
+        '3xl': '1.5rem',
         'full': '9999px',
       },
       fontSize: {
@@ -258,18 +266,10 @@ export default {
         'pulse-glow': {
           '0%, 100%': {
             opacity: '1',
-            boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.7)'
+            boxShadow: '0 0 0 0 hsl(var(--primary) / 0.7)'
           },
           '50%': {
-            boxShadow: '0 0 0 10px rgba(59, 130, 246, 0)'
-          },
-        },
-        'pulse-color': {
-          '0%, 100%': {
-            color: 'hsl(var(--primary))'
-          },
-          '50%': {
-            color: 'hsl(160, 60%, 45%)'
+            boxShadow: '0 0 0 10px hsl(var(--primary) / 0)'
           },
         },
         // Shimmer and loading effects
@@ -373,21 +373,20 @@ export default {
         'slide-in-right': 'slide-in-from-right 0.3s ease-out',
         
         // Playful entrance animations with bouncy easing
-        'bounce-in': 'bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'bounce-up': 'bounce-up 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'bounce-down': 'bounce-down 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'bounce-in': 'bounce-in 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+        'bounce-up': 'bounce-up 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+        'bounce-down': 'bounce-down 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
         'cascade-in': 'cascade-in 0.5s ease-out',
-        
+
         // Spring and hover effects
-        'spring-scale': 'spring-scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'elastic-scale': 'elastic-scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'spring-scale': 'spring-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        'elastic-scale': 'elastic-scale 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         
         // Floating animations
         'float': 'float 3s ease-in-out infinite',
         'gentle-float': 'gentle-float 4s ease-in-out infinite',
         'pulse-glow': 'pulse-glow 2s infinite',
-        'pulse-color': 'pulse-color 2s ease-in-out infinite',
-        
+
         // Loading states
         'shimmer': 'shimmer 2s infinite',
         'skeleton-pulse': 'skeleton-pulse 2s ease-in-out infinite',
@@ -397,8 +396,8 @@ export default {
         'wiggle': 'wiggle 0.3s ease-in-out',
         
         // Page transitions
-        'swipe-in-right': 'swipe-in-right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'swipe-in-left': 'swipe-in-left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'swipe-in-right': 'swipe-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'swipe-in-left': 'swipe-in-left 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
         
         // Stagger children
         'stagger-child': 'stagger-child 0.5s ease-out backwards',
@@ -408,9 +407,7 @@ export default {
         'text-reveal': 'text-reveal 0.6s ease-out',
       },
       transitionTimingFunction: {
-        'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'elastic': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'expo-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },

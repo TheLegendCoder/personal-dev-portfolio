@@ -21,6 +21,12 @@ export const EASE = 'power3.out';
 export const STAGGER_TEXT = 0.08;
 export const STAGGER_CARD = 0.15;
 
+// ─── Bold-kinetic-editorial additions ────────────────────────────────────────
+// Snappier settle for kinetic-type entrances (hero headline, About intro)
+export const EASE_SNAPPY = 'power4.out';
+// Scrub-driven tweens must be linear — GSAP convention for ScrollTrigger scrub
+export const EASE_STACK_SCRUB = 'none';
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
@@ -99,6 +105,15 @@ export function magneticHover(element: HTMLElement, strength = 0.35) {
     element.removeEventListener('mouseleave', onLeave);
     gsap.to(element, { x: 0, y: 0, duration: 0 });
   };
+}
+
+/**
+ * True when the user has requested reduced motion at the OS/browser level.
+ * SSR-safe: returns false on the server.
+ */
+export function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 export { gsap, ScrollTrigger, Draggable };
