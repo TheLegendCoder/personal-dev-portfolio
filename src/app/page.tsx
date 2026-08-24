@@ -1,6 +1,5 @@
 import { Hero } from '@/components/home/hero';
 import { FeaturedProjects } from '@/components/home/featuredprojects';
-import { Protocol } from '@/components/home/protocol';
 import { LatestPosts } from '@/components/home/latestposts';
 import { generateSEOMetadata, getCanonicalUrl } from '@/lib/seo/metadata';
 import { personalInfo } from '@/components/data/content';
@@ -19,7 +18,6 @@ export default function Home() {
     <div className="flex flex-col items-center w-full overflow-x-hidden">
       <Hero />
       <FeaturedProjects />
-      <Protocol />
       <LatestPosts />
     </div>
   );

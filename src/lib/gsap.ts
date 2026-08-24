@@ -26,8 +26,6 @@ export const STAGGER_CARD = 0.15;
 export const EASE_SNAPPY = 'power4.out';
 // Scrub-driven tweens must be linear — GSAP convention for ScrollTrigger scrub
 export const EASE_STACK_SCRUB = 'none';
-// Shared scrub value for the Protocol sticky-stack sequence
-export const STICKY_STACK_SCRUB = 0.8;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
