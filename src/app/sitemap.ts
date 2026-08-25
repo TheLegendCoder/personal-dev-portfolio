@@ -4,6 +4,7 @@ import { MetadataRoute } from 'next';
 import { getAllBlogPostsForSitemap } from '@/lib/blog';
 import { getAllTutorialsForSitemap } from '@/lib/tutorial';
 import { getProjects } from '@/lib/projects';
+import { allTopicSlugs } from '@/lib/taxonomy';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tsholofelondawonde.co.za';
 
@@ -32,6 +33,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    // One page per canonical topic in src/lib/taxonomy.ts.
+    ...allTopicSlugs().map(({ slug }) => ({
+      url: `${SITE_URL}/writing/topic/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
     {
       url: `${SITE_URL}/blog`,
       lastModified: new Date(),
@@ -98,7 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Project detail pages were previously absent from the sitemap entirely.
   const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${SITE_URL}/projects/${project.id}`,
+    url: `${SITE_URL}/projects/${project.slug || project.id}`,
     lastModified: new Date(project.updated_at || project.created_at),
     changeFrequency: 'monthly',
     priority: 0.6,

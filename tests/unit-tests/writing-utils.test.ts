@@ -4,6 +4,8 @@ import {
   mergeWriting,
   collectTopics,
   filterWriting,
+  canonicalTopicsFor,
+  filterByCanonicalTopic,
   type WritingSourceSummary,
 } from '@/lib/writing-utils';
 
@@ -19,6 +21,11 @@ function summary(overrides: Partial<WritingSourceSummary> = {}): WritingSourceSu
     image: 'https://example.com/a.png',
     imageHint: 'hint',
     featured: false,
+    topics: [],
+    evergreen: false,
+    relatedPostSlugs: [],
+    relatedTutorialSlugs: [],
+    relatedProjectSlugs: [],
     ...overrides,
   };
 }
@@ -120,5 +127,61 @@ describe('filterWriting()', () => {
 
   it('returns nothing for an unknown topic', () => {
     expect(filterWriting(items, { topic: 'quantum' })).toEqual([]);
+  });
+});
+
+
+describe('canonicalTopicsFor()', () => {
+  it('merges the curated topics column with topics implied by tags', () => {
+    const [item] = mergeWriting(
+      [summary({ topics: ['Security'], tags: ['Clean Architecture'] })],
+      []
+    );
+
+    expect(canonicalTopicsFor(item).sort()).toEqual(['Architecture', 'Security']);
+  });
+
+  it('de-duplicates when a tag implies an already-curated topic', () => {
+    const [item] = mergeWriting([summary({ topics: ['.NET'], tags: ['dotnet'] })], []);
+
+    expect(canonicalTopicsFor(item)).toEqual(['.NET']);
+  });
+
+  it('ignores tags that are not canonical topics', () => {
+    const [item] = mergeWriting(
+      [summary({ topics: [], tags: ['Building in Public'] })],
+      []
+    );
+
+    expect(canonicalTopicsFor(item)).toEqual([]);
+  });
+});
+
+describe('filterByCanonicalTopic()', () => {
+  const items = mergeWriting(
+    [
+      summary({ slug: 'curated', topics: ['Architecture'], tags: [], date: '2026-05-01' }),
+      summary({ slug: 'via-tag', topics: [], tags: ['Distributed Systems'], date: '2026-04-01' }),
+      summary({ slug: 'unrelated', topics: [], tags: ['Building in Public'], date: '2026-03-01' }),
+    ],
+    [summary({ slug: 'tutorial', topics: ['Architecture'], tags: [], date: '2026-02-01' })]
+  );
+
+  it('matches both curated topics and topics implied by tags', () => {
+    // An item tagged only "Distributed Systems" must still appear under
+    // Architecture, or the topic pages fragment.
+    expect(filterByCanonicalTopic(items, 'Architecture').map((i) => i.slug)).toEqual([
+      'curated',
+      'via-tag',
+      'tutorial',
+    ]);
+  });
+
+  it('is case-insensitive', () => {
+    expect(filterByCanonicalTopic(items, 'architecture')).toHaveLength(3);
+  });
+
+  it('returns nothing for a topic no item belongs to', () => {
+    expect(filterByCanonicalTopic(items, 'Testing')).toEqual([]);
   });
 });

@@ -1,3 +1,5 @@
+import { normalizeTopics } from '@/lib/taxonomy';
+
 /**
  * Pure helpers behind the Writing hub.
  *
@@ -22,6 +24,12 @@ export interface WritingItem {
   image: string;
   imageHint: string;
   featured: boolean;
+  /** Canonical topics from src/lib/taxonomy.ts — the navigable subset of tags. */
+  topics: string[];
+  evergreen: boolean;
+  relatedPostSlugs: string[];
+  relatedTutorialSlugs: string[];
+  relatedProjectSlugs: string[];
 }
 
 /** The shared shape of `BlogPostSummary` and `TutorialPostSummary`. */
@@ -36,6 +44,11 @@ export interface WritingSourceSummary {
   image: string;
   imageHint: string;
   featured: boolean;
+  topics?: string[] | null;
+  evergreen?: boolean | null;
+  relatedPostSlugs?: string[] | null;
+  relatedTutorialSlugs?: string[] | null;
+  relatedProjectSlugs?: string[] | null;
 }
 
 export function toWritingItem(
@@ -55,6 +68,11 @@ export function toWritingItem(
     image: row.image,
     imageHint: row.imageHint,
     featured: row.featured,
+    topics: row.topics ?? [],
+    evergreen: row.evergreen ?? false,
+    relatedPostSlugs: row.relatedPostSlugs ?? [],
+    relatedTutorialSlugs: row.relatedTutorialSlugs ?? [],
+    relatedProjectSlugs: row.relatedProjectSlugs ?? [],
   };
 }
 
@@ -74,6 +92,30 @@ export function collectTopics(items: WritingItem[]): string[] {
   const topics = new Set<string>();
   items.forEach((item) => item.tags.forEach((tag) => topics.add(tag)));
   return Array.from(topics).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Every canonical topic an item belongs to, from its curated `topics` column
+ * plus anything its free-form tags imply. Used by topic pages so an item
+ * tagged only "Clean Architecture" still appears under Architecture.
+ */
+export function canonicalTopicsFor(item: WritingItem): string[] {
+  const merged = new Set<string>([
+    ...normalizeTopics(item.topics),
+    ...normalizeTopics(item.tags),
+  ]);
+  return Array.from(merged);
+}
+
+/** Items belonging to a canonical topic. */
+export function filterByCanonicalTopic(
+  items: WritingItem[],
+  topic: string
+): WritingItem[] {
+  const target = topic.toLowerCase();
+  return items.filter((item) =>
+    canonicalTopicsFor(item).some((t) => t.toLowerCase() === target)
+  );
 }
 
 export interface WritingFilters {

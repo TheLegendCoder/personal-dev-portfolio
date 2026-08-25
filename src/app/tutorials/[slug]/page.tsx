@@ -10,6 +10,8 @@ import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateTutorialBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
+import { getRelatedContent } from "@/lib/related-content";
+import { RelatedContentSection } from "@/components/writing/related-content";
 
 interface TutorialPageProps {
   params: Promise<{
@@ -55,6 +57,14 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
   if (!tutorial) {
     notFound();
   }
+
+  const related = await getRelatedContent({
+    kind: 'tutorial',
+    slug,
+    relatedPostSlugs: tutorial.relatedPostSlugs,
+    relatedTutorialSlugs: tutorial.relatedTutorialSlugs,
+    relatedProjectSlugs: tutorial.relatedProjectSlugs,
+  });
 
   const formattedDate = new Date(tutorial.date).toLocaleDateString("en-US", {
     year: "numeric",
@@ -165,6 +175,8 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
               </div>
             </footer>
           )}
+
+          <RelatedContentSection related={related} />
         </div>
       </article>
     </Layout>

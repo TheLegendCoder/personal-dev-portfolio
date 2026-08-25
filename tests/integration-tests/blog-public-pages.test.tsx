@@ -120,6 +120,11 @@ const sampleSummaries = [
     featured: true,
     image: 'https://images.test/first.png',
     imageHint: 'first image',
+    topics: [],
+    evergreen: false,
+    relatedPostSlugs: [],
+    relatedTutorialSlugs: [],
+    relatedProjectSlugs: [],
   },
   {
     slug: 'second-post',
@@ -133,6 +138,11 @@ const sampleSummaries = [
     featured: false,
     image: 'https://images.test/second.png',
     imageHint: 'second image',
+    topics: [],
+    evergreen: false,
+    relatedPostSlugs: [],
+    relatedTutorialSlugs: [],
+    relatedProjectSlugs: [],
   },
 ];
 
@@ -148,6 +158,11 @@ const samplePost = {
   featured: true,
   image: 'https://images.test/first.png',
   imageHint: 'first image',
+  topics: [],
+  evergreen: false,
+  relatedPostSlugs: [],
+  relatedTutorialSlugs: [],
+  relatedProjectSlugs: [],
   content: '<p>Rendered HTML content</p>',
 };
 
