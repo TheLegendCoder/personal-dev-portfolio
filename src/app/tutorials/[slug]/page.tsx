@@ -8,7 +8,7 @@ import "highlight.js/styles/atom-one-dark.css";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-data";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
-import { generateBlogPostBreadcrumbs } from "@/lib/seo/breadcrumbs";
+import { generateTutorialBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
 
 interface TutorialPageProps {
@@ -74,7 +74,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
   });
 
   // Generate breadcrumbs (Tutorials > Tutorial Title)
-  const breadcrumbs = generateBlogPostBreadcrumbs(tutorial.title);
+  const breadcrumbs = generateTutorialBreadcrumbs(tutorial.title);
 
   return (
     <Layout>

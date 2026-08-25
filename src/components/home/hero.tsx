@@ -84,21 +84,15 @@ export function Hero() {
           <div ref={ctaRef} className="flex flex-col sm:flex-row items-start gap-4">
             <MagneticButton>
               <Button asChild size="lg" className="group">
-                <Link href="/projects">
+                <Link href="/work">
                   View My Work
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </MagneticButton>
             <MagneticButton>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  document.querySelector("footer")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Contact Me
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/contact">Contact Me</Link>
               </Button>
             </MagneticButton>
           </div>

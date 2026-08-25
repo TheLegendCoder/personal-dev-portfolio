@@ -42,37 +42,52 @@ function formatSegmentLabel(segment: string): string {
 }
 
 /**
- * Generate breadcrumbs for blog post pages (simplified: Blog > Post Title)
+ * Breadcrumbs for a content detail page: Home > Section > Title.
+ *
+ * The Home crumb is included so these match `generateBreadcrumbs` — the two
+ * previously disagreed, which produced inconsistent BreadcrumbList schema
+ * depending on which page a crawler landed on.
  */
-export function generateBlogPostBreadcrumbs(postTitle: string): BreadcrumbItem[] {
+function generateDetailBreadcrumbs(
+  sectionName: string,
+  sectionPath: string,
+  title: string
+): BreadcrumbItem[] {
   const siteUrl = getSiteUrl();
 
   return [
     {
-      name: 'Blog',
-      url: `${siteUrl}/blog`,
+      name: 'Home',
+      url: siteUrl,
     },
     {
-      name: postTitle,
+      name: sectionName,
+      url: `${siteUrl}${sectionPath}`,
+    },
+    {
+      name: title,
       url: '', // Current page, no URL needed
     },
   ];
 }
 
 /**
- * Generate breadcrumbs for project detail pages (simplified: Projects > Project Title)
+ * Generate breadcrumbs for blog post pages (Home > Blog > Post Title)
+ */
+export function generateBlogPostBreadcrumbs(postTitle: string): BreadcrumbItem[] {
+  return generateDetailBreadcrumbs('Blog', '/blog', postTitle);
+}
+
+/**
+ * Generate breadcrumbs for tutorial pages (Home > Tutorials > Tutorial Title)
+ */
+export function generateTutorialBreadcrumbs(tutorialTitle: string): BreadcrumbItem[] {
+  return generateDetailBreadcrumbs('Tutorials', '/tutorials', tutorialTitle);
+}
+
+/**
+ * Generate breadcrumbs for project detail pages (Home > Projects > Project Title)
  */
 export function generateProjectBreadcrumbs(projectTitle: string): BreadcrumbItem[] {
-  const siteUrl = getSiteUrl();
-
-  return [
-    {
-      name: 'Projects',
-      url: `${siteUrl}/projects`,
-    },
-    {
-      name: projectTitle,
-      url: '', // Current page, no URL needed
-    },
-  ];
+  return generateDetailBreadcrumbs('Projects', '/projects', projectTitle);
 }

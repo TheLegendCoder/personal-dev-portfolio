@@ -84,6 +84,11 @@ vi.mock('next/link', () => ({
 vi.mock('lucide-react', () => ({
   BookOpen: () => <svg data-testid="book-open" />,
   ArrowLeft: () => <svg data-testid="arrow-left" />,
+  // The detail page's byline row renders these three; without them the mock
+  // throws "No X export is defined on the lucide-react mock".
+  User: () => <svg data-testid="user" />,
+  Calendar: () => <svg data-testid="calendar" />,
+  Clock: () => <svg data-testid="clock" />,
 }));
 
 vi.mock('isomorphic-dompurify', () => ({

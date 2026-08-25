@@ -8,14 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn, triggerCelebrationFrom } from "@/lib/utils";
 import { gsap, ScrollTrigger, EASE, prefersReducedMotion } from "@/lib/gsap";
-
-const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Projects", path: "/projects" },
-  { name: "Blog", path: "/blog" },
-  { name: "Tutorials", path: "/tutorials" },
-];
+import { primaryNav, isNavItemActive } from "@/lib/nav";
+import { trackNavigationClick } from "@/lib/posthog-events";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -141,21 +135,62 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link, i) => (
-            <Link
-              key={link.path}
-              href={link.path}
-              ref={(el) => { navLinkRefs.current[i] = el; }}
-              className={cn(
-                "mono-label border-b-2 py-1 transition-colors duration-200 inline-block",
-                pathname === link.path
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
-              )}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {primaryNav.map((item, i) => {
+            const active = isNavItemActive(pathname, item);
+
+            const trigger = (
+              <Link
+                href={item.path}
+                ref={(el) => { navLinkRefs.current[i] = el; }}
+                onClick={() => trackNavigationClick(item.name, item.path, 'navbar')}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  "mono-label border-b-2 py-1 transition-colors duration-200 inline-block",
+                  active
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                )}
+              >
+                {item.name}
+              </Link>
+            );
+
+            if (!item.children) {
+              return <div key={item.path}>{trigger}</div>;
+            }
+
+            // The sub-menu opens on hover and on keyboard focus (focus-within),
+            // so it carries no open/close state that could desync from the GSAP
+            // magnetic-hover handlers bound to the trigger link above.
+            return (
+              <div key={item.path} className="group relative">
+                {trigger}
+                <div
+                  className={cn(
+                    "invisible absolute left-1/2 top-full z-50 min-w-[11rem] -translate-x-1/2 pt-4 opacity-0 transition-opacity duration-200",
+                    "group-hover:visible group-hover:opacity-100",
+                    "group-focus-within:visible group-focus-within:opacity-100"
+                  )}
+                >
+                  <ul className="flex flex-col border border-border bg-background py-1 shadow-lg">
+                    {item.children.map((child) => (
+                      <li key={child.path}>
+                        <Link
+                          href={child.path}
+                          onClick={() =>
+                            trackNavigationClick(child.name, child.path, 'navbar-dropdown')
+                          }
+                          className="mono-label block whitespace-nowrap px-4 py-2 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                        >
+                          {child.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
           <ThemeToggle source="navbar" />
           <Button
             variant="ghost"
@@ -179,6 +214,7 @@ export function Navbar() {
           size="icon"
           className="md:hidden"
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
           aria-label="Toggle menu"
         >
           {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -189,21 +225,47 @@ export function Navbar() {
       {isOpen && (
         <div className="md:hidden border-t border-border bg-background animate-fade-in">
           <div className="flex flex-col gap-1 px-4 py-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  "mono-label border-l-2 px-4 py-3 transition-colors duration-200",
-                  pathname === link.path
-                    ? "border-primary text-primary bg-primary/5"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {primaryNav.map((item) => {
+              const active = isNavItemActive(pathname, item);
+              return (
+                <div key={item.path}>
+                  <Link
+                    href={item.path}
+                    onClick={() => {
+                      trackNavigationClick(item.name, item.path, 'mobile');
+                      setIsOpen(false);
+                    }}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      "mono-label block border-l-2 px-4 py-3 transition-colors duration-200",
+                      active
+                        ? "border-primary text-primary bg-primary/5"
+                        : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                  {item.children && (
+                    <ul className="flex flex-col">
+                      {item.children.map((child) => (
+                        <li key={child.path}>
+                          <Link
+                            href={child.path}
+                            onClick={() => {
+                              trackNavigationClick(child.name, child.path, 'mobile');
+                              setIsOpen(false);
+                            }}
+                            className="mono-label block border-l-2 border-transparent py-2 pl-10 pr-4 text-xs text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                          >
+                            {child.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
             <div className="flex items-center justify-between px-4 py-2">
               <span className="mono-label">Theme</span>
               <ThemeToggle source="navbar" />
@@ -214,4 +276,3 @@ export function Navbar() {
     </header>
   );
 }
-

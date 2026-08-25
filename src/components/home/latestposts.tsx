@@ -2,6 +2,7 @@ import { AlertTriangle, BookOpen } from "lucide-react";
 import { getBlogPostsSummaryWithStatus } from "@/lib/blog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
+import { copy } from "@/components/data/content";
 
 export async function LatestPosts() {
   const { data: allPosts, error } = await getBlogPostsSummaryWithStatus();
@@ -27,14 +28,14 @@ export async function LatestPosts() {
           <EmptyState
             icon={<AlertTriangle className="h-12 w-12 text-primary" />}
             title="Having trouble loading this"
-            description="Something went wrong on our end. This isn't an empty portfolio, just a temporary hiccup. Please check back shortly."
+            description={copy.loadError}
             actionText="Check back soon"
           />
         ) : latestPosts.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-12 w-12 text-primary" />}
-            title="Blog posts coming soon"
-            description="I'm working on insightful articles about web development, design patterns, and best practices. Check back soon for in-depth tutorials and technical insights."
+            title="Writing coming soon"
+            description={copy.writingEmptyState}
             actionText="Check back soon"
           />
         ) : (

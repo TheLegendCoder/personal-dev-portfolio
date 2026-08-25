@@ -11,6 +11,7 @@ vi.mock('@/lib/seo/metadata', () => ({
 import {
   generateBreadcrumbs,
   generateBlogPostBreadcrumbs,
+  generateTutorialBreadcrumbs,
 } from '@/lib/seo/breadcrumbs';
 
 // ---------------------------------------------------------------------------
@@ -87,28 +88,36 @@ describe('generateBreadcrumbs()', () => {
 // ---------------------------------------------------------------------------
 
 describe('generateBlogPostBreadcrumbs()', () => {
-  it('returns exactly two items', () => {
+  it('returns Home > Blog > Title', () => {
     const crumbs = generateBlogPostBreadcrumbs('My Awesome Post');
 
-    expect(crumbs).toHaveLength(2);
+    // The Home crumb was added so detail pages agree with generateBreadcrumbs;
+    // the two previously emitted different BreadcrumbList shapes.
+    expect(crumbs).toHaveLength(3);
+    expect(crumbs.map((c) => c.name)).toEqual(['Home', 'Blog', 'My Awesome Post']);
   });
 
-  it('first item is Blog pointing to /blog', () => {
+  it('links Home and the section, leaving the current page url empty', () => {
     const crumbs = generateBlogPostBreadcrumbs('My Awesome Post');
 
-    expect(crumbs[0].name).toBe('Blog');
-    expect(crumbs[0].url).toBe('https://example.com/blog');
+    expect(crumbs[0].url).toBe('https://example.com');
+    expect(crumbs[1].url).toBe('https://example.com/blog');
+    expect(crumbs[2].url).toBe('');
   });
+});
 
-  it('second item name is the supplied post title', () => {
-    const crumbs = generateBlogPostBreadcrumbs('My Awesome Post');
+// ---------------------------------------------------------------------------
+// generateTutorialBreadcrumbs()
+// ---------------------------------------------------------------------------
 
-    expect(crumbs[1].name).toBe('My Awesome Post');
-  });
+describe('generateTutorialBreadcrumbs()', () => {
+  it('returns Home > Tutorials > Title', () => {
+    const crumbs = generateTutorialBreadcrumbs('My Guide');
 
-  it('second item url is empty string (current page)', () => {
-    const crumbs = generateBlogPostBreadcrumbs('My Awesome Post');
-
-    expect(crumbs[1].url).toBe('');
+    // Tutorial pages previously reused generateBlogPostBreadcrumbs and so
+    // rendered a trail labelled "Blog".
+    expect(crumbs.map((c) => c.name)).toEqual(['Home', 'Tutorials', 'My Guide']);
+    expect(crumbs[1].url).toBe('https://example.com/tutorials');
+    expect(crumbs[2].url).toBe('');
   });
 });

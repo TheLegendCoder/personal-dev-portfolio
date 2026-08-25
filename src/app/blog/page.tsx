@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Layout } from "@/components/layout/layout";
 import { BlogCard } from "@/components/blog/blogcard";
 import { getBlogPostsSummary } from "@/lib/blog";
@@ -6,10 +7,11 @@ import { BookOpen } from "lucide-react";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbs } from "@/lib/seo/breadcrumbs";
+import { copy } from "@/components/data/content";
 
 export const metadata = generateSEOMetadata({
   title: "Blog",
-  description: "Thoughts, tutorials, and insights about software development, React, TypeScript, and web technologies. Learn from real-world projects and experiments.",
+  description: copy.blogMetaDescription,
   canonicalUrl: getCanonicalUrl('/blog'),
 });
 
@@ -30,13 +32,13 @@ async function BlogPage() {
               <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
 
               <p className="text-lg text-muted-foreground">
-                Thoughts, tutorials, and insights about software development.
+                {copy.blogIntro}
               </p>
             </div>
             <EmptyState
               icon={<BookOpen className="h-12 w-12 text-primary" />}
               title="Blog posts coming soon"
-              description="I'm working on some insightful articles about web development, design patterns, and best practices. Check back soon for in-depth tutorials and technical insights."
+              description={copy.writingEmptyState}
               actionText="Check back soon"
             />
           </div>
@@ -60,9 +62,15 @@ async function BlogPage() {
             <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
 
             <p className="text-lg text-muted-foreground">
-              Thoughts, tutorials, and insights about software development, React, and modern web
-              technologies.
+              {copy.blogIntro}
             </p>
+
+            <Link
+              href="/writing"
+              className="mono-label mt-6 inline-flex items-center border-b border-primary pb-1 text-primary transition-colors hover:text-primary/80"
+            >
+              See all writing →
+            </Link>
           </div>
 
           {/* Editorial stacked list — matches /projects; the lead post gets
