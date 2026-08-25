@@ -48,3 +48,13 @@ alter table portfolio_projects alter column slug set not null;
 
 create unique index if not exists portfolio_projects_slug_key
   on portfolio_projects (slug);
+
+-- Enforce the slug shape in the database, not only in the admin editor's zod
+-- schema. The backfill above produces exactly this shape, so it cannot fail on
+-- existing rows. `drop ... if exists` first because `add constraint` has no
+-- `if not exists` — this keeps the file re-runnable.
+alter table portfolio_projects
+  drop constraint if exists portfolio_projects_slug_format;
+alter table portfolio_projects
+  add constraint portfolio_projects_slug_format
+  check (slug ~ '^[a-z0-9-]+$');
