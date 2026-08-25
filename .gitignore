@@ -83,3 +83,5 @@ PRODUCT.md
 
 .impeccable/
 DESIGN-f1.md
+# Agent skills (installed locally via `npx skills add`)
+.agents/
