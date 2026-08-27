@@ -30,6 +30,39 @@ export const nowStatus = {
   updatedAt: '', // e.g. '2026-08-27'
 };
 
+export interface WorkTheme {
+  label: string;
+  description: string;
+}
+
+/**
+ * The "What I work on" strip on the home page. Copy is drawn from the existing
+ * About content below (`aboutContent.approachSections` and `personalInfo.bio`)
+ * rather than invented — reword freely, it only lives here.
+ */
+export const workThemes: WorkTheme[] = [
+  {
+    label: 'Backend & .NET',
+    description:
+      'C# and the .NET ecosystem in professional work — reliable, long-lived systems built with an eye on performance and maintainability.',
+  },
+  {
+    label: 'TypeScript & the Web',
+    description:
+      'Node.js and TypeScript across the stack, from APIs and backend services through to modern web interfaces.',
+  },
+  {
+    label: 'Architecture',
+    description:
+      'How systems evolve over time, and how small design decisions compound as an application grows.',
+  },
+  {
+    label: 'Building in Public',
+    description:
+      'Documenting what I learn while building real software — the experiments, the lessons, and the things that failed interestingly.',
+  },
+];
+
 export interface Project {
   id: string;
   title: string;

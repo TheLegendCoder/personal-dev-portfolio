@@ -15,6 +15,8 @@ interface Post {
   readTime?: string;
   tags: string[];
   content?: string;
+  /** Which section the item lives in — decides the link target. */
+  type: 'article' | 'tutorial';
 }
 
 interface LatestPostsGridProps {
@@ -91,8 +93,8 @@ export function LatestPostsGrid({ posts }: LatestPostsGridProps) {
       <div ref={listRef} className="flex flex-col divide-y divide-border">
         {posts.map((post) => (
           <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
+            key={`${post.type}-${post.slug}`}
+            href={`/${post.type === 'tutorial' ? 'tutorials' : 'blog'}/${post.slug}`}
             className="group flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 py-6"
           >
             <span className="font-mono text-sm text-muted-foreground shrink-0 sm:w-32">
@@ -113,8 +115,8 @@ export function LatestPostsGrid({ posts }: LatestPostsGridProps) {
 
       <div ref={ctaRef} className="mt-12">
         <Button asChild variant="outline" size="lg" className="group">
-          <Link href="/blog">
-            View All Posts
+          <Link href="/writing">
+            View All Writing
             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </Button>

@@ -74,7 +74,7 @@ export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClie
           ref={headerRef}
           className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-foreground mb-16 lg:mb-20 max-w-2xl"
         >
-          Featured Projects
+          Featured Work
         </h2>
 
         {error ? (
@@ -114,7 +114,7 @@ export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClie
             <div ref={ctaRef} className="mt-16">
               <Button asChild variant="outline" size="lg" className="group">
                 <Link href="/projects">
-                  View All Projects
+                  View All Work
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>

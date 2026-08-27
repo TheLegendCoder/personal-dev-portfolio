@@ -1,4 +1,6 @@
 import { Hero } from '@/components/home/hero';
+import { WorkThemes } from '@/components/home/work-themes';
+import { Currently } from '@/components/home/currently';
 import { FeaturedProjects } from '@/components/home/featuredprojects';
 import { LatestPosts } from '@/components/home/latestposts';
 import { generateSEOMetadata, getCanonicalUrl } from '@/lib/seo/metadata';
@@ -17,6 +19,8 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center w-full overflow-x-hidden">
       <Hero />
+      <WorkThemes />
+      <Currently />
       <FeaturedProjects />
       <LatestPosts />
     </div>

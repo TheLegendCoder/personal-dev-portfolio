@@ -1,10 +1,12 @@
 import { AlertTriangle, BookOpen } from "lucide-react";
-import { getBlogPostsSummaryWithStatus } from "@/lib/blog";
+import { getUnifiedWritingWithStatus } from "@/lib/writing";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LatestPostsGrid } from "@/components/home/latest-posts-grid";
 
 export async function LatestPosts() {
-  const { data: allPosts, error } = await getBlogPostsSummaryWithStatus();
+  // Articles + tutorials merged — the home page leads with "Latest Writing",
+  // so it should not be blog-only.
+  const { data: allPosts, error } = await getUnifiedWritingWithStatus();
 
   // Extract featured posts
   const featuredPosts = allPosts.filter((p) => p.featured);
@@ -33,8 +35,8 @@ export async function LatestPosts() {
         ) : latestPosts.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-12 w-12 text-primary" />}
-            title="Blog posts coming soon"
-            description="I'm working on insightful articles about web development, design patterns, and best practices. Check back soon for in-depth tutorials and technical insights."
+            title="Writing coming soon"
+            description="I'm working on articles and step-by-step tutorials about web development, architecture, and the lessons that come out of building real software."
             actionText="Check back soon"
           />
         ) : (
