@@ -14,6 +14,22 @@ export const personalInfo = {
     twitter: "https://x.com/tsholo_dev",
   },
 };
+/**
+ * /now page content — deliberately a config object, not a Supabase table.
+ * A "currently building/learning" blurb touched every few weeks doesn't need a
+ * database and an admin form; editing this file and redeploying is the whole
+ * update workflow.
+ *
+ * Ships empty: /now renders an empty state and the home page "Currently" strip
+ * doesn't render at all until these are filled in.
+ */
+export const nowStatus = {
+  building: '',
+  learning: '',
+  exploring: '',
+  updatedAt: '', // e.g. '2026-08-27'
+};
+
 export interface Project {
   id: string;
   title: string;
