@@ -79,3 +79,9 @@ PRODUCT.md
 
 .impeccable/
 DESIGN-f1.md
+
+# local-only AI assistant guidance
+/CLAUDE.md
+
+# graphify knowledge-graph build output
+/graphify-out/
