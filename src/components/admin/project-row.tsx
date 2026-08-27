@@ -58,15 +58,22 @@ export function AdminProjectRow({ project }: AdminProjectRowProps) {
             />
             <span className="font-medium text-foreground line-clamp-1">{project.title}</span>
           </div>
-          <Badge
-            className={`text-xs font-medium border-0 ${
-              project.category === 'professional'
-                ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                : 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
-            }`}
-          >
-            {project.category === 'professional' ? 'Professional' : 'Personal'}
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            <Badge
+              className={`text-xs font-medium border-0 ${
+                project.category === 'professional'
+                  ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                  : 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
+              }`}
+            >
+              {project.category === 'professional' ? 'Professional' : 'Personal'}
+            </Badge>
+            {project.is_experiment && (
+              <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-medium border-0">
+                Experiment
+              </Badge>
+            )}
+          </div>
         </div>
       </td>
 

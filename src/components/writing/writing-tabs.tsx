@@ -10,7 +10,6 @@ const TABS: { label: string; value: WritingType | 'all'; href: string }[] = [
 /**
  * Plain links rather than a client-side filter — the list is server-rendered per
  * `?type=`, so there is no state to hold and no reason to ship JS for this.
- * Visual treatment matches ProjectFilters on /projects.
  */
 export function WritingTabs({ current }: { current: WritingType | 'all' }) {
   return (

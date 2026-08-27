@@ -1,33 +1,68 @@
-import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
 import { Code2 } from 'lucide-react';
-import { getProjects, getProjectsByCategory } from '@/lib/projects';
-import type { ProjectCategory } from '@/lib/projects';
+import { getProjects } from '@/lib/projects';
+import type { PortfolioProject } from '@/lib/projects';
 import { ProjectCard } from '@/components/projects/projectcards';
-import { ProjectFilters } from '@/components/projects/project-filters';
 import { EmptyState } from '@/components/ui/empty-state';
 import { BreadcrumbWithSchema } from '@/components/ui/breadcrumb';
 import { generateBreadcrumbs } from '@/lib/seo/breadcrumbs';
 
 export const dynamic = 'force-dynamic';
 
-interface ProjectsPageProps {
-  searchParams: Promise<{ category?: string }>;
+/**
+ * Three buckets instead of category filter tabs. `is_experiment` is orthogonal
+ * to `category` — an experiment keeps being 'professional' or 'personal', it
+ * just groups here instead. Experiments are pulled out first so a featured
+ * experiment lands under Experiments rather than appearing twice.
+ */
+function groupProjects(projects: PortfolioProject[]) {
+  const experiments = projects.filter((p) => p.is_experiment);
+  const rest = projects.filter((p) => !p.is_experiment);
+
+  return {
+    featured: rest.filter((p) => p.featured),
+    side: rest.filter((p) => !p.featured),
+    experiments,
+  };
 }
 
-export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
-  const { category } = await searchParams;
+function ProjectSection({
+  title,
+  projects,
+}: {
+  title: string;
+  projects: PortfolioProject[];
+}) {
+  // Empty buckets render nothing at all — the page grows into three sections as
+  // projects get curated, rather than showing empty headings in the meantime.
+  if (projects.length === 0) return null;
 
-  const validCategories = ['all', 'professional', 'personal'];
-  if (!category || !validCategories.includes(category)) {
-    redirect('/projects?category=all');
-  }
+  return (
+    <section className="mb-16 lg:mb-24 last:mb-0">
+      <h2 className="mono-label mb-8 pb-3 border-b border-border">{title}</h2>
+      <div className="flex flex-col gap-16 lg:gap-24">
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            id={project.id}
+            title={project.title}
+            description={project.description}
+            image={project.image}
+            tags={project.tags}
+            liveUrl={project.live_url}
+            githubUrl={project.github_url}
+            featured={project.featured}
+            category={project.category}
+            isExperiment={project.is_experiment}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 
-  const projects =
-    category === 'all'
-      ? await getProjects()
-      : await getProjectsByCategory(category as ProjectCategory);
-
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+  const { featured, side, experiments } = groupProjects(projects);
   const breadcrumbs = generateBreadcrumbs('/projects');
 
   return (
@@ -36,49 +71,34 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
       <section className="py-28 lg:py-36 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-foreground mb-4 max-w-3xl">
-            My Projects
+            Work
           </h1>
 
           <BreadcrumbWithSchema items={breadcrumbs} className="mb-6" />
 
-          <p className="text-lg text-muted-foreground max-w-2xl mb-10">
-            A collection of my professional work and personal projects showcasing my skills in
-            web development, design, and problem-solving.
+          <p className="text-lg text-muted-foreground max-w-2xl">
+            Things I&apos;ve built — client and professional work, side projects, and
+            smaller experiments worth keeping around.
           </p>
-
-          <Suspense fallback={null}>
-            <ProjectFilters current={category} />
-          </Suspense>
         </div>
       </section>
 
-      {/* Projects List */}
+      {/* Grouped project list */}
       <section className="pb-28 lg:pb-36 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {projects.length === 0 ? (
             <EmptyState
               icon={<Code2 className="h-12 w-12 text-primary" />}
               title="I am working on it."
-              description={`Coming soon!${category !== 'all' ? ` No ${category} projects are published yet.` : ''}`}
+              description="Coming soon!"
               actionText="Check back soon"
             />
           ) : (
-            <div className="flex flex-col gap-16 lg:gap-24">
-              {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  id={project.id}
-                  title={project.title}
-                  description={project.description}
-                  image={project.image}
-                  tags={project.tags}
-                  liveUrl={project.live_url}
-                  githubUrl={project.github_url}
-                  featured={project.featured}
-                  category={project.category}
-                />
-              ))}
-            </div>
+            <>
+              <ProjectSection title="Featured" projects={featured} />
+              <ProjectSection title="Side Projects" projects={side} />
+              <ProjectSection title="Experiments" projects={experiments} />
+            </>
           )}
         </div>
       </section>

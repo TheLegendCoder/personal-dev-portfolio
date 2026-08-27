@@ -73,6 +73,8 @@ export interface Project {
   githubUrl: string;
   featured?: boolean;
   category?: 'professional' | 'personal';
+  /** Groups under Experiments on /projects. Independent of category. */
+  isExperiment?: boolean;
 }
 
 /**

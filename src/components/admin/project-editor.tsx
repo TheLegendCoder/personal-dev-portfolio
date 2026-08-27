@@ -35,6 +35,7 @@ const projectSchema = z.object({
   category: z.enum(['professional', 'personal']),
   published: z.boolean(),
   featured: z.boolean(),
+  isExperiment: z.boolean(),
   sortOrder: z.number().int().min(0),
 });
 
@@ -71,6 +72,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
       category: project?.category ?? 'professional',
       published: project?.published ?? false,
       featured: project?.featured ?? false,
+      isExperiment: project?.is_experiment ?? false,
       sortOrder: project?.sort_order ?? 0,
     },
   });
@@ -91,6 +93,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
           category: values.category,
           published: values.published,
           featured: values.featured,
+          is_experiment: values.isExperiment,
           sort_order: values.sortOrder,
         });
       } catch (err) {
@@ -106,6 +109,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
 
   const published = useWatch({ control, name: 'published' }) ?? false;
   const featured = useWatch({ control, name: 'featured' }) ?? false;
+  const isExperiment = useWatch({ control, name: 'isExperiment' }) ?? false;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -301,6 +305,14 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
                 <p className="text-xs text-muted-foreground">Pinned to the home page</p>
               </div>
             </label>
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input type="checkbox" className="sr-only" {...register('isExperiment')} />
+              <ToggleVisual checked={isExperiment} color="violet" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Experiment</p>
+                <p className="text-xs text-muted-foreground">Groups under Experiments on Work</p>
+              </div>
+            </label>
           </div>
         </div>
       </div>
@@ -316,17 +328,17 @@ function ToggleVisual({
   color = 'green',
 }: {
   checked: boolean;
-  color?: 'green' | 'amber';
+  color?: 'green' | 'amber' | 'violet';
 }) {
   const bg = checked
-    ? color === 'green'
-      ? 'bg-emerald-500'
-      : 'bg-amber-500'
+    ? { green: 'bg-emerald-500', amber: 'bg-amber-500', violet: 'bg-violet-500' }[color]
     : 'bg-muted-foreground/25';
   const ring = checked
-    ? color === 'green'
-      ? 'ring-2 ring-emerald-500/25'
-      : 'ring-2 ring-amber-500/25'
+    ? {
+        green: 'ring-2 ring-emerald-500/25',
+        amber: 'ring-2 ring-amber-500/25',
+        violet: 'ring-2 ring-violet-500/25',
+      }[color]
     : '';
   return (
     <span className={`relative inline-flex w-11 h-6 rounded-full transition-all duration-200 shrink-0 ${bg} ${ring}`}>

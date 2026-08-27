@@ -58,9 +58,14 @@ function makeProjectRow(overrides: Record<string, unknown> = {}) {
     github_url: 'https://github.com/example/repo',
     published: true,
     featured: false,
+    is_experiment: false,
     sort_order: 1,
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
+    slug: 'my-project',
+    related_post_slugs: [],
+    related_tutorial_slugs: [],
+    related_project_slugs: [],
     ...overrides,
   };
 }

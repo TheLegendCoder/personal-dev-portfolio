@@ -14,6 +14,7 @@ interface ProjectCardProps {
 	githubUrl: string;
 	featured?: boolean;
 	category?: ProjectCategory;
+	isExperiment?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export function ProjectCard({
 	githubUrl,
 	featured,
 	category,
+	isExperiment,
 }: ProjectCardProps) {
 	return (
 		<article className="group grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 border-b border-border/60 pb-16 last:border-b-0 last:pb-0">
@@ -50,6 +52,12 @@ export function ProjectCard({
 			<div className="flex flex-col justify-center">
 				<div className="mono-label flex items-center gap-2 mb-3 pb-3 border-b border-border">
 					{category && <span>{category === 'professional' ? 'Professional' : 'Personal'}</span>}
+					{isExperiment && (
+						<>
+							<span aria-hidden="true">·</span>
+							<span className="text-accent">Experiment</span>
+						</>
+					)}
 					{featured && (
 						<>
 							<span aria-hidden="true">·</span>

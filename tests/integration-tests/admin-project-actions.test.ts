@@ -40,6 +40,7 @@ const sampleProject = {
   featured: true,
   published: true,
   category: 'professional' as const,
+  is_experiment: false,
   sort_order: 1,
 };
 

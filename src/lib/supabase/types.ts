@@ -1,6 +1,30 @@
 // ---------------------------------------------------------------------------
 // Supabase Database types for the portfolio_posts table
+//
+// These mirror the live schema of project `hfazxdhdnozlgnxfowpy`, including the
+// columns added by the `content_taxonomy`, `project_slugs` and
+// `content_relations` migrations. Row types describe what a SELECT returns —
+// every column below is NOT NULL in the database, so none of them are optional
+// on read.
 // ---------------------------------------------------------------------------
+
+/** Columns the database always generates — never sent in an insert payload. */
+type Generated = 'id' | 'created_at' | 'updated_at';
+
+/**
+ * Columns that have a database default: required when reading a row, optional
+ * when writing one. Without this, every insert payload in the app would have to
+ * spell out taxonomy and relation columns it has no opinion about.
+ */
+type WithDefaults<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+/** Taxonomy + cross-linking columns shared by posts and tutorials. */
+type ContentDefaults =
+  | 'topics'
+  | 'evergreen'
+  | 'related_post_slugs'
+  | 'related_tutorial_slugs'
+  | 'related_project_slugs';
 
 export interface PortfolioPost {
   id: string;
@@ -18,9 +42,14 @@ export interface PortfolioPost {
   content: string; // raw markdown
   created_at: string;
   updated_at: string;
+  topics: string[];
+  evergreen: boolean;
+  related_post_slugs: string[];
+  related_tutorial_slugs: string[];
+  related_project_slugs: string[];
 }
 
-export type DbBlogPostInsert = Omit<PortfolioPost, 'id' | 'created_at' | 'updated_at'>;
+export type DbBlogPostInsert = WithDefaults<Omit<PortfolioPost, Generated>, ContentDefaults>;
 export type DbBlogPostUpdate = Partial<DbBlogPostInsert>;
 
 // ---------------------------------------------------------------------------
@@ -41,12 +70,28 @@ export interface PortfolioProject {
   featured: boolean;
   published: boolean;
   category: ProjectCategory;
+  /** Groups the project under Experiments on /projects. Independent of category. */
+  is_experiment: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;
+  /** NOT NULL with no database default — an insert must supply it. */
+  slug: string;
+  related_post_slugs: string[];
+  related_tutorial_slugs: string[];
+  related_project_slugs: string[];
 }
 
-export type DbProjectInsert = Omit<PortfolioProject, 'id' | 'created_at' | 'updated_at'>;
+/**
+ * `slug` is listed as defaulted here only because the admin project editor does
+ * not collect one yet, which makes creating a project fail against the table's
+ * NOT NULL constraint. Once the editor supplies a slug, drop it from this list
+ * so the type enforces what the database already does.
+ */
+export type DbProjectInsert = WithDefaults<
+  Omit<PortfolioProject, Generated>,
+  'slug' | 'related_post_slugs' | 'related_tutorial_slugs' | 'related_project_slugs'
+>;
 export type DbProjectUpdate = Partial<DbProjectInsert>;
 
 // ---------------------------------------------------------------------------
@@ -69,9 +114,14 @@ export interface PortfolioTutorial {
   content: string; // raw markdown
   created_at: string;
   updated_at: string;
+  topics: string[];
+  evergreen: boolean;
+  related_post_slugs: string[];
+  related_tutorial_slugs: string[];
+  related_project_slugs: string[];
 }
 
-export type DbTutorialInsert = Omit<PortfolioTutorial, 'id' | 'created_at' | 'updated_at'>;
+export type DbTutorialInsert = WithDefaults<Omit<PortfolioTutorial, Generated>, ContentDefaults>;
 export type DbTutorialUpdate = Partial<DbTutorialInsert>;
 
 // Supabase requires a specific nested structure for the Database generic.
