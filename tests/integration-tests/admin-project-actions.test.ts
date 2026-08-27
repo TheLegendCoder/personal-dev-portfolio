@@ -31,6 +31,7 @@ import { deleteProject, updateProjectFields, upsertProject } from '@/lib/project
 
 const sampleProject = {
   title: 'Portfolio CMS',
+  slug: 'portfolio-cms',
   description: 'An admin-enabled portfolio project.',
   image: 'https://images.test/project.png',
   image_hint: 'dashboard preview',

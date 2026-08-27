@@ -83,14 +83,13 @@ export interface PortfolioProject {
 }
 
 /**
- * `slug` is listed as defaulted here only because the admin project editor does
- * not collect one yet, which makes creating a project fail against the table's
- * NOT NULL constraint. Once the editor supplies a slug, drop it from this list
- * so the type enforces what the database already does.
+ * `slug` is deliberately required: the column is NOT NULL with no database
+ * default, so leaving it optional here would let an insert typecheck and then
+ * fail at runtime.
  */
 export type DbProjectInsert = WithDefaults<
   Omit<PortfolioProject, Generated>,
-  'slug' | 'related_post_slugs' | 'related_tutorial_slugs' | 'related_project_slugs'
+  'related_post_slugs' | 'related_tutorial_slugs' | 'related_project_slugs'
 >;
 export type DbProjectUpdate = Partial<DbProjectInsert>;
 

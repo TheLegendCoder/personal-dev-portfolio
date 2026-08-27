@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { saveProjectAction, deleteProjectAction } from '@/app/admin/projects/actions';
 import type { PortfolioProject } from '@/lib/projects';
+import { slugify, SLUG_PATTERN } from '@/lib/slug';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -19,13 +20,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Save, Trash2, FolderKanban, Globe, Github, Tag, Image, ArrowUpDown, Layers, Eye } from 'lucide-react';
+import { Save, Trash2, FolderKanban, Globe, Github, Tag, Image, ArrowUpDown, Layers, Eye, Link2 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Zod schema
 // ---------------------------------------------------------------------------
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
+  // Mirrors the ^[a-z0-9-]+$ CHECK constraint on portfolio_projects.slug —
+  // the column is NOT NULL with no default, so an insert without one fails.
+  slug: z
+    .string()
+    .min(1, 'Slug is required')
+    .regex(SLUG_PATTERN, 'Lowercase letters, numbers and hyphens only'),
   description: z.string().min(1, 'Description is required'),
   image: z.string().url('Must be a valid URL').or(z.literal('')),
   imageHint: z.string(),
@@ -58,11 +65,13 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    setValue,
+    formState: { errors, dirtyFields },
   } = useForm<ProjectForm>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: project?.title ?? '',
+      slug: project?.slug ?? '',
       description: project?.description ?? '',
       image: project?.image ?? '',
       imageHint: project?.image_hint ?? '',
@@ -84,6 +93,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
         await saveProjectAction({
           ...(project?.id && { id: project.id }),
           title: values.title,
+          slug: values.slug,
           description: values.description,
           image: values.image,
           image_hint: values.imageHint,
@@ -106,6 +116,15 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
     if (!project) return;
     startTransition(() => deleteProjectAction(project.id));
   };
+
+  // On a new project, keep the slug tracking the title until the author edits
+  // it themselves. Existing projects are left alone — their slug is already set
+  // and may be linked from related_project_slugs elsewhere.
+  const titleValue = useWatch({ control, name: 'title' }) ?? '';
+  useEffect(() => {
+    if (!isNew || dirtyFields.slug) return;
+    setValue('slug', slugify(titleValue));
+  }, [titleValue, isNew, dirtyFields.slug, setValue]);
 
   const published = useWatch({ control, name: 'published' }) ?? false;
   const featured = useWatch({ control, name: 'featured' }) ?? false;
@@ -185,6 +204,23 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
             </Label>
             <Input id="title" placeholder="Project title" className="text-sm font-medium" {...register('title')} />
             {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+          </div>
+
+          {/* Slug */}
+          <div className="md:col-span-2 space-y-1.5">
+            <Label htmlFor="slug" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Link2 className="h-3 w-3" /> Slug
+            </Label>
+            <Input id="slug" placeholder="my-project" className="font-mono text-sm" {...register('slug')} />
+            {errors.slug ? (
+              <p className="text-xs text-destructive">{errors.slug.message}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {isNew
+                  ? 'Filled in from the title until you edit it. Lowercase letters, numbers and hyphens.'
+                  : 'Used to cross-link this project from posts and tutorials.'}
+              </p>
+            )}
           </div>
 
           {/* Description */}
