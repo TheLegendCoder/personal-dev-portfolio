@@ -93,11 +93,12 @@ describe('generateBlogPostBreadcrumbs()', () => {
     expect(crumbs).toHaveLength(2);
   });
 
-  it('first item is Blog pointing to /blog', () => {
+  // /blog now 301s to /writing, so the crumb points at the live URL directly.
+  it('first item is Writing pointing to /writing', () => {
     const crumbs = generateBlogPostBreadcrumbs('My Awesome Post');
 
-    expect(crumbs[0].name).toBe('Blog');
-    expect(crumbs[0].url).toBe('https://example.com/blog');
+    expect(crumbs[0].name).toBe('Writing');
+    expect(crumbs[0].url).toBe('https://example.com/writing');
   });
 
   it('second item name is the supplied post title', () => {

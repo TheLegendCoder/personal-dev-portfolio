@@ -96,7 +96,7 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
   }
 }
 
-export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
+async function fetchTutorialsSummary(): Promise<{ data: TutorialPostSummary[]; error: boolean }> {
   try {
     const supabase = createAnonClient();
     const { data, error } = await supabase
@@ -105,25 +105,46 @@ export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
       .eq('published', true)
       .order('date', { ascending: false });
 
-    if (error || !data) return [];
+    if (error) {
+      console.error('Error fetching tutorials summary:', error.message);
+      return { data: [], error: true };
+    }
+    if (!data) return { data: [], error: false };
 
-    return data.map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      date: row.date,
-      author: row.author,
-      tags: row.tags ?? [],
-      readTime: row.read_time,
-      published: row.published,
-      featured: row.featured,
-      image: row.image,
-      imageHint: row.image_hint,
-    } as TutorialPostSummary));
+    return {
+      data: data.map((row) => ({
+        slug: row.slug,
+        title: row.title,
+        description: row.description,
+        date: row.date,
+        author: row.author,
+        tags: row.tags ?? [],
+        readTime: row.read_time,
+        published: row.published,
+        featured: row.featured,
+        image: row.image,
+        imageHint: row.image_hint,
+      } as TutorialPostSummary)),
+      error: false,
+    };
   } catch (error) {
     console.error('Error fetching tutorials summary:', error);
-    return [];
+    return { data: [], error: true };
   }
+}
+
+export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
+  const { data } = await fetchTutorialsSummary();
+  return data;
+}
+
+/**
+ * Same query as getTutorialsSummary, but preserves whether the fetch itself
+ * failed vs. genuinely returned no rows — mirrors getBlogPostsSummaryWithStatus
+ * in blog.ts, and is what the unified writing helper composes on the home page.
+ */
+export async function getTutorialsSummaryWithStatus(): Promise<{ data: TutorialPostSummary[]; error: boolean }> {
+  return fetchTutorialsSummary();
 }
 
 // ---------------------------------------------------------------------------

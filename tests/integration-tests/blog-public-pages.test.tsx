@@ -84,6 +84,9 @@ vi.mock('next/link', () => ({
 vi.mock('lucide-react', () => ({
   BookOpen: () => <svg data-testid="book-open" />,
   ArrowLeft: () => <svg data-testid="arrow-left" />,
+  Calendar: () => <svg data-testid="calendar" />,
+  Clock: () => <svg data-testid="clock" />,
+  User: () => <svg data-testid="user" />,
 }));
 
 vi.mock('isomorphic-dompurify', () => ({
@@ -94,7 +97,6 @@ vi.mock('isomorphic-dompurify', () => ({
 
 vi.mock('highlight.js/styles/atom-one-dark.css', () => ({}));
 
-import BlogPage, { metadata } from '@/app/blog/page';
 import BlogPostPage, {
   generateMetadata,
   generateStaticParams,
@@ -146,44 +148,8 @@ const samplePost = {
   content: '<p>Rendered HTML content</p>',
 };
 
-describe('blog public page integration', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('renders blog cards when posts exist', async () => {
-    vi.mocked(getBlogPostsSummary).mockResolvedValue(sampleSummaries);
-
-    const html = renderToStaticMarkup(await BlogPage());
-
-    expect(html).toContain('First Post');
-    expect(html).toContain('Second Post');
-    expect(html).toContain('First description');
-    expect(html).toContain('React');
-    expect(html.match(/data-testid="blog-card"/g)).toHaveLength(2);
-  });
-
-  it('renders the empty state when no posts exist', async () => {
-    vi.mocked(getBlogPostsSummary).mockResolvedValue([]);
-
-    const html = renderToStaticMarkup(await BlogPage());
-
-    expect(html).toContain('Blog posts coming soon');
-    expect(html).toContain('Check back soon');
-    expect(html).toContain('Home &gt; Blog');
-  });
-
-  it('keeps the blog listing metadata export available', () => {
-    expect(metadata).toEqual(
-      expect.objectContaining({
-        kind: 'seo',
-        title: 'Blog',
-        canonicalUrl: 'https://portfolio.test/blog',
-      })
-    );
-  });
-});
-
+// The /blog listing page was replaced by the merged /writing index —
+// see writing-public-page.test.tsx. Post detail pages are unchanged.
 describe('blog detail page integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();

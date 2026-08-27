@@ -1,38 +1,34 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Blog listing page', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/blog');
-  });
+test.describe('Blog index redirect', () => {
+  test('/blog permanently redirects to the merged Writing index', async ({ page }) => {
+    const response = await page.goto('/blog');
 
-  test('renders the Blog heading', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Blog', level: 1 })).toBeVisible();
-  });
-
-  test('page title includes "Blog"', async ({ page }) => {
-    await expect(page).toHaveTitle(/blog/i);
-  });
-
-  test('displays blog posts or an empty state', async ({ page }) => {
-    // Either blog post cards are shown, or an empty state message
-    const hasCards = await page.locator('article, [data-testid="blog-card"]').count();
-    const hasEmptyState = await page.getByText(/no posts yet|no articles/i).count();
-    expect(hasCards + hasEmptyState).toBeGreaterThan(0);
+    await expect(page).toHaveURL(/\/writing\?type=articles$/);
+    // 301, not 302 — old backlinks should transfer, not just follow.
+    const chain = response?.request().redirectedFrom();
+    expect(chain).not.toBeNull();
+    expect((await chain!.response())?.status()).toBe(301);
   });
 });
 
 test.describe('Blog post page', () => {
-  test('navigating to a post slug renders the post content', async ({ page }) => {
-    await page.goto('/blog');
+  test('post URLs still resolve directly, with no redirect', async ({ page }) => {
+    await page.goto('/writing?type=articles');
 
-    const firstCard = page.locator('article').first();
-    const readMoreLink = firstCard.getByRole('link', { name: 'Read More' });
+    const readMoreLink = page
+      .locator('article')
+      .first()
+      .getByRole('link', { name: 'Read More' });
+    test.skip((await readMoreLink.count()) === 0, 'no published articles to open');
 
     await expect(readMoreLink).toHaveAttribute('href', /^\/blog\/[^/]+$/);
-    await readMoreLink.click();
+    const href = await readMoreLink.getAttribute('href');
+
+    const response = await page.goto(href!);
+    expect(response?.request().redirectedFrom()).toBeNull();
 
     await expect(page).toHaveURL(/\/blog\/[^/]+$/);
-    // Post page should have an article heading
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 });

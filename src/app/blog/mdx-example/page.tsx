@@ -25,11 +25,11 @@ export default function MDXBlogPost() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
           {/* Back Button */}
           <Link
-            href="/blog"
+            href="/writing?type=articles"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-8"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Blog
+            Back to Writing
           </Link>
 
           {/* Header */}

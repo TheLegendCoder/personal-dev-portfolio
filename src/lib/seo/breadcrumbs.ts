@@ -42,15 +42,17 @@ function formatSegmentLabel(segment: string): string {
 }
 
 /**
- * Generate breadcrumbs for blog post pages (simplified: Blog > Post Title)
+ * Generate breadcrumbs for blog post pages (simplified: Writing > Post Title).
+ * Points at /writing rather than /blog — the latter now 301s, and a crumb that
+ * redirects costs every post page a needless hop.
  */
 export function generateBlogPostBreadcrumbs(postTitle: string): BreadcrumbItem[] {
   const siteUrl = getSiteUrl();
 
   return [
     {
-      name: 'Blog',
-      url: `${siteUrl}/blog`,
+      name: 'Writing',
+      url: `${siteUrl}/writing`,
     },
     {
       name: postTitle,

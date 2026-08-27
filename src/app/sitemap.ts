@@ -16,7 +16,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${SITE_URL}/blog`,
+      // Merged articles + tutorials index. /blog and /tutorials 301 here, so
+      // they are deliberately absent from the sitemap.
+      url: `${SITE_URL}/writing`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -31,12 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/about`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/tutorials`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
       priority: 0.7,
     },
   ];
