@@ -23,9 +23,9 @@ const socialLinks = [
 const footerLinks = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
-  { name: "Projects", path: "/projects" },
-  { name: "Blog", path: "/blog" },
-  { name: "Tutorials", path: "/tutorials" },
+  { name: "Work", path: "/projects" },
+  { name: "Writing", path: "/writing" },
+  { name: "Now", path: "/now" },
   { name: "Privacy", path: "/privacy" },
 ];
 

@@ -51,6 +51,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Index pages only. Individual posts, tutorials and projects keep their
+  // existing URLs — redirecting those would break every inbound link.
+  async redirects() {
+    return [
+      // statusCode: 301 rather than `permanent: true` — the latter emits 308,
+      // which preserves the request method. These are GET-only index pages and
+      // 301 is what the existing backlinks and search listings expect.
+      { source: '/blog', destination: '/writing?type=articles', statusCode: 301 },
+      { source: '/tutorials', destination: '/writing?type=tutorials', statusCode: 301 },
+    ];
+  },
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
   experimental: {
