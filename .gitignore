@@ -85,3 +85,9 @@ PRODUCT.md
 DESIGN-f1.md
 # Agent skills (installed locally via `npx skills add`)
 .agents/
+
+# local-only AI assistant guidance
+/CLAUDE.md
+
+# graphify knowledge-graph build output
+/graphify-out/
