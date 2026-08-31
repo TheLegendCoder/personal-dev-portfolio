@@ -18,7 +18,7 @@ test.describe('Now page', () => {
     await expect(page.locator('time').first()).toBeVisible();
   });
 
-  test('renders the sections from src/content/now.md', async ({ page }) => {
+  test('renders the sections from the database', async ({ page }) => {
     for (const heading of ['Building', 'Learning', 'Exploring', 'Writing']) {
       await expect(page.getByRole('heading', { name: heading, level: 2 })).toBeVisible();
     }

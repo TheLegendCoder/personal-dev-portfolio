@@ -1,78 +1,113 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
+'use server';
 
 /**
- * Reader for the /now page.
+ * Data layer for the /now page.
  *
- * Unlike blog posts, tutorials and projects, the now page is not CMS content —
- * it is a short, frequently-rewritten personal statement, so it lives in the
- * repo at `src/content/now.md` and ships with a deploy. No Supabase, no admin
- * screen, no schema.
+ * The now content lives in the `portfolio_now` singleton table (one row,
+ * id = 1) and is edited from /admin/now. Pure helpers and types are in
+ * ./now-utils so they stay client-importable.
  */
 
-export interface NowSection {
-  heading: string;
-  items: string[];
+import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
+import {
+  parseNowSections,
+  parseNowUpdated,
+  type NowContent,
+  type NowSection,
+} from '@/lib/now-utils';
+
+type MarkdownToHtml = (markdown: string) => Promise<string>;
+
+let markdownToHtmlFn: MarkdownToHtml | null = null;
+
+async function renderMarkdown(markdown: string): Promise<string> {
+  if (!markdownToHtmlFn) {
+    const markdownModule = await import('@/lib/markdown');
+    markdownToHtmlFn = markdownModule.markdownToHtml;
+  }
+  return markdownToHtmlFn(markdown);
 }
 
-export interface NowContent {
-  /** ISO date the page was last revised, or null if the file omits it. */
-  updated: string | null;
-  sections: NowSection[];
-  /** Rendered HTML of the markdown body below the frontmatter. */
-  body: string;
-}
-
-const NOW_FILE = path.join(process.cwd(), 'src', 'content', 'now.md');
+const EMPTY: NowContent = { updated: null, sections: [], body: '' };
 
 /**
- * Coerce raw frontmatter into `NowSection[]`, dropping anything malformed.
- * The file is hand-edited, so a typo should degrade the page rather than
- * crash the route.
+ * Public read for the /now route. Best-effort: any failure (including the
+ * table not existing yet during a deploy-before-migrate window) returns an
+ * empty NowContent so the route never 500s.
  */
-export function parseNowSections(raw: unknown): NowSection[] {
-  if (!Array.isArray(raw)) return [];
-
-  return raw.flatMap((entry) => {
-    if (!entry || typeof entry !== 'object') return [];
-    const { heading, items } = entry as { heading?: unknown; items?: unknown };
-    if (typeof heading !== 'string' || !heading.trim()) return [];
-
-    const cleanItems = Array.isArray(items)
-      ? items.filter((item): item is string => typeof item === 'string' && item.trim() !== '')
-      : [];
-
-    return [{ heading, items: cleanItems }];
-  });
-}
-
-/**
- * Normalise the `updated` frontmatter value. gray-matter's YAML parser turns
- * an unquoted `2026-08-25` into a Date, so both forms have to be handled.
- */
-export function parseNowUpdated(raw: unknown): string | null {
-  if (raw instanceof Date && !Number.isNaN(raw.getTime())) {
-    return raw.toISOString();
-  }
-  if (typeof raw === 'string') {
-    const parsed = new Date(raw);
-    if (!Number.isNaN(parsed.getTime())) return parsed.toISOString();
-  }
-  return null;
-}
-
 export async function getNowContent(): Promise<NowContent> {
-  const file = fs.readFileSync(NOW_FILE, 'utf8');
-  const { data, content } = matter(file);
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from('portfolio_now')
+      .select('body, sections, updated_at')
+      .eq('id', 1)
+      .single();
 
-  // Imported lazily so the markdown pipeline (remark + highlight.js) is not
-  // pulled into any bundle that only needs the frontmatter.
-  const { markdownToHtml } = await import('@/lib/markdown');
+    if (error || !data) return EMPTY;
 
-  return {
-    updated: parseNowUpdated(data.updated),
-    sections: parseNowSections(data.sections),
-    body: content.trim() ? await markdownToHtml(content) : '',
-  };
+    return {
+      updated: parseNowUpdated(data.updated_at),
+      sections: parseNowSections(data.sections),
+      body: data.body?.trim() ? await renderMarkdown(data.body) : '',
+    };
+  } catch (err) {
+    console.error('Error fetching now content:', err);
+    return EMPTY;
+  }
+}
+
+/**
+ * Admin read — raw markdown body, no rendering. Used by /admin/now.
+ */
+export async function getNowAdmin(): Promise<{
+  body: string;
+  sections: NowSection[];
+  updated: string | null;
+}> {
+  try {
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from('portfolio_now')
+      .select('body, sections, updated_at')
+      .eq('id', 1)
+      .single();
+
+    if (error || !data) return { body: '', sections: [], updated: null };
+
+    return {
+      body: data.body ?? '',
+      sections: parseNowSections(data.sections),
+      updated: parseNowUpdated(data.updated_at),
+    };
+  } catch (err) {
+    console.error('Error fetching now content for admin:', err);
+    return { body: '', sections: [], updated: null };
+  }
+}
+
+/**
+ * Update the single now row. `updated_at` is stamped here so the public
+ * "Last updated" date always reflects the most recent save.
+ */
+export async function updateNow(fields: {
+  body: string;
+  sections: NowSection[];
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = createServiceClient();
+    const { error } = await supabase
+      .from('portfolio_now')
+      .update({
+        body: fields.body,
+        sections: fields.sections,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', 1);
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
 }

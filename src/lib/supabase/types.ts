@@ -1,3 +1,5 @@
+import type { NowSection } from '@/lib/now-utils';
+
 // ---------------------------------------------------------------------------
 // Supabase Database types for the portfolio_posts table
 // ---------------------------------------------------------------------------
@@ -126,6 +128,25 @@ export type DbTutorialInsert = Omit<
   Partial<Pick<PortfolioTutorial, WritingDefaults>>;
 export type DbTutorialUpdate = Partial<DbTutorialInsert>;
 
+// ---------------------------------------------------------------------------
+// portfolio_now table — the /now page (singleton, one row, id = 1)
+// ---------------------------------------------------------------------------
+
+export interface PortfolioNow {
+  id: number;
+  // Intro paragraph, raw markdown.
+  body: string;
+  // [{ heading, items: string[] }, ...]
+  sections: NowSection[];
+  // Doubles as the "Last updated" value shown on /now; the admin save action
+  // stamps it to "now" on every edit.
+  updated_at: string;
+  created_at: string;
+}
+
+export type DbNowUpdate = Partial<Pick<PortfolioNow, 'body' | 'sections' | 'updated_at'>>;
+export type DbNowInsert = Partial<PortfolioNow>;
+
 // Supabase requires a specific nested structure for the Database generic.
 // Views/Functions/Enums must be present even if empty.
 export type Database = {
@@ -147,6 +168,12 @@ export type Database = {
         Row: PortfolioTutorial;
         Insert: DbTutorialInsert;
         Update: DbTutorialUpdate;
+        Relationships: [];
+      };
+      portfolio_now: {
+        Row: PortfolioNow;
+        Insert: DbNowInsert;
+        Update: DbNowUpdate;
         Relationships: [];
       };
     };
