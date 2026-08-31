@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { PenLine, FolderKanban, ArrowLeft, LogOut, Zap } from 'lucide-react';
+import { PenLine, FolderKanban, ArrowLeft, LogOut, Zap, Radio } from 'lucide-react';
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export function AdminSidebar() {
   const isPostsActive = pathname.startsWith('/admin/blog');
   const isProjectsActive = pathname.startsWith('/admin/projects');
   const isTutorialsActive = pathname.startsWith('/admin/tutorials');
+  const isNowActive = pathname.startsWith('/admin/now');
 
   const handleSignOut = async () => {
     if (isSigningOut) return;
@@ -47,6 +48,7 @@ export function AdminSidebar() {
           isPostsActive={isPostsActive}
           isProjectsActive={isProjectsActive}
           isTutorialsActive={isTutorialsActive}
+          isNowActive={isNowActive}
           isSigningOut={isSigningOut}
           handleSignOut={handleSignOut}
         />
@@ -97,6 +99,17 @@ export function AdminSidebar() {
               <PenLine className="h-3.5 w-3.5" />
               Tutorials
             </Link>
+            <Link
+              href="/admin/now"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                isNowActive
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+              }`}
+            >
+              <Radio className="h-3.5 w-3.5" />
+              Now
+            </Link>
           </nav>
           {/* Sign out */}
           <button
@@ -119,12 +132,14 @@ function SidebarContents({
   isPostsActive,
   isProjectsActive,
   isTutorialsActive,
+  isNowActive,
   isSigningOut,
   handleSignOut,
 }: {
   isPostsActive: boolean;
   isProjectsActive: boolean;
   isTutorialsActive: boolean;
+  isNowActive: boolean;
   isSigningOut: boolean;
   handleSignOut: () => Promise<void>;
 }) {
@@ -180,6 +195,17 @@ function SidebarContents({
         >
           <PenLine className="h-4 w-4 shrink-0" />
           Tutorials
+        </Link>
+        <Link
+          href="/admin/now"
+          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
+            isNowActive
+              ? 'bg-primary/10 text-primary font-medium shadow-[inset_2px_0_0_hsl(var(--primary))]'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+          }`}
+        >
+          <Radio className="h-4 w-4 shrink-0" />
+          Now
         </Link>
       </nav>
 

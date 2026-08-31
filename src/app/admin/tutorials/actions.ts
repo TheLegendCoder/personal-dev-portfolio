@@ -15,6 +15,7 @@ export async function saveTutorialAction(tutorial: DbTutorialInsert) {
   const result = await upsertTutorial(tutorial);
   if (!result.success) throw new Error(result.error ?? 'Failed to save tutorial');
   revalidatePath('/tutorials');
+  revalidatePath('/writing');
   revalidatePath(`/tutorials/${tutorial.slug}`);
   revalidatePath('/admin/tutorials');
   revalidatePath('/');
@@ -26,6 +27,7 @@ export async function toggleTutorialPublishedAction(slug: string, published: boo
   const result = await updateTutorialFields(slug, { published });
   if (!result.success) throw new Error(result.error ?? 'Failed to update');
   revalidatePath('/tutorials');
+  revalidatePath('/writing');
   revalidatePath(`/tutorials/${slug}`);
   revalidatePath('/admin/tutorials');
   revalidatePath('/');
@@ -36,6 +38,7 @@ export async function toggleTutorialFeaturedAction(slug: string, featured: boole
   const result = await updateTutorialFields(slug, { featured });
   if (!result.success) throw new Error(result.error ?? 'Failed to update');
   revalidatePath('/tutorials');
+  revalidatePath('/writing');
   revalidatePath(`/tutorials/${slug}`);
   revalidatePath('/admin/tutorials');
   revalidatePath('/');
@@ -46,6 +49,7 @@ export async function deleteTutorialAction(slug: string) {
   const result = await deleteTutorial(slug);
   if (!result.success) throw new Error(result.error ?? 'Failed to delete tutorial');
   revalidatePath('/tutorials');
+  revalidatePath('/writing');
   revalidatePath('/admin/tutorials');
   revalidatePath('/');
   redirect('/admin/tutorials');

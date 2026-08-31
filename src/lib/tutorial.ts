@@ -3,6 +3,7 @@
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbTutorialInsert, DbTutorialUpdate } from '@/lib/supabase/types';
 import type { BlogPost as TutorialPost } from '@/lib/blog';
+import { withSummaryColumns } from '@/lib/supabase/columns';
 
 type MarkdownToHtml = (markdown: string) => Promise<string>;
 
@@ -45,11 +46,16 @@ export async function getTutorial(slug: string): Promise<TutorialPost | null> {
       date: data.date,
       author: data.author,
       tags: data.tags ?? [],
+      topics: data.topics ?? [],
+      evergreen: data.evergreen ?? false,
       readTime: data.read_time,
       published: data.published,
       featured: data.featured,
       image: data.image,
       imageHint: data.image_hint,
+      relatedPostSlugs: data.related_post_slugs ?? [],
+      relatedTutorialSlugs: data.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: data.related_project_slugs ?? [],
       content: htmlContent,
     };
   } catch (error) {
@@ -79,11 +85,16 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
           date: row.date,
           author: row.author,
           tags: row.tags ?? [],
+          topics: row.topics ?? [],
+          evergreen: row.evergreen ?? false,
           readTime: row.read_time,
           published: row.published,
           featured: row.featured,
           image: row.image,
           imageHint: row.image_hint,
+          relatedPostSlugs: row.related_post_slugs ?? [],
+          relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+          relatedProjectSlugs: row.related_project_slugs ?? [],
           content: htmlContent,
         } as TutorialPost;
       })
@@ -99,11 +110,13 @@ export async function getAllTutorials(): Promise<TutorialPost[]> {
 export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
   try {
     const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_tutorials')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .order('date', { ascending: false });
+    const { data, error } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_tutorials')
+        .select(columns)
+        .eq('published', true)
+        .order('date', { ascending: false })
+    );
 
     if (error || !data) return [];
 
@@ -114,11 +127,16 @@ export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
       date: row.date,
       author: row.author,
       tags: row.tags ?? [],
+      topics: row.topics ?? [],
+      evergreen: row.evergreen ?? false,
       readTime: row.read_time,
       published: row.published,
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
+      relatedPostSlugs: row.related_post_slugs ?? [],
+      relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: row.related_project_slugs ?? [],
     } as TutorialPostSummary));
   } catch (error) {
     console.error('Error fetching tutorials summary:', error);
@@ -134,11 +152,13 @@ export async function getTutorialsSummary(): Promise<TutorialPostSummary[]> {
 export async function getAllTutorialsSummary(): Promise<TutorialPostSummary[]> {
   try {
     const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_tutorials')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .order('date', { ascending: false });
+    const { data, error } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_tutorials')
+        .select(columns)
+        .eq('published', true)
+        .order('date', { ascending: false })
+    );
 
     if (error || !data) return [];
 
@@ -149,11 +169,16 @@ export async function getAllTutorialsSummary(): Promise<TutorialPostSummary[]> {
       date: row.date,
       author: row.author,
       tags: row.tags ?? [],
+      topics: row.topics ?? [],
+      evergreen: row.evergreen ?? false,
       readTime: row.read_time,
       published: row.published,
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
+      relatedPostSlugs: row.related_post_slugs ?? [],
+      relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: row.related_project_slugs ?? [],
     }));
   } catch (error) {
     console.error('Error fetching tutorials summary:', error);
@@ -199,11 +224,16 @@ export async function getAllTutorialsAdmin(): Promise<TutorialPost[]> {
       date: row.date,
       author: row.author,
       tags: row.tags ?? [],
+      topics: row.topics ?? [],
+      evergreen: row.evergreen ?? false,
       readTime: row.read_time,
       published: row.published,
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
+      relatedPostSlugs: row.related_post_slugs ?? [],
+      relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: row.related_project_slugs ?? [],
       content: row.content, // raw markdown for admin
     }));
   } catch (error) {
@@ -216,10 +246,12 @@ export async function getAllTutorialsAdmin(): Promise<TutorialPost[]> {
 export async function getAllTutorialsAdminSummary(): Promise<TutorialPostSummary[]> {
   try {
     const supabase = createServiceClient();
-    const { data, error } = await supabase
-      .from('portfolio_tutorials')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .order('date', { ascending: false });
+    const { data, error } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_tutorials')
+        .select(columns)
+        .order('date', { ascending: false })
+    );
 
     if (error || !data) return [];
 
@@ -230,11 +262,16 @@ export async function getAllTutorialsAdminSummary(): Promise<TutorialPostSummary
       date: row.date,
       author: row.author,
       tags: row.tags ?? [],
+      topics: row.topics ?? [],
+      evergreen: row.evergreen ?? false,
       readTime: row.read_time,
       published: row.published,
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
+      relatedPostSlugs: row.related_post_slugs ?? [],
+      relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: row.related_project_slugs ?? [],
     }));
   } catch (error) {
     console.error('Error fetching admin tutorials summary:', error);
@@ -260,11 +297,16 @@ export async function getTutorialAdmin(slug: string): Promise<TutorialPost | nul
       date: data.date,
       author: data.author,
       tags: data.tags ?? [],
+      topics: data.topics ?? [],
+      evergreen: data.evergreen ?? false,
       readTime: data.read_time,
       published: data.published,
       featured: data.featured,
       image: data.image,
       imageHint: data.image_hint,
+      relatedPostSlugs: data.related_post_slugs ?? [],
+      relatedTutorialSlugs: data.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: data.related_project_slugs ?? [],
       content: data.content, // raw markdown for admin
     };
   } catch (error) {

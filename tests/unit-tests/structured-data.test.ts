@@ -164,15 +164,16 @@ describe('generateWebsiteSchema()', () => {
     expect(schema['@type']).toBe('WebSite');
   });
 
-  it('includes a SearchAction potentialAction', () => {
+  it('declares no SearchAction, because the site has no search endpoint', () => {
     const schema = generateWebsiteSchema({
       name: 'My Site',
       url: 'https://mysite.com',
       description: 'A personal website',
     });
 
-    expect(schema.potentialAction['@type']).toBe('SearchAction');
-    expect(schema.potentialAction.target.urlTemplate).toContain('https://mysite.com/blog?q=');
+    // It previously advertised /blog?q={search_term_string}, which nothing
+    // implements. Reinstate this assertion when search actually ships.
+    expect(schema).not.toHaveProperty('potentialAction');
   });
 });
 
@@ -220,7 +221,8 @@ describe('generateBlogPostingSchema()', () => {
 
   it('uses getSiteUrl() for publisher logo url', () => {
     const schema = generateBlogPostingSchema(baseData);
-    expect(schema.publisher.logo.url).toBe('https://example.com/images/logo.png');
+    // There is no /public directory, so the old /images/logo.png 404'd.
+    expect(schema.publisher.logo.url).toBe('https://example.com/opengraph-image');
   });
 
   it('joins keywords array into a comma-separated string', () => {

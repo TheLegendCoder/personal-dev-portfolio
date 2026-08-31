@@ -5,34 +5,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { personalInfo } from "@/components/data/content";
-import { useToast } from "@/hooks/use-toast";
+import { useCopyEmail } from "@/hooks/use-copy-email";
 import { triggerCelebrationFrom } from "@/lib/utils";
 import { clearConsent } from "@/lib/consent";
+import { footerNav } from "@/lib/nav";
+import { trackContactConversion, trackNavigationClick } from "@/lib/posthog-events";
 
 const socialLinks = [
-  { name: "GitHub", icon: Github, url: personalInfo.socialLinks.github },
-  { name: "LinkedIn", icon: Linkedin, url: personalInfo.socialLinks.linkedin },
-  { name: "Twitter", icon: Twitter, url: personalInfo.socialLinks.twitter },
+  { name: "GitHub", icon: Github, url: personalInfo.socialLinks.github, method: "github" as const },
+  { name: "LinkedIn", icon: Linkedin, url: personalInfo.socialLinks.linkedin, method: "linkedin" as const },
+  { name: "Twitter", icon: Twitter, url: personalInfo.socialLinks.twitter, method: "twitter" as const },
   // Email link only appears once personalInfo.email is populated — an empty
   // address would otherwise render a dead mailto: link.
   ...(personalInfo.email
-    ? [{ name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, email: true }]
+    ? [{ name: "Email", icon: Mail, url: `mailto:${personalInfo.email}`, method: "email" as const, email: true }]
     : []),
-];
-
-const footerLinks = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Projects", path: "/projects" },
-  { name: "Blog", path: "/blog" },
-  { name: "Tutorials", path: "/tutorials" },
-  { name: "Privacy", path: "/privacy" },
 ];
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const { toast } = useToast();
   const pathname = usePathname();
+  const handleEmailClick = useCopyEmail();
 
   // Footer Easter Egg
   const copyrightRef = useRef<HTMLSpanElement>(null);
@@ -62,33 +55,6 @@ export function Footer() {
     }
   };
 
-  const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>, email: string) => {
-    e.preventDefault();
-    
-    // Copy email to clipboard
-    navigator.clipboard.writeText(email).then(() => {
-      const target = e.currentTarget;
-      
-      // Trigger celebration
-      triggerCelebrationFrom(target, { intensity: 'low' });
-      
-      // Show success toast
-      toast({
-        variant: "success",
-        title: "Email copied! ✨",
-        description: `${email} is ready to paste`,
-        duration: 3000,
-      });
-    }).catch(() => {
-      toast({
-        variant: "destructive",
-        title: "Couldn't copy email",
-        description: "Please try again",
-        duration: 3000,
-      });
-    });
-  };
-
   return (
     <footer className="bg-background border-t border-border/50 py-12 mt-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,11 +80,12 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex flex-wrap gap-6">
-            {footerLinks.map((link) => (
+          <nav className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3 md:max-w-md">
+            {footerNav.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
+                onClick={() => trackNavigationClick(link.name, link.path, 'footer')}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.name}
@@ -134,7 +101,11 @@ export function Footer() {
                 href={social.url}
                 target={social.email ? undefined : "_blank"}
                 rel={social.email ? undefined : "noopener noreferrer"}
-                onClick={social.email ? (e) => handleEmailClick(e, personalInfo.email) : undefined}
+                onClick={
+                  social.email
+                    ? (e) => handleEmailClick(e, personalInfo.email)
+                    : () => trackContactConversion(social.method)
+                }
                 className="p-2 rounded-full bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all duration-300"
                 aria-label={social.name}
               >

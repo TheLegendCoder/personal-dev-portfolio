@@ -10,6 +10,8 @@ import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBlogPostBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
+import { getRelatedContent } from "@/lib/related-content";
+import { RelatedContentSection } from "@/components/writing/related-content";
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -55,6 +57,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) {
     notFound();
   }
+
+  const related = await getRelatedContent({
+    kind: 'article',
+    slug,
+    relatedPostSlugs: post.relatedPostSlugs,
+    relatedTutorialSlugs: post.relatedTutorialSlugs,
+    relatedProjectSlugs: post.relatedProjectSlugs,
+  });
 
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
@@ -167,6 +177,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             </footer>
           )}
+
+          <RelatedContentSection related={related} />
         </div>
       </article>
     </Layout>

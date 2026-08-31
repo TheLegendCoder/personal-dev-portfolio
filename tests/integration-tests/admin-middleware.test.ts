@@ -6,7 +6,7 @@ vi.mock('@supabase/ssr', () => ({
 }));
 
 import { createServerClient } from '@supabase/ssr';
-import { middleware } from '../../middleware';
+import { middleware } from '@/middleware';
 
 function mockSupabaseUser(user: unknown) {
   return {

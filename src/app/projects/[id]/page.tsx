@@ -1,3 +1,5 @@
+import { getRelatedContent } from '@/lib/related-content';
+import { RelatedContentSection } from '@/components/writing/related-content';
 import { getProjects, getPublishedProjectById } from "@/lib/projects";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -50,6 +52,14 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   if (!project) {
     notFound();
   }
+
+  const related = await getRelatedContent({
+    kind: 'project',
+    slug: project.slug || project.id,
+    relatedPostSlugs: project.related_post_slugs,
+    relatedTutorialSlugs: project.related_tutorial_slugs,
+    relatedProjectSlugs: project.related_project_slugs,
+  });
 
   const breadcrumbs = generateProjectBreadcrumbs(project.title);
 
@@ -153,6 +163,8 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             </Link>
           </footer>
         )}
+
+        <RelatedContentSection related={related} />
       </div>
     </article>
   );

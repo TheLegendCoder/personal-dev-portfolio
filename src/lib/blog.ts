@@ -2,6 +2,7 @@
 
 import { createServiceClient, createAnonClient } from '@/lib/supabase/server';
 import type { DbBlogPostInsert, DbBlogPostUpdate } from '@/lib/supabase/types';
+import { withSummaryColumns } from '@/lib/supabase/columns';
 
 type MarkdownToHtml = (markdown: string) => Promise<string>;
 
@@ -22,11 +23,17 @@ interface BlogPostBase {
   date: string;
   author: string;
   tags: string[];
+  /** Curated subset of tags mapping onto src/lib/taxonomy.ts */
+  topics: string[];
+  evergreen: boolean;
   readTime: string;
   published: boolean;
   featured: boolean;
   image: string;
   imageHint: string;
+  relatedPostSlugs: string[];
+  relatedTutorialSlugs: string[];
+  relatedProjectSlugs: string[];
 }
 
 export type BlogPostSummary = BlogPostBase;
@@ -36,19 +43,28 @@ export interface BlogPost extends BlogPostBase {
   content: string;
 }
 
-function mapBlogPostSummary(row: {
+interface BlogPostRow {
   slug: string;
   title: string;
   description: string;
   date: string;
   author: string;
   tags: string[] | null;
+  // Nullable in the mapper because the Stage 2 columns only exist once the
+  // migrations in supabase/migrations/ have been applied.
+  topics?: string[] | null;
+  evergreen?: boolean | null;
   read_time: string;
   published: boolean;
   featured: boolean;
   image: string;
   image_hint: string;
-}): BlogPostSummary {
+  related_post_slugs?: string[] | null;
+  related_tutorial_slugs?: string[] | null;
+  related_project_slugs?: string[] | null;
+}
+
+function mapBlogPostSummary(row: BlogPostRow): BlogPostSummary {
   return {
     slug: row.slug,
     title: row.title,
@@ -56,11 +72,16 @@ function mapBlogPostSummary(row: {
     date: row.date,
     author: row.author,
     tags: row.tags ?? [],
+    topics: row.topics ?? [],
+    evergreen: row.evergreen ?? false,
     readTime: row.read_time,
     published: row.published,
     featured: row.featured,
     image: row.image,
     imageHint: row.image_hint,
+    relatedPostSlugs: row.related_post_slugs ?? [],
+    relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+    relatedProjectSlugs: row.related_project_slugs ?? [],
   };
 }
 
@@ -89,11 +110,16 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
       date: data.date,
       author: data.author,
       tags: data.tags ?? [],
+      topics: data.topics ?? [],
+      evergreen: data.evergreen ?? false,
       readTime: data.read_time,
       published: data.published,
       featured: data.featured,
       image: data.image,
       imageHint: data.image_hint,
+      relatedPostSlugs: data.related_post_slugs ?? [],
+      relatedTutorialSlugs: data.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: data.related_project_slugs ?? [],
       content: htmlContent,
     };
   } catch (error) {
@@ -106,13 +132,15 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
   try {
     const supabase = createAnonClient();
 
-    const { data: featuredData, error: featuredError } = await supabase
-      .from('portfolio_posts')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .eq('featured', true)
-      .order('date', { ascending: false })
-      .limit(limit);
+    const { data: featuredData, error: featuredError } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_posts')
+        .select(columns)
+        .eq('published', true)
+        .eq('featured', true)
+        .order('date', { ascending: false })
+        .limit(limit)
+    );
 
     if (featuredError) {
       console.error('Error fetching featured blog posts:', featuredError);
@@ -122,12 +150,14 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
     let posts = featuredData ?? [];
 
     if (posts.length === 0) {
-      const { data: recentData, error: recentError } = await supabase
-        .from('portfolio_posts')
-        .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-        .eq('published', true)
-        .order('date', { ascending: false })
-        .limit(limit);
+      const { data: recentData, error: recentError } = await withSummaryColumns((columns) =>
+        supabase
+          .from('portfolio_posts')
+          .select(columns)
+          .eq('published', true)
+          .order('date', { ascending: false })
+          .limit(limit)
+      );
 
       if (recentError) {
         console.error('Error fetching recent blog posts:', recentError);
@@ -147,11 +177,13 @@ export async function getTopBlogPosts(limit: number = 3): Promise<BlogPostSummar
 async function fetchBlogPostsSummary(): Promise<{ data: BlogPostSummary[]; error: boolean }> {
   try {
     const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from('portfolio_posts')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .eq('published', true)
-      .order('date', { ascending: false });
+    const { data, error } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_posts')
+        .select(columns)
+        .eq('published', true)
+        .order('date', { ascending: false })
+    );
 
     if (error) {
       console.error('Error fetching blog post summaries:', error.message);
@@ -230,11 +262,16 @@ export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
       date: row.date,
       author: row.author,
       tags: row.tags ?? [],
+      topics: row.topics ?? [],
+      evergreen: row.evergreen ?? false,
       readTime: row.read_time,
       published: row.published,
       featured: row.featured,
       image: row.image,
       imageHint: row.image_hint,
+      relatedPostSlugs: row.related_post_slugs ?? [],
+      relatedTutorialSlugs: row.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: row.related_project_slugs ?? [],
       content: row.content,
     }));
   } catch (error) {
@@ -246,10 +283,12 @@ export async function getAllBlogPostsAdmin(): Promise<BlogPost[]> {
 export async function getAllBlogPostsAdminSummary(): Promise<BlogPostSummary[]> {
   try {
     const supabase = createServiceClient();
-    const { data, error } = await supabase
-      .from('portfolio_posts')
-      .select('slug, title, description, date, author, tags, read_time, published, featured, image, image_hint')
-      .order('date', { ascending: false });
+    const { data, error } = await withSummaryColumns((columns) =>
+      supabase
+        .from('portfolio_posts')
+        .select(columns)
+        .order('date', { ascending: false })
+    );
 
     if (error || !data) return [];
 
@@ -278,11 +317,16 @@ export async function getBlogPostAdmin(slug: string): Promise<BlogPost | null> {
       date: data.date,
       author: data.author,
       tags: data.tags ?? [],
+      topics: data.topics ?? [],
+      evergreen: data.evergreen ?? false,
       readTime: data.read_time,
       published: data.published,
       featured: data.featured,
       image: data.image,
       imageHint: data.image_hint,
+      relatedPostSlugs: data.related_post_slugs ?? [],
+      relatedTutorialSlugs: data.related_tutorial_slugs ?? [],
+      relatedProjectSlugs: data.related_project_slugs ?? [],
       content: data.content,
     };
   } catch (error) {

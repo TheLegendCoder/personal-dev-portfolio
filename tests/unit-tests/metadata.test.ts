@@ -11,7 +11,7 @@ describe('seo metadata helpers', () => {
     const metadata = generateSEOMetadata({});
 
     expect(metadata.title).toBe('Tsholofelo Ndawonde | Software Engineer');
-    expect(metadata.description).toContain('Software engineer documenting learnings');
+    expect(metadata.description).toContain('Software engineer documenting what I learn');
     expect(metadata.alternates?.canonical).toBe(getSiteUrl());
     expect(metadata.openGraph?.siteName).toBe(getSiteName());
     expect(metadata.robots).toEqual(

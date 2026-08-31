@@ -9,6 +9,12 @@ import { saveTutorialAction, deleteTutorialAction } from '@/app/admin/tutorials/
 import type { BlogPost as TutorialPost } from '@/lib/blog';
 import { markdownToHtml } from '@/lib/markdown';
 import { Input } from '@/components/ui/input';
+import {
+  TopicPicker,
+  RelatedFields,
+  parseSlugList,
+  formatSlugList,
+} from '@/components/admin/taxonomy-fields';
 import { Label } from '@/components/ui/label';
 import {
   AlertDialog,
@@ -41,6 +47,13 @@ const postSchema = z.object({
   imageHint: z.string(),
   published: z.boolean(),
   featured: z.boolean(),
+  evergreen: z.boolean(),
+  topics: z.array(z.string()),
+  // Relations are captured as comma-separated slugs and split on save, the
+  // same way tags already are.
+  relatedPostSlugs: z.string(),
+  relatedTutorialSlugs: z.string(),
+  relatedProjectSlugs: z.string(),
   content: z.string().min(1, 'Content is required'),
 });
 
@@ -93,6 +106,11 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
       imageHint: tutorial?.imageHint ?? '',
       published: tutorial?.published ?? false,
       featured: tutorial?.featured ?? false,
+      evergreen: tutorial?.evergreen ?? false,
+      topics: tutorial?.topics ?? [],
+      relatedPostSlugs: formatSlugList(tutorial?.relatedPostSlugs),
+      relatedTutorialSlugs: formatSlugList(tutorial?.relatedTutorialSlugs),
+      relatedProjectSlugs: formatSlugList(tutorial?.relatedProjectSlugs),
       content: tutorial?.content ?? '',
     },
   });
@@ -101,6 +119,9 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
   const titleValue = useWatch({ control, name: 'title' }) ?? '';
   const published = useWatch({ control, name: 'published' }) ?? false;
   const featured = useWatch({ control, name: 'featured' }) ?? false;
+  const evergreen = useWatch({ control, name: 'evergreen' }) ?? false;
+  const topics = useWatch({ control, name: 'topics' }) ?? [];
+  const tagsValue = useWatch({ control, name: 'tags' }) ?? '';
 
   // Auto-generate slug from title (only for new posts)
   useEffect(() => {
@@ -141,6 +162,11 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
           image_hint: values.imageHint,
           published: values.published,
           featured: values.featured,
+          evergreen: values.evergreen,
+          topics: values.topics,
+          related_post_slugs: parseSlugList(values.relatedPostSlugs),
+          related_tutorial_slugs: parseSlugList(values.relatedTutorialSlugs),
+          related_project_slugs: parseSlugList(values.relatedProjectSlugs),
           content: values.content,
         });
       } catch (err) {
@@ -284,6 +310,18 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
             <p className="text-xs text-muted-foreground">Separate multiple tags with commas.</p>
           </div>
 
+          <TopicPicker
+            value={topics}
+            onChange={(next) => setValue('topics', next, { shouldDirty: true })}
+            tags={parseSlugList(tagsValue)}
+          />
+
+          <RelatedFields
+            idPrefix="tutorial"
+            register={register}
+            include={{ posts: true, tutorials: false, projects: true }}
+          />
+
           {/* Image URL */}
           <div className="md:col-span-2 space-y-1.5">
             <Label htmlFor="image" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -324,6 +362,14 @@ export function TutorialEditor({ tutorial }: TutorialEditorProps) {
             <div>
               <p className="text-sm font-medium text-foreground">Featured</p>
               <p className="text-xs text-muted-foreground">Pinned to the home page</p>
+            </div>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input type="checkbox" className="sr-only" {...register('evergreen')} />
+            <ToggleVisual checked={evergreen} />
+            <div>
+              <p className="text-sm font-medium text-foreground">Evergreen</p>
+              <p className="text-xs text-muted-foreground">Stays relevant regardless of date</p>
             </div>
           </label>
         </div>

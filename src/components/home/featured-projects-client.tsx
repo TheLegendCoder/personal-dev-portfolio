@@ -8,6 +8,7 @@ import { ProjectCard } from '@/components/projects/projectcards';
 import { EmptyState } from '@/components/ui/empty-state';
 import { gsap, ScrollTrigger, EASE, STAGGER_CARD, prefersReducedMotion } from '@/lib/gsap';
 import type { PortfolioProject } from '@/lib/projects';
+import { copy } from '@/components/data/content';
 
 interface FeaturedProjectsClientProps {
   projects: PortfolioProject[];
@@ -81,14 +82,14 @@ export function FeaturedProjectsClient({ projects, error }: FeaturedProjectsClie
           <EmptyState
             icon={<AlertTriangle className="h-12 w-12 text-primary" />}
             title="Having trouble loading this"
-            description="Something went wrong on our end. This isn't an empty portfolio, just a temporary hiccup. Please check back shortly."
+            description={copy.loadError}
             actionText="Check back soon"
           />
         ) : projects.length === 0 ? (
           <EmptyState
             icon={<Code2 className="h-12 w-12 text-primary" />}
             title="I am working on it."
-            description="Coming soon!"
+            description={copy.projectsEmptyState}
             actionText="Check back soon"
           />
         ) : (

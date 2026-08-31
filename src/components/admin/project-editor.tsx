@@ -7,6 +7,11 @@ import { z } from 'zod';
 import { saveProjectAction, deleteProjectAction } from '@/app/admin/projects/actions';
 import type { PortfolioProject } from '@/lib/projects';
 import { Input } from '@/components/ui/input';
+import {
+  RelatedFields,
+  parseSlugList,
+  formatSlugList,
+} from '@/components/admin/taxonomy-fields';
 import { Label } from '@/components/ui/label';
 import {
   AlertDialog,
@@ -24,6 +29,15 @@ import { Save, Trash2, FolderKanban, Globe, Github, Tag, Image, ArrowUpDown, Lay
 // ---------------------------------------------------------------------------
 // Zod schema
 // ---------------------------------------------------------------------------
+/** Mirrors the backfill in supabase/migrations/0002_project_slugs.sql. */
+function titleToProjectSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
@@ -36,6 +50,15 @@ const projectSchema = z.object({
   published: z.boolean(),
   featured: z.boolean(),
   sortOrder: z.number().int().min(0),
+  // Readable URL key (migration 0002). Blank on a new project — the save
+  // action derives it from the title.
+  slug: z
+    .string()
+    .regex(/^[a-z0-9-]*$/, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  // Captured as comma-separated slugs and split on save, like tags.
+  relatedPostSlugs: z.string(),
+  relatedTutorialSlugs: z.string(),
+  relatedProjectSlugs: z.string(),
 });
 
 type ProjectForm = z.infer<typeof projectSchema>;
@@ -72,6 +95,10 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
       published: project?.published ?? false,
       featured: project?.featured ?? false,
       sortOrder: project?.sort_order ?? 0,
+      slug: project?.slug ?? '',
+      relatedPostSlugs: formatSlugList(project?.related_post_slugs),
+      relatedTutorialSlugs: formatSlugList(project?.related_tutorial_slugs),
+      relatedProjectSlugs: formatSlugList(project?.related_project_slugs),
     },
   });
 
@@ -92,6 +119,12 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
           published: values.published,
           featured: values.featured,
           sort_order: values.sortOrder,
+          // Fall back to a title-derived slug so a project saved from the
+          // editor never lands without one.
+          slug: values.slug || titleToProjectSlug(values.title),
+          related_post_slugs: parseSlugList(values.relatedPostSlugs),
+          related_tutorial_slugs: parseSlugList(values.relatedTutorialSlugs),
+          related_project_slugs: parseSlugList(values.relatedProjectSlugs),
         });
       } catch (err) {
         setServerError(String(err));
@@ -243,6 +276,25 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
             <Input id="tags" placeholder="Next.js, TypeScript, Tailwind CSS" {...register('tags')} />
             <p className="text-xs text-muted-foreground">Separate tags with commas.</p>
           </div>
+
+          {/* Slug */}
+          <div className="space-y-1.5">
+            <Label htmlFor="slug" className="flex items-center gap-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <Tag className="h-3 w-3" /> Slug
+            </Label>
+            <Input id="slug" placeholder="clean-architecture-generator" {...register('slug')} />
+            {errors.slug && <p className="text-xs text-destructive">{errors.slug.message}</p>}
+            <p className="text-xs text-muted-foreground">
+              Used in /projects/…. Leave blank to derive it from the title. The
+              old /projects/&lt;uuid&gt; URL keeps working either way.
+            </p>
+          </div>
+
+          <RelatedFields
+            idPrefix="project"
+            register={register}
+            include={{ posts: true, tutorials: true, projects: false }}
+          />
         </div>
       </div>
 

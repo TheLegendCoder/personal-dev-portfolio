@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tsholofelondawonde.co.za';
 const SITE_NAME = 'Tsholofelo Ndawonde';
 const SITE_TITLE = 'Tsholofelo Ndawonde | Software Engineer';
-const SITE_DESCRIPTION = 'Software engineer documenting learnings through code. Building scalable web apps and sharing experiments, lessons, and projects.';
+const SITE_DESCRIPTION = 'Software engineer documenting what I learn while building real-world systems — architecture, .NET, cloud, and the engineering decisions behind them.';
 
 export interface SEOMetadataProps {
   title?: string;

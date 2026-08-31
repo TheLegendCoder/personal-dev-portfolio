@@ -19,6 +19,10 @@ import type {
 export type PortfolioProject = PortfolioProjectRow;
 export type ProjectCategory = ProjectCategoryRow;
 
+/** Distinguishes a legacy /projects/<uuid> URL from a /projects/<slug> one. */
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // ---------------------------------------------------------------------------
 // Public reads (published only — uses anon client / RLS)
 // ---------------------------------------------------------------------------
@@ -100,14 +104,42 @@ export async function getProjectsByCategory(
   }
 }
 
-/** Single published project by id — public detail-page read (anon client, RLS-filtered) */
-export async function getPublishedProjectById(id: string): Promise<PortfolioProject | null> {
+/**
+ * Single published project by slug OR uuid — public detail-page read
+ * (anon client, RLS-filtered).
+ *
+ * /projects/[id] served opaque uuids before migration 0002 added a slug, and
+ * those URLs are in the sitemap and possibly indexed. Slug is tried first;
+ * anything shaped like a uuid falls back to an id lookup, so both keep working.
+ */
+export async function getPublishedProjectById(
+  idOrSlug: string
+): Promise<PortfolioProject | null> {
   try {
     const supabase = createAnonClient();
+
+    const { data: bySlug, error: slugError } = await supabase
+      .from('portfolio_projects')
+      .select('*')
+      .eq('slug', idOrSlug)
+      .eq('published', true)
+      .maybeSingle();
+
+    // A missing `slug` column (migration 0002 not yet applied) surfaces as an
+    // error rather than an empty result — fall through to the id lookup.
+    if (!slugError && bySlug) return bySlug;
+
+    if (!UUID_PATTERN.test(idOrSlug)) {
+      if (slugError) {
+        console.error('[getPublishedProjectById] Supabase error:', slugError.message, '| code:', slugError.code);
+      }
+      return null;
+    }
+
     const { data, error } = await supabase
       .from('portfolio_projects')
       .select('*')
-      .eq('id', id)
+      .eq('id', idOrSlug)
       .eq('published', true)
       .single();
 

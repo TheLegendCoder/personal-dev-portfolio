@@ -70,8 +70,12 @@ Cinematic_Portfolio_Design_Document.md
 .github/
 .claude/
 
-# Supabase local configuration
-supabase/
+# Supabase local configuration (CLI-generated).
+# Anchored to the repo root: the unanchored `supabase/` also matched
+# src/lib/supabase/, so any new file added there was silently untracked.
+# Migrations are deliberately checked in — they are applied by hand.
+/supabase/*
+!/supabase/migrations/
 
 # Impeccable design/product docs (local only)
 DESIGN.md
@@ -79,3 +83,11 @@ PRODUCT.md
 
 .impeccable/
 DESIGN-f1.md
+# Agent skills (installed locally via `npx skills add`)
+.agents/
+
+# local-only AI assistant guidance
+/CLAUDE.md
+
+# graphify knowledge-graph build output
+/graphify-out/
