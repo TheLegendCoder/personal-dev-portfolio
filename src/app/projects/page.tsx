@@ -8,6 +8,7 @@ import { ProjectFilters } from '@/components/projects/project-filters';
 import { EmptyState } from '@/components/ui/empty-state';
 import { BreadcrumbWithSchema } from '@/components/ui/breadcrumb';
 import { generateBreadcrumbs } from '@/lib/seo/breadcrumbs';
+import { copy } from '@/components/data/content';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,8 +43,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
           <BreadcrumbWithSchema items={breadcrumbs} className="mb-6" />
 
           <p className="text-lg text-muted-foreground max-w-2xl mb-10">
-            A collection of my professional work and personal projects showcasing my skills in
-            web development, design, and problem-solving.
+            {copy.projectsIntro}
           </p>
 
           <Suspense fallback={null}>
@@ -59,7 +59,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
             <EmptyState
               icon={<Code2 className="h-12 w-12 text-primary" />}
               title="I am working on it."
-              description={`Coming soon!${category !== 'all' ? ` No ${category} projects are published yet.` : ''}`}
+              description={`${copy.projectsEmptyState}${category !== 'all' ? ` No ${category} projects are published yet.` : ''}`}
               actionText="Check back soon"
             />
           ) : (

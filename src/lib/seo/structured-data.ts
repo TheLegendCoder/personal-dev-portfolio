@@ -75,14 +75,10 @@ export function generateWebsiteSchema(data: {
     name: data.name,
     url: data.url,
     description: data.description,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${data.url}/blog?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
+    // No `potentialAction`/SearchAction here: the site has no search endpoint.
+    // It previously advertised /blog?q={search_term_string}, a parameter
+    // nothing implements — declaring a search action that 404s is worse for
+    // crawlers than declaring none. Reinstate this when search actually ships.
   };
 }
 
@@ -119,7 +115,7 @@ export function generateBlogPostingSchema(data: {
       name: siteName,
       logo: {
         '@type': 'ImageObject',
-        url: `${siteUrl}/images/logo.png`,
+        url: `${siteUrl}/opengraph-image`,
       },
     },
     url: data.url,

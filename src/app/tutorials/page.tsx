@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Layout } from "@/components/layout/layout";
 import { TutorialCard } from "@/components/tutorial/tutorialcard";
 import { getTutorialsSummary } from "@/lib/tutorial";
@@ -6,10 +7,11 @@ import { Lightbulb } from "lucide-react";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
 import { generateBreadcrumbs } from "@/lib/seo/breadcrumbs";
+import { copy } from "@/components/data/content";
 
 export const metadata = generateSEOMetadata({
   title: "Tutorials",
-  description: "Step-by-step guides to help you learn and grow as a developer. Comprehensive tutorials covering web development, design patterns, and advanced techniques.",
+  description: copy.tutorialsMetaDescription,
   canonicalUrl: getCanonicalUrl('/tutorials'),
 });
 
@@ -30,13 +32,13 @@ async function TutorialsPage() {
               <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
 
               <p className="text-lg text-muted-foreground">
-                Step-by-step guides to help you learn and grow as a developer.
+                {copy.tutorialsIntro}
               </p>
             </div>
             <EmptyState
               icon={<Lightbulb className="h-12 w-12 text-primary" />}
               title="Tutorials on the way"
-              description="I'm creating comprehensive step-by-step guides on web development, best practices, and advanced techniques. These tutorials will help you level up your skills as a developer."
+              description={copy.tutorialsEmptyState}
               actionText="Check back soon"
             />
           </div>
@@ -60,9 +62,15 @@ async function TutorialsPage() {
             <BreadcrumbWithSchema items={breadcrumbs} className="mb-4" />
 
             <p className="text-lg text-muted-foreground">
-              Step-by-step guides to help you learn and grow as a developer. Master web development,
-              design patterns, and advanced techniques.
+              {copy.tutorialsIntro}
             </p>
+
+            <Link
+              href="/writing"
+              className="mono-label mt-6 inline-flex items-center border-b border-primary pb-1 text-primary transition-colors hover:text-primary/80"
+            >
+              See all writing →
+            </Link>
           </div>
 
           {/* Editorial stacked list — matches /projects; the lead tutorial gets

@@ -84,6 +84,11 @@ vi.mock('next/link', () => ({
 vi.mock('lucide-react', () => ({
   BookOpen: () => <svg data-testid="book-open" />,
   ArrowLeft: () => <svg data-testid="arrow-left" />,
+  // The detail page's byline row renders these three; without them the mock
+  // throws "No X export is defined on the lucide-react mock".
+  User: () => <svg data-testid="user" />,
+  Calendar: () => <svg data-testid="calendar" />,
+  Clock: () => <svg data-testid="clock" />,
 }));
 
 vi.mock('isomorphic-dompurify', () => ({
@@ -115,6 +120,11 @@ const sampleSummaries = [
     featured: true,
     image: 'https://images.test/first.png',
     imageHint: 'first image',
+    topics: [],
+    evergreen: false,
+    relatedPostSlugs: [],
+    relatedTutorialSlugs: [],
+    relatedProjectSlugs: [],
   },
   {
     slug: 'second-post',
@@ -128,6 +138,11 @@ const sampleSummaries = [
     featured: false,
     image: 'https://images.test/second.png',
     imageHint: 'second image',
+    topics: [],
+    evergreen: false,
+    relatedPostSlugs: [],
+    relatedTutorialSlugs: [],
+    relatedProjectSlugs: [],
   },
 ];
 
@@ -143,6 +158,11 @@ const samplePost = {
   featured: true,
   image: 'https://images.test/first.png',
   imageHint: 'first image',
+  topics: [],
+  evergreen: false,
+  relatedPostSlugs: [],
+  relatedTutorialSlugs: [],
+  relatedProjectSlugs: [],
   content: '<p>Rendered HTML content</p>',
 };
 

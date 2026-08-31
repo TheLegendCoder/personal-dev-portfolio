@@ -94,3 +94,59 @@ export function setUserProperties(properties: Record<string, any>): void {
     posthog.setPersonProperties(properties);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Information-architecture events
+//
+// Added with the About/Work/Writing/Now/Contact refactor so we can tell whether
+// the new hubs actually route people through the site. All of these go through
+// trackEvent, so they inherit the cookie-consent gate in posthog-provider.tsx.
+// ---------------------------------------------------------------------------
+
+export type NavSource = 'navbar' | 'navbar-dropdown' | 'mobile' | 'footer';
+
+/**
+ * A click on any site navigation link.
+ */
+export function trackNavigationClick(
+  label: string,
+  path: string,
+  source: NavSource
+): void {
+  trackEvent('Navigation Click', { label, path, source });
+}
+
+/**
+ * A click on a card in the Featured strip of the Writing hub. `position` is
+ * 0-indexed so we can tell whether anything below the first slot gets read.
+ */
+export function trackFeaturedContentClick(
+  contentType: string,
+  slug: string,
+  position: number
+): void {
+  trackEvent('Featured Content Click', {
+    content_type: contentType,
+    slug,
+    position,
+  });
+}
+
+/**
+ * A type or topic filter applied on the Writing hub.
+ */
+export function trackWritingFilter(
+  filter: 'type' | 'topic',
+  value: string
+): void {
+  trackEvent('Writing Filter', { filter, value });
+}
+
+/**
+ * Someone reached out — the closest thing this site has to a conversion.
+ */
+export function trackContactConversion(
+  method: 'email' | 'linkedin' | 'github' | 'twitter'
+): void {
+  trackEvent('Contact Conversion', { method });
+}

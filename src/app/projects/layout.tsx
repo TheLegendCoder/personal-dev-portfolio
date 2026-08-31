@@ -1,8 +1,9 @@
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
+import { copy } from "@/components/data/content";
 
 export const metadata = generateSEOMetadata({
   title: "Projects",
-  description: "A collection of professional work and personal projects showcasing skills in web development, React, TypeScript, and modern software engineering.",
+  description: copy.projectsMetaDescription,
   canonicalUrl: getCanonicalUrl('/projects'),
 });
 

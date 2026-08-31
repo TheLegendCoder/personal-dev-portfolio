@@ -11,17 +11,28 @@ test.describe('Home page', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText("Hi, I'm");
   });
 
-  test('has a "View My Work" CTA link to /projects', async ({ page }) => {
+  test('has a "View My Work" CTA link to the Work hub', async ({ page }) => {
     const cta = page.getByRole('link', { name: /view my work/i });
     await expect(cta).toBeVisible();
-    await expect(cta).toHaveAttribute('href', '/projects');
+    await expect(cta).toHaveAttribute('href', '/work');
   });
 
-  test('navigation bar is visible with key links', async ({ page }) => {
+  test('has a "Contact Me" CTA link to the Contact page', async ({ page }) => {
+    // Was a scroll-to-footer button before /contact existed.
+    const cta = page.getByRole('link', { name: /contact me/i });
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', '/contact');
+  });
+
+  test('navigation bar is visible with the top-level IA links', async ({ page }) => {
     const nav = page.getByRole('banner').getByRole('navigation');
     await expect(nav).toBeVisible();
-    await expect(nav.getByRole('link', { name: /blog/i })).toBeVisible();
-    await expect(nav.getByRole('link', { name: /projects/i })).toBeVisible();
+    // Blog/Tutorials/Projects moved under the Work and Writing hubs.
+    await expect(nav.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Writing', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'About', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Now', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Contact', exact: true })).toBeVisible();
   });
 
   test('page title is set correctly', async ({ page }) => {

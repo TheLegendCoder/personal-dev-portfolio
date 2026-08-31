@@ -8,8 +8,10 @@ import "highlight.js/styles/atom-one-dark.css";
 import { generateSEOMetadata, getCanonicalUrl } from "@/lib/seo/metadata";
 import { generateBlogPostingSchema, generateJSONLD } from "@/lib/seo/structured-data";
 import { BreadcrumbWithSchema } from "@/components/ui/breadcrumb";
-import { generateBlogPostBreadcrumbs } from "@/lib/seo/breadcrumbs";
+import { generateTutorialBreadcrumbs } from "@/lib/seo/breadcrumbs";
 import ShareButtons from "@/components/blog/share-buttons";
+import { getRelatedContent } from "@/lib/related-content";
+import { RelatedContentSection } from "@/components/writing/related-content";
 
 interface TutorialPageProps {
   params: Promise<{
@@ -56,6 +58,14 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
     notFound();
   }
 
+  const related = await getRelatedContent({
+    kind: 'tutorial',
+    slug,
+    relatedPostSlugs: tutorial.relatedPostSlugs,
+    relatedTutorialSlugs: tutorial.relatedTutorialSlugs,
+    relatedProjectSlugs: tutorial.relatedProjectSlugs,
+  });
+
   const formattedDate = new Date(tutorial.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -74,7 +84,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
   });
 
   // Generate breadcrumbs (Tutorials > Tutorial Title)
-  const breadcrumbs = generateBlogPostBreadcrumbs(tutorial.title);
+  const breadcrumbs = generateTutorialBreadcrumbs(tutorial.title);
 
   return (
     <Layout>
@@ -165,6 +175,8 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
               </div>
             </footer>
           )}
+
+          <RelatedContentSection related={related} />
         </div>
       </article>
     </Layout>
